@@ -1,0 +1,12 @@
+prefix: "&8[&eElections&9+&8] &r"
+
+database:
+  type: "SQLITE" # SQLITE, MYSQL, REDIS
+  # MySQL and Redis
+  username: "root"
+  password: ""
+  ip: "localhost"
+  port: 3306
+
+  # Do not edit this if you don't know what you are doing
+  jdbc: null
