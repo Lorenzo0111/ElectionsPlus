@@ -26,6 +26,8 @@ package me.lorenzo0111.elections.database;
 
 import me.lorenzo0111.elections.api.objects.Election;
 import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.api.objects.Vote;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
@@ -43,5 +45,7 @@ public interface IDatabaseManager {
     void updateParty(Party party);
     void updateElection(Election election);
     void deleteElection(Election election);
-    CompletableFuture<Boolean> vote(Player player, Party party, Election election);
+    CompletableFuture<List<Vote>> getVotes();
+    CompletableFuture<Boolean> vote(OfflinePlayer player, Party party, Election election);
+    CompletableFuture<Boolean> vote(Vote vote);
 }

@@ -24,5 +24,21 @@
 
 package me.lorenzo0111.elections.api;
 
+import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.api.objects.Vote;
+import org.bukkit.OfflinePlayer;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
 public interface IElectionsPlusAPI {
+    CompletableFuture<List<Vote>> getVotes();
+    CompletableFuture<Vote> getVote(UUID player, String election, String party);
+    CompletableFuture<Party> getParty(String name);
+    CompletableFuture<Election> getElection(String name);
+    CompletableFuture<List<Election>> getElections();
+    CompletableFuture<Boolean> addVote(OfflinePlayer player, Election election, Party party);
+    CompletableFuture<Boolean> addVote(Vote vote);
 }

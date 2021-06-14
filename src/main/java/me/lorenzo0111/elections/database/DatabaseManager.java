@@ -33,6 +33,7 @@ import me.lorenzo0111.elections.api.objects.Vote;
 import me.lorenzo0111.pluginslib.database.connection.JavaConnection;
 import me.lorenzo0111.pluginslib.database.objects.Column;
 import me.lorenzo0111.pluginslib.database.objects.Table;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -282,16 +283,45 @@ public class DatabaseManager implements IDatabaseManager {
     }
 
     @Override
-    public CompletableFuture<Boolean> vote(Player player, Party party, Election election) {
+    public CompletableFuture<List<Vote>> getVotes() {
+        CompletableFuture<List<Vote>> future = new CompletableFuture<>();
+
+        this.getVotesTable().run(new BukkitRunnable() {
+            @Override
+            public void run() {
+                try {
+                    PreparedStatement statement = votesTable.getConnection().prepareStatement(String.format("SELECT * FROM %s;", votesTable.getName()));
+                    ResultSet set = statement.executeQuery();
+                    List<Vote> votes = new ArrayList<>();
+                    while (set.next()) {
+                        votes.add(new Vote(UUID.fromString(set.getString("uuid")),set.getString("party"),set.getString("election")));
+                    }
+                    future.complete(votes);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> vote(OfflinePlayer player, Party party, Election election) {
+        Vote vote = new Vote(player.getUniqueId(),party.getName(),election.getName());
+        return this.vote(vote);
+    }
+
+    @Override
+    public CompletableFuture<Boolean> vote(Vote vote) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
 
-        Vote vote = new Vote(player.getUniqueId(),party.getName(),election.getName());
         this.getVotesTable()
-                .find("uuid",player.getUniqueId())
+                .find("uuid",vote.getPlayer())
                 .thenAccept((set) -> {
                     try {
                         while (set.next()) {
-                            if (set.getString("election").equals(election.getName())) {
+                            if (set.getString("election").equals(vote.getElection())) {
                                 future.complete(false);
                                 return;
                             }

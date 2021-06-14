@@ -24,11 +24,15 @@
 
 package me.lorenzo0111.elections;
 
+import me.lorenzo0111.elections.api.IElectionsPlusAPI;
+import me.lorenzo0111.elections.api.implementations.ElectionsPlusAPI;
 import me.lorenzo0111.elections.commands.ElectionsCommand;
 import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
 import me.lorenzo0111.pluginslib.command.Customization;
 import me.lorenzo0111.pluginslib.dependency.beta.SlimJarDependencyManager;
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -67,6 +71,7 @@ public final class ElectionsPlus extends JavaPlugin {
 
     public void start() {
         this.loaded = true;
+        Bukkit.getServicesManager().register(IElectionsPlusAPI.class,new ElectionsPlusAPI(this),this, ServicePriority.Normal);
         switch (getConfig().getString("database.type", "NULL").toUpperCase()) {
             case "SQLITE":
                 try {

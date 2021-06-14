@@ -42,6 +42,18 @@ public class Vote implements DatabaseSerializable {
         this.election = election;
     }
 
+    public String getParty() {
+        return party;
+    }
+
+    public String getElection() {
+        return election;
+    }
+
+    public UUID getPlayer() {
+        return player;
+    }
+
     @Override
     public @NotNull String tableName() {
         return "votes";
