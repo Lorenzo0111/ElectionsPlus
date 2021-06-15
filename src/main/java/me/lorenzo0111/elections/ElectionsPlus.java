@@ -45,6 +45,7 @@ public final class ElectionsPlus extends JavaPlugin {
     private boolean loaded;
     private IDatabaseManager manager;
     private static ElectionsPlus instance;
+    private ElectionsPlusAPI api;
 
     @Override
     public void onEnable() {
@@ -71,7 +72,8 @@ public final class ElectionsPlus extends JavaPlugin {
 
     public void start() {
         this.loaded = true;
-        Bukkit.getServicesManager().register(IElectionsPlusAPI.class,new ElectionsPlusAPI(this),this, ServicePriority.Normal);
+        this.api = new ElectionsPlusAPI(this);
+        Bukkit.getServicesManager().register(IElectionsPlusAPI.class,api,this, ServicePriority.Normal);
         switch (getConfig().getString("database.type", "NULL").toUpperCase()) {
             case "SQLITE":
                 try {
@@ -132,5 +134,9 @@ public final class ElectionsPlus extends JavaPlugin {
 
     public static ElectionsPlus getInstance() {
         return instance;
+    }
+
+    public ElectionsPlusAPI getApi() {
+        return api;
     }
 }

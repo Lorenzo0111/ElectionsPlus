@@ -25,12 +25,10 @@
 package me.lorenzo0111.elections.commands;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import me.lorenzo0111.elections.commands.childs.CreateChild;
-import me.lorenzo0111.elections.commands.childs.DisbandChild;
-import me.lorenzo0111.elections.commands.childs.ListChild;
-import me.lorenzo0111.elections.commands.childs.PartiesChild;
+import me.lorenzo0111.elections.commands.childs.*;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.Customization;
+import me.lorenzo0111.pluginslib.command.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -50,6 +48,8 @@ public class ElectionsCommand extends Command implements TabExecutor {
         this.addSubcommand(new PartiesChild(this, (ElectionsPlus) plugin));
         this.addSubcommand(new ListChild(this));
         this.addSubcommand(new DisbandChild(this));
+        this.addSubcommand(new HelpChild(this));
+        this.addSubcommand(new VoteChild(this));
         Objects.requireNonNull(plugin.getCommand(command)).setTabCompleter(this);
     }
 
@@ -66,5 +66,9 @@ public class ElectionsCommand extends Command implements TabExecutor {
             list.add("<name>");
 
         return list;
+    }
+
+    public List<SubCommand> getSubCommands() {
+        return subcommands;
     }
 }
