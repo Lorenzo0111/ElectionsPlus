@@ -52,7 +52,7 @@ repositories {
 
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT'
-    implementation('me.lorenzo0111:pluginslib:1.3.2')
+    implementation('me.lorenzo0111:pluginslib:1.3.3')
     slim("dev.triumphteam:triumph-gui:3.0.2")
     slim('com.github.cryptomorin:XSeries:8.1.0')
     slim('net.kyori:adventure-api:4.8.1')
