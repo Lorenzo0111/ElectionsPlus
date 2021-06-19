@@ -26,46 +26,88 @@ package me.lorenzo0111.elections.database;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.api.objects.Vote;
-import me.lorenzo0111.pluginslib.database.connection.JavaConnection;
+import me.lorenzo0111.pluginslib.database.connection.HikariConnection;
+import me.lorenzo0111.pluginslib.database.connection.IConnectionHandler;
+import me.lorenzo0111.pluginslib.database.connection.SQLiteConnection;
 import me.lorenzo0111.pluginslib.database.objects.Column;
 import me.lorenzo0111.pluginslib.database.objects.Table;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
 public class DatabaseManager implements IDatabaseManager {
-    private final Table votesTable;
-    private final Table partiesTable;
-    private final Table electionsTable;
-    private final Connection connection;
+    private Table votesTable;
+    private Table partiesTable;
+    private Table electionsTable;
+    private final IConnectionHandler connectionHandler;
 
-    public DatabaseManager(ElectionsPlus plugin) throws SQLException {
-        this(plugin,jdbc(plugin),plugin.getConfig().getString("username"),plugin.getConfig().getString("password"));
+    public DatabaseManager(ElectionsPlus plugin, IConnectionHandler handler) {
+        this.connectionHandler = handler;
+
+        this.tables(plugin);
     }
 
-    public DatabaseManager(ElectionsPlus plugin, String jdbc, @Nullable String username, @Nullable String password) throws SQLException {
-        this.connection = DriverManager.getConnection(jdbc,username,password);
+    public DatabaseManager(ElectionsPlus plugin) throws SQLException {
+        HikariConfig config = new HikariConfig();
 
+        config.setMaximumPoolSize(10);
+        config.setMinimumIdle(10);
+        config.setMaxLifetime(1800000);
+        config.setConnectionTimeout(5000);
+
+        config.setPoolName("MultiLang MySQL Connection Pool");
+        config.setDataSourceClassName("com.mysql.cj.jdbc.Driver");
+        config.addDataSourceProperty("serverName", plugin.getConfig("database.ip"));
+        config.addDataSourceProperty("port", plugin.getConfig("database.port"));
+        config.addDataSourceProperty("databaseName", plugin.getConfig("database.database"));
+        config.addDataSourceProperty("user", plugin.getConfig("database.username"));
+        config.addDataSourceProperty("password", plugin.getConfig("database.password"));
+        config.addDataSourceProperty("useSSL", plugin.getConfig("database.ssl"));
+
+        IConnectionHandler handler = null;
+
+        try {
+            handler = new HikariConnection(new HikariDataSource(config));
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.SEVERE, "Unable to connect to the database, using SQLite.. ",e);
+            try {
+                handler = new SQLiteConnection(plugin);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+        }
+
+        this.connectionHandler = handler;
+
+        this.tables(plugin);
+    }
+
+    private void tables(JavaPlugin plugin) {
         // Votes
         List<Column> votesColumns = new ArrayList<>();
         votesColumns.add(new Column("uuid", "TEXT"));
         votesColumns.add(new Column("party", "TEXT"));
         votesColumns.add(new Column("election", "TEXT"));
-        this.votesTable = new Table(plugin,new JavaConnection(connection),"votes",votesColumns);
+        this.votesTable = new Table(plugin,connectionHandler,"votes",votesColumns);
         this.votesTable.create();
 
         // Parties
@@ -74,7 +116,7 @@ public class DatabaseManager implements IDatabaseManager {
         partiesColumns.add(new Column("name", "TEXT"));
         partiesColumns.add(new Column("members", "TEXT"));
         partiesColumns.add(new Column("icon", "TEXT nullable"));
-        this.partiesTable = new Table(plugin,new JavaConnection(connection),"parties",partiesColumns);
+        this.partiesTable = new Table(plugin,connectionHandler,"parties",partiesColumns);
         this.partiesTable.create();
 
         // Elections
@@ -82,25 +124,9 @@ public class DatabaseManager implements IDatabaseManager {
         electionsColumns.add(new Column("name", "TEXT"));
         electionsColumns.add(new Column("parties", "TEXT"));
         electionsColumns.add(new Column("open", "INTEGER"));
-        this.electionsTable = new Table(plugin,new JavaConnection(connection),"elections",electionsColumns);
+        this.electionsTable = new Table(plugin,connectionHandler,"elections",electionsColumns);
         this.electionsTable.create();
 
-    }
-
-    private static String jdbc(JavaPlugin plugin) {
-        String jdbc = plugin.getConfig().getString("database.jdbc");
-
-        if (jdbc == null) {
-            String database = plugin.getConfig().getString("database");
-            String ip = plugin.getConfig().getString("ip");
-            int port = plugin.getConfig().getInt("port",3306);
-
-            Objects.requireNonNull(database);
-            Objects.requireNonNull(ip);
-            jdbc = String.format("jdbc:mysql://%s:%s/%s",ip,port,database);
-        }
-
-        return jdbc;
     }
 
     public Table getPartiesTable() {
@@ -146,7 +172,7 @@ public class DatabaseManager implements IDatabaseManager {
 
     @Override
     public void closeConnection() throws SQLException {
-        connection.close();
+        connectionHandler.close();
     }
 
     @Override
@@ -159,7 +185,7 @@ public class DatabaseManager implements IDatabaseManager {
                     @Override
                     public void run() {
                         try {
-                            Statement statement = connection.createStatement();
+                            Statement statement = connectionHandler.getConnection().createStatement();
                             ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s;", getElectionsTable().getName()));
 
                             List<Election> elections = new ArrayList<>();
@@ -202,7 +228,7 @@ public class DatabaseManager implements IDatabaseManager {
             @Override
             public void run() {
                 try {
-                    Statement statement = connection.createStatement();
+                    Statement statement = connectionHandler.getConnection().createStatement();
                     ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s;", getPartiesTable().getName()));
 
                     List<Party> parties = new ArrayList<>();

@@ -7,6 +7,4 @@ database:
   password: ""
   ip: "localhost"
   port: 3306
-
-  # Do not edit this if you don't know what you are doing
-  jdbc: null
+  ssl: false

@@ -30,12 +30,12 @@ import me.lorenzo0111.elections.commands.ElectionsCommand;
 import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
 import me.lorenzo0111.pluginslib.command.Customization;
+import me.lorenzo0111.pluginslib.database.connection.SQLiteConnection;
 import me.lorenzo0111.pluginslib.dependency.slimjar.SlimJarDependencyManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
@@ -77,16 +77,8 @@ public final class ElectionsPlus extends JavaPlugin {
         switch (getConfig().getString("database.type", "NULL").toUpperCase()) {
             case "SQLITE":
                 try {
-                    File file = new File(this.getDataFolder(), "database.db");
-
-                    if (file.exists() || file.createNewFile()) {
-                        this.manager = new DatabaseManager(this, "jdbc:sqlite:" + file.getAbsolutePath(), null, null);
-                        break;
-                    }
-
-                    this.getLogger().warning("Unable to create the database file");
-
-                } catch (IOException | SQLException e) {
+                    this.manager = new DatabaseManager(this,new SQLiteConnection(this));
+                } catch (SQLException | IOException e) {
                     e.printStackTrace();
                 }
                 break;
