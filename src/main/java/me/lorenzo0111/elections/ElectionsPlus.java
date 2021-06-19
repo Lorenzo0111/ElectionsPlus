@@ -61,7 +61,7 @@ public final class ElectionsPlus extends JavaPlugin {
         instance = this;
         this.saveDefaultConfig();
         new Metrics(this,11735);
-        this.updater = new UpdateChecker(this, 0, "", null);
+        this.updater = new UpdateChecker(this, 93463, "", null);
         this.load();
     }
 
