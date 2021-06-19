@@ -65,5 +65,5 @@ dependencies {
 shadowJar {
     relocate 'me.lorenzo0111.pluginslib', 'me.lorenzo0111.elections.pluginslib'
 
-    destinationDirectory = file('C:\\Users\\loren\\AppData\\Roaming\\VisualSpigot\\minecraft_servers\\VSFC3ti5LC\\plugins')
+    // destinationDirectory = file('C:\\Users\\loren\\AppData\\Roaming\\VisualSpigot\\minecraft_servers\\VSFC3ti5LC\\plugins')
 }
