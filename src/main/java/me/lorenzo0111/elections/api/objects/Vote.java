@@ -55,6 +55,14 @@ public class Vote implements DatabaseSerializable {
     }
 
     @Override
+    public DatabaseSerializable from(Map<String, Object> keys) {
+        UUID player = UUID.fromString((String) keys.get("uuid"));
+        String party = (String) keys.get("party");
+        String election = (String) keys.get("election");
+        return new Vote(player,party,election);
+    }
+
+    @Override
     public @NotNull String tableName() {
         return "votes";
     }

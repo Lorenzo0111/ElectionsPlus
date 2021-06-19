@@ -30,7 +30,7 @@ import me.lorenzo0111.elections.commands.ElectionsCommand;
 import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
 import me.lorenzo0111.pluginslib.command.Customization;
-import me.lorenzo0111.pluginslib.dependency.beta.SlimJarDependencyManager;
+import me.lorenzo0111.pluginslib.dependency.slimjar.SlimJarDependencyManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;

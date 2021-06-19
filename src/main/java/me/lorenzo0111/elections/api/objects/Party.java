@@ -24,11 +24,13 @@
 
 package me.lorenzo0111.elections.api.objects;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.pluginslib.database.DatabaseSerializable;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class Party implements DatabaseSerializable {
@@ -91,8 +93,26 @@ public class Party implements DatabaseSerializable {
                 .updateParty(this);
     }
 
+    public void setIconWithoutUpdate(String icon) {
+        this.icon = icon;
+    }
+
     public String getIcon() {
         return icon;
+    }
+
+    @Override
+    public DatabaseSerializable from(Map<String, Object> keys) {
+        String name = (String) keys.get("name");
+        String icon = (String) keys.get("icon");
+        UUID owner = UUID.fromString((String) keys.get("owner"));
+
+        Type type = new TypeToken<ArrayList<UUID>>() {}.getType();
+        List<UUID> members = new Gson().fromJson((String) keys.get("members"),type);
+
+        Party party = new Party(name,owner,members);
+        party.setIconWithoutUpdate(icon);
+        return party;
     }
 
     @Override

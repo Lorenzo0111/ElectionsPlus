@@ -65,6 +65,11 @@ public class Election implements DatabaseSerializable {
     }
 
     @Override
+    public DatabaseSerializable from(Map<String, Object> keys) throws RuntimeException {
+        throw new RuntimeException("You can't deserialize this class. You have to do that manually.");
+    }
+
+    @Override
     public @NotNull String tableName() {
         return "elections";
     }
