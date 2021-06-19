@@ -22,24 +22,41 @@
  * SOFTWARE.
  */
 
-package me.lorenzo0111.elections.conversation;
+package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.pluginslib.command.Command;
+import me.lorenzo0111.pluginslib.command.SubCommand;
+import me.lorenzo0111.pluginslib.command.annotations.Permission;
 import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationFactory;
+import org.bukkit.command.CommandSender;
+import org.spongepowered.configurate.ConfigurateException;
 
-public class ConversationUtil {
+public class ReloadChild extends SubCommand {
 
-    public static void createConversation(ElectionsPlus plugin, Conversation conversation) {
-        ConversationFactory factory = new ConversationFactory(plugin)
-                .withPrefix(context -> ChatColor.translateAlternateColorCodes('&', plugin.getConfig("prefix")))
-                .withEscapeSequence(plugin.getConfig("escape"))
-                .withTimeout(60)
-                .withModality(true)
-                .withFirstPrompt(conversation)
-                .withLocalEcho(false);
-
-        factory.buildConversation(conversation.getAuthor()).begin();
+    public ReloadChild(Command command) {
+        super(command);
     }
 
+    @Override
+    public String getName() {
+        return "reload";
+    }
+
+    @Permission("elections.reload")
+    @Override
+    public void handleSubcommand(CommandSender sender, String[] args) {
+        long now = System.currentTimeMillis();
+        int errors = 0;
+
+        try {
+            ElectionsPlus.getInstance()
+                    .reload();
+        } catch (ConfigurateException e) {
+            e.printStackTrace();
+            errors++;
+        }
+
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', ElectionsPlus.getInstance().getConfig("prefix") + "&7Plugin reloaded in &e&n" + (System.currentTimeMillis() - now) + "ms&7 with &e&n" + errors + "&7 error(s)."));
+    }
 }

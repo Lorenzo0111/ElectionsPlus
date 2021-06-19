@@ -34,8 +34,8 @@ import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.IconConversation;
+import me.lorenzo0111.elections.handlers.Messages;
 import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -49,7 +49,7 @@ public class EditPartyMenu extends BaseGui {
     private final ElectionsPlus plugin;
 
     public EditPartyMenu(Player owner, Party party, SkullBuilder item, ElectionsPlus plugin) {
-        super(5, Component.text("§9§l» §7Parties §9§l» §7" + party.getName()), EnumSet.noneOf(InteractionModifier.class));
+        super(5, Messages.component(false, "guis", "edit-party-title"), EnumSet.noneOf(InteractionModifier.class));
 
         this.owner = owner;
         this.party = party;
@@ -61,37 +61,37 @@ public class EditPartyMenu extends BaseGui {
         this.setDefaultClickAction((e) -> e.setCancelled(true));
 
         this.setItem(2, 5, item.lore(Component.empty()).asGuiItem());
-        this.setItem(4,3, ItemBuilder.from(Material.BARRIER).name(Component.text("§cDelete")).lore(Component.text("§7Click to delete the party")).asGuiItem(e -> {
+        this.setItem(4,3, ItemBuilder.from(Material.BARRIER).name(Messages.component(false, "guis", "delete")).lore(Messages.component(false, "guis", "delete-party-lore")).asGuiItem(e -> {
             e.getWhoClicked().closeInventory();
             if (party.getOwner().equals(owner.getUniqueId())) {
                 plugin.getManager()
                         .deleteParty(party);
-                owner.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig("prefix") + "&7Party deleted. &o(Refresh may take some seconds)"));
+                Messages.send(e.getWhoClicked(),true,"party-deleted");
                 return;
             }
 
-            owner.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig("prefix") + "&cYou can't delete this party."));
+            Messages.send(e.getWhoClicked(),true,"no-permission-delete");
         }));
         this.setItem(4,5, ItemBuilder
                 .from(Objects.requireNonNull(XMaterial.OAK_SIGN.parseItem()))
-                .name(Component.text("§7Members"))
-                .lore(Component.text("§7Click to §e§nedit§7 the member list"), Component.text( "§7Refresh may take some seconds"))
+                .name(Messages.component(false, "guis", "members"))
+                .lore(Messages.component(false,"guis","members-lore"), Messages.component(false, "guis", "refresh"))
                 .asGuiItem(e -> new MembersMenu(plugin,party,owner).setup()));
 
         GuiItem item;
 
         if (owner.hasPermission("elections.party.icon")) {
             item = ItemBuilder.from(Material.EMERALD)
-                    .name(Component.text("§7Edit the icon"))
-                    .lore(Component.text("§7Edit the party §a§nicon"), Component.text("§7that will be displayed in elections"))
+                    .name(Messages.component(false, "guis", "icon"))
+                    .lore(Messages.component(false, "guis", "icon-lore"), Messages.component(false, "guis", "icon-lore2"))
                     .asGuiItem(e -> {
                     e.getWhoClicked().closeInventory();
                     ConversationUtil.createConversation(plugin,new IconConversation(this,party,owner,plugin));
                 });
         } else {
             item = ItemBuilder.from(Material.BARRIER)
-                    .name(Component.text("§cYou can't edit the icon"))
-                    .lore(Component.text("§7You don't have the permission"), Component.text("§7to set the item icon"))
+                    .name(Messages.component(false, "guis", "no-icon"))
+                    .lore(Messages.component(false, "guis", "no-icon-description"), Messages.component(false, "guis", "no-icon-description2"))
                     .asGuiItem();
         }
 

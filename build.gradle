@@ -36,6 +36,10 @@ targetCompatibility = '1.8'
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
+ext {
+    libsBase = 'me.lorenzo0111.elections.libs'
+}
+
 repositories {
     mavenCentral()
     maven {
@@ -53,8 +57,11 @@ repositories {
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT'
     implementation('me.lorenzo0111:pluginslib:1.4')
+    implementation('org.bstats:bstats-bukkit:2.2.1')
     slim("dev.triumphteam:triumph-gui:3.0.2")
     slim('com.github.cryptomorin:XSeries:8.1.0')
+    slim("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
+    slim("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
     slim('net.kyori:adventure-api:4.8.1')
     slim('net.kyori:adventure-text-serializer-legacy:4.8.1')
     slim('mysql:mysql-connector-java:8.0.25')
@@ -62,8 +69,12 @@ dependencies {
     slim('com.zaxxer:HikariCP:4.0.3')
 }
 
-shadowJar {
-    relocate 'me.lorenzo0111.pluginslib', 'me.lorenzo0111.elections.pluginslib'
-
-    // destinationDirectory = file('C:\\Users\\loren\\AppData\\Roaming\\VisualSpigot\\minecraft_servers\\VSFC3ti5LC\\plugins')
+slimJar {
+    relocate('org.bstats', "${libsBase}.bstats")
+    relocate('dev.triumphteam',"${libsBase}")
+    relocate('google',"${libsBase}.google")
+    relocate('org.slf4j',"${libsBase}.slf4j")
+    relocate('org.sqlite.native',"${libsBase}.jdbc.sqlite")
+    relocate('com.cryptomorin.xseries',"${libsBase}.xseries")
+    relocate('com.zaxxer.hikari',"${libsBase}.hikari")
 }

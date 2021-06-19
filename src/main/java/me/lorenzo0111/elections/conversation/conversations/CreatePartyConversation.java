@@ -26,6 +26,7 @@ package me.lorenzo0111.elections.conversation.conversations;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.conversation.Conversation;
+import me.lorenzo0111.elections.handlers.Messages;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 public class CreatePartyConversation extends Conversation {
 
     public CreatePartyConversation(Player author, ElectionsPlus plugin) {
-        super("Insert the name of the new party", author, plugin);
+        super(Messages.get("conversations", "create"), author, plugin);
     }
 
     @Override

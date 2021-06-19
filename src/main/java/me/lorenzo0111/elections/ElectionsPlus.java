@@ -29,12 +29,17 @@ import me.lorenzo0111.elections.api.implementations.ElectionsPlusAPI;
 import me.lorenzo0111.elections.commands.ElectionsCommand;
 import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
+import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.command.Customization;
+import me.lorenzo0111.pluginslib.config.ConfigExtractor;
 import me.lorenzo0111.pluginslib.database.connection.SQLiteConnection;
 import me.lorenzo0111.pluginslib.dependency.slimjar.SlimJarDependencyManager;
+import me.lorenzo0111.pluginslib.updater.UpdateChecker;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.spongepowered.configurate.ConfigurateException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -46,12 +51,15 @@ public final class ElectionsPlus extends JavaPlugin {
     private IDatabaseManager manager;
     private static ElectionsPlus instance;
     private ElectionsPlusAPI api;
+    private ConfigExtractor extractor;
+    private UpdateChecker updater;
 
     @Override
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
-        this.getLogger().info("Loading dependencies..");
+        new Metrics(this,11735);
+        this.updater = new UpdateChecker(this, 0, "", null);
         this.load();
     }
 
@@ -67,11 +75,17 @@ public final class ElectionsPlus extends JavaPlugin {
              e.printStackTrace();
          }
 
+         Messages.close();
 
     }
 
-    public void start() {
+    public void start() throws ConfigurateException {
         this.loaded = true;
+
+        this.extractor = new ConfigExtractor(this.getClass(),this.getDataFolder(),"messages.yml");
+        this.extractor.extract();
+
+        Messages.init(this.extractor.toConfigurate(),getConfig("prefix"),this);
         this.api = new ElectionsPlusAPI(this);
         Bukkit.getServicesManager().register(IElectionsPlusAPI.class,api,this, ServicePriority.Normal);
         switch (getConfig().getString("database.type", "NULL").toUpperCase()) {
@@ -110,10 +124,13 @@ public final class ElectionsPlus extends JavaPlugin {
             long time = manager.build();
             this.getLogger().info("Loaded all libraries in " + time + "ms");
             this.start();
-
         } catch (ReflectiveOperationException | URISyntaxException | NoSuchAlgorithmException | IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void reload() throws ConfigurateException {
+        Messages.init(this.extractor.toConfigurate(),getConfig("prefix"),this);
     }
 
     public String getConfig(String path) {
@@ -130,5 +147,9 @@ public final class ElectionsPlus extends JavaPlugin {
 
     public ElectionsPlusAPI getApi() {
         return api;
+    }
+
+    public UpdateChecker getUpdater() {
+        return updater;
     }
 }

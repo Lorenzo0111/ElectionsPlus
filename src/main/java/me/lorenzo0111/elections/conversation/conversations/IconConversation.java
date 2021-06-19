@@ -27,6 +27,7 @@ package me.lorenzo0111.elections.conversation.conversations;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.Conversation;
+import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.elections.menus.EditPartyMenu;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +37,7 @@ public class IconConversation extends Conversation {
     private final EditPartyMenu menu;
 
     public IconConversation(EditPartyMenu menu, Party party, Player author, ElectionsPlus plugin) {
-        super("Write the icon base64 in chat.", author, plugin);
+        super(Messages.get("conversations", "icon"), author, plugin);
         this.party = party;
         this.menu = menu;
     }

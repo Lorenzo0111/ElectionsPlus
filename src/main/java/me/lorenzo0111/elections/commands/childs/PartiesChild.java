@@ -27,11 +27,11 @@ package me.lorenzo0111.elections.commands.childs;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.CreatePartyConversation;
+import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.elections.menus.PartiesMenu;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -52,7 +52,7 @@ public class PartiesChild extends SubCommand {
     @Override
     public void handleSubcommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig("prefix") + "&cThis command can be used from Players only."));
+            Messages.send(sender,true,"errors", "console");
             return;
         }
 

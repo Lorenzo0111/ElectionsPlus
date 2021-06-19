@@ -22,24 +22,35 @@
  * SOFTWARE.
  */
 
-package me.lorenzo0111.elections.conversation;
+package me.lorenzo0111.elections.listeners;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import org.bukkit.ChatColor;
-import org.bukkit.conversations.ConversationFactory;
+import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.handlers.Messages;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 
-public class ConversationUtil {
+public class JoinListener implements Listener {
 
-    public static void createConversation(ElectionsPlus plugin, Conversation conversation) {
-        ConversationFactory factory = new ConversationFactory(plugin)
-                .withPrefix(context -> ChatColor.translateAlternateColorCodes('&', plugin.getConfig("prefix")))
-                .withEscapeSequence(plugin.getConfig("escape"))
-                .withTimeout(60)
-                .withModality(true)
-                .withFirstPrompt(conversation)
-                .withLocalEcho(false);
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onJoin(PlayerJoinEvent event) {
+        if (!ElectionsPlus.getInstance().getConfig().getBoolean("join-notification"))
+            return;
 
-        factory.buildConversation(conversation.getAuthor()).begin();
+        if (event.getPlayer().hasPermission("elections.update"))
+            ElectionsPlus.getInstance()
+                    .getUpdater()
+                    .sendUpdateCheck(event.getPlayer());
+
+        ElectionsPlus.getInstance()
+                .getManager()
+                .getElections()
+                .thenAccept((elections) -> elections.stream()
+                        .filter(Election::isOpen)
+                        .findFirst()
+                        .ifPresent((e) -> Messages.send(event.getPlayer(), true, "join")));
     }
 
 }

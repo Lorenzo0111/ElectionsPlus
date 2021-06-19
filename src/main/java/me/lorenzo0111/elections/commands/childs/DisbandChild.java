@@ -25,11 +25,14 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class DisbandChild extends SubCommand {
 
@@ -54,6 +57,9 @@ public class DisbandChild extends SubCommand {
                 .getManager()
                 .deleteParty(args[1]);
 
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', ElectionsPlus.getInstance().getConfig("prefix") + "&7Party deleted."));
+        Map<String,Object> map = new HashMap<>();
+        map.put("name",args[1]);
+        Messages
+                .send(sender,true, map, "disband");
     }
 }

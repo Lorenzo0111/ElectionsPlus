@@ -8,3 +8,9 @@ database:
   ip: "localhost"
   port: 3306
   ssl: false
+
+# Notify the player if an election is open
+join-notification: true
+
+# String to quit an input conversation
+escape: "cancel"

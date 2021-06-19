@@ -32,6 +32,7 @@ import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.AddMemberConversation;
+import me.lorenzo0111.elections.handlers.Messages;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -50,7 +51,7 @@ public class MembersMenu extends PaginatedGui {
     private final List<OfflinePlayer> added = new ArrayList<>();
 
     public MembersMenu(ElectionsPlus plugin, Party party, Player owner) {
-        super(3, Component.text("§9§l» §7" + party.getName() + " §9§l» §7Members"));
+        super(3, Messages.component(false, Messages.single("name",party.getName()), "guis", "members-title"));
 
         this.party = party;
         this.owner = owner;
@@ -59,10 +60,9 @@ public class MembersMenu extends PaginatedGui {
 
     public void setup() {
         this.setDefaultClickAction(e -> e.setCancelled(true));
-
-        this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Component.text("§7Back")).asGuiItem(e -> this.previous()));
-        this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Component.text("§7Next")).asGuiItem(e -> this.next()));
-        this.setItem(3,5, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem())).name(Component.text("§aAdd Member")).asGuiItem(e -> {
+        this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
+        this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
+        this.setItem(3,5, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem())).name(Messages.component(false, "guis", "add-member")).asGuiItem(e -> {
             e.getWhoClicked().closeInventory();
             ConversationUtil.createConversation(plugin,new AddMemberConversation(party,owner,plugin));
         }));
@@ -78,7 +78,7 @@ public class MembersMenu extends PaginatedGui {
 
             SkullBuilder item = ItemBuilder.skull()
                     .name(Component.text("§9" + player.getName()))
-                    .lore(Component.text("§e§nLeft click§7 to kick"),Component.text( "§e§nRight click§7 to set as owner"))
+                    .lore(Messages.component(false, "guis", "kick-member"),Messages.component(false, "guis", "set-owner"))
                     .owner(player);
 
             this.addItem(item.asGuiItem(e -> {

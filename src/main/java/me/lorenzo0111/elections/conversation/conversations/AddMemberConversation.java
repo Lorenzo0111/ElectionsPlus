@@ -27,6 +27,7 @@ package me.lorenzo0111.elections.conversation.conversations;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.Conversation;
+import me.lorenzo0111.elections.handlers.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -36,7 +37,7 @@ public class AddMemberConversation extends Conversation {
     private final Party party;
 
     public AddMemberConversation(Party party, Player author, ElectionsPlus plugin) {
-        super("Write the name of the player to add.", author, plugin);
+        super(Messages.get("conversations", "add"), author, plugin);
 
         this.party = party;
     }

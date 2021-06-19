@@ -29,6 +29,7 @@ import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.handlers.Messages;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -44,7 +45,7 @@ public class ElectionsMenu extends PaginatedGui {
     private final ElectionsPlus plugin;
 
     public ElectionsMenu(Player owner, List<Election> elections, ElectionsPlus plugin) {
-        super(3, Component.text("§9§l» §7Elections"));
+        super(3, Messages.component(false,"guis","elections"));
 
         this.owner = owner;
         this.elections = elections;
@@ -54,15 +55,15 @@ public class ElectionsMenu extends PaginatedGui {
     public void setup() {
         Bukkit.getScheduler().runTask(plugin, () -> {
             this.setDefaultClickAction(e -> e.setCancelled(true));
-            this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Component.text("§7Back")).asGuiItem(e -> this.previous()));
-            this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Component.text("§7Next")).asGuiItem(e -> this.next()));
+            this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
+            this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
             this.getFiller().fillBorder(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
 
             for (Election election : elections) {
                 this.addItem(ItemBuilder
                         .from(Objects.requireNonNull(XMaterial.YELLOW_BANNER.parseItem()))
                         .name(Component.text("§9" + election.getName()))
-                        .lore(Component.text("§7State: " + (election.isOpen() ? "§aOpen" : "§cClose")), election.isOpen() ? Component.text("§7Click to vote") : Component.empty(), getRightLore(election))
+                        .lore(Messages.component(false, Messages.single("state", election.isOpen() ? Messages.get("open") : Messages.get("close")),"guis", "state"), election.isOpen() ? Messages.component(false, "guis", "vote") : Component.empty(), getRightLore(election))
                         .asGuiItem(e -> {
                             if (e.getWhoClicked().hasPermission("elections.edit") && e.getClick().equals(ClickType.RIGHT)) {
                                 this.close(e.getWhoClicked());
@@ -94,8 +95,8 @@ public class ElectionsMenu extends PaginatedGui {
             return Component.empty();
 
         if (election.isOpen())
-            return Component.text("§7Right click to close");
+            return Messages.component(false, "guis", "close-election");
 
-        return Component.text("§7Right click to delete");
+        return Messages.component(false, "guis", "delete-election");
     }
 }

@@ -32,6 +32,7 @@ import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.CreatePartyConversation;
+import me.lorenzo0111.elections.handlers.Messages;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -46,7 +47,7 @@ public class PartiesMenu extends PaginatedGui {
     private final ElectionsPlus plugin;
 
     public PartiesMenu(Player owner, List<Party> parties, ElectionsPlus plugin) {
-        super(5, Component.text("§9§l» §7Parties"));
+        super(5, Messages.component(false, "guis", "parties"));
 
         this.owner = owner;
         this.parties = parties;
@@ -56,14 +57,13 @@ public class PartiesMenu extends PaginatedGui {
     public void setup() {
         Bukkit.getScheduler().runTask(plugin, () -> {
             this.setDefaultClickAction(e -> e.setCancelled(true));
-
-            this.setItem(5,3, ItemBuilder.from(Material.ARROW).name(Component.text("§7Back")).asGuiItem(e -> this.previous()));
-            this.setItem(5,7, ItemBuilder.from(Material.ARROW).lore(Component.text("§7Next")).asGuiItem(e -> this.next()));
+            this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
+            this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
 
             if (owner.hasPermission("elections.party.create")) {
                 this.setItem(5, 5, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem()))
-                        .name(Component.text("§aCreate"))
-                        .lore(Component.text("§7Click to create a new party."))
+                        .name(Messages.component(false, "guis", "create-party"))
+                        .lore(Messages.component(false, "guis", "create-party-lore"))
                         .asGuiItem(e -> {
                             e.getWhoClicked().closeInventory();
                             ConversationUtil.createConversation(plugin,new CreatePartyConversation(owner,plugin));
@@ -75,7 +75,7 @@ public class PartiesMenu extends PaginatedGui {
             for (Party party : parties) {
                 SkullBuilder item = ItemBuilder.skull()
                         .name(Component.text("§9" + party.getName()))
-                        .lore(Component.text(canEdit(owner,party) ? "§7Click to edit" : "§cYou can't edit this party"));
+                        .lore(canEdit(owner,party) ? Messages.component(false, "guis", "edit-party") : Messages.component(false, "guis", "no-edit-party"));
 
                 item.owner(Bukkit.getOfflinePlayer(party.getOwner()));
 

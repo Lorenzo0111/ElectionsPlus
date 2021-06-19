@@ -33,8 +33,7 @@ import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.NameConversation;
-import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import me.lorenzo0111.elections.handlers.Messages;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -50,7 +49,7 @@ public class CreateElectionMenu extends BaseGui {
     private final List<Party> parties = new ArrayList<>();
 
     public CreateElectionMenu(ElectionsPlus plugin, String name, Player player) {
-        super(5, Component.text("§9§l» §7Create Election"), EnumSet.noneOf(InteractionModifier.class));
+        super(5, Messages.component(false,"guis", "create"), EnumSet.noneOf(InteractionModifier.class));
 
         this.name = name;
         this.player = player;
@@ -63,31 +62,31 @@ public class CreateElectionMenu extends BaseGui {
         this.setDefaultClickAction((e) -> e.setCancelled(true));
 
         GuiItem nameItem = ItemBuilder.from(Material.BOOK)
-                .name(Component.text("§7Current Name: §e" + name))
-                .lore(Component.text("§7§oClick to edit"))
+                .name(Messages.component(false,Messages.single("name",name),"guis","current-name"))
+                .lore(Messages.component(false,"guis", "edit-name"))
                 .asGuiItem(e -> {
                     e.getWhoClicked().closeInventory();
                     ConversationUtil.createConversation(plugin,new NameConversation(player,plugin,this));
                 });
 
         GuiItem close = ItemBuilder.from(Material.BARRIER)
-                .name(Component.text("§cCancel"))
+                .name(Messages.component(false,"guis", "cancel"))
                 .asGuiItem(e -> e.getWhoClicked().closeInventory());
 
         GuiItem save = ItemBuilder.from(Material.EMERALD_BLOCK)
-                .name(Component.text("§aSave"))
-                .lore(Component.text("§7Click to save and create elections."))
+                .name(Messages.component(false,"guis", "save"))
+                .lore(Messages.component(false, "guis", "save-lore"))
                 .asGuiItem(e -> {
                     e.getWhoClicked().closeInventory();
                     plugin.getManager()
                             .createElection(name,parties)
                             .thenAccept(election -> {
                                 if (election == null) {
-                                    player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig("prefix") + "Election already exists."));
+                                    Messages.send(player, true, "errors", "election-exists");
                                     return;
                                 }
 
-                                player.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig("prefix") + "Election created."));
+                                Messages.send(player,true,"election-created");
                             });
                 });
 
@@ -97,11 +96,11 @@ public class CreateElectionMenu extends BaseGui {
         this.setItem(5,9, save);
 
         this.setItem(2,2, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem()))
-                .name(Component.text("§aAdd Parties"))
-                .lore(Component.text("§7Click to add parties to the elections"))
+                .name(Messages.component(false, "guis","add-name"))
+                .lore(Messages.component(false, "guis","add-lore"))
                 .asGuiItem(e -> {
                     e.getWhoClicked().closeInventory();
-                    e.getWhoClicked().sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getConfig("prefix") + "Loading.."));
+                    Messages.send(e.getWhoClicked(), false, "loading");
                     plugin.getManager()
                             .getParties()
                             .thenAccept((parties1) -> new AddPartyMenu(plugin,this,parties1,(Player) e.getWhoClicked(),parties).setup());
