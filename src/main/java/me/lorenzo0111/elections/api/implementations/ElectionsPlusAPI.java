@@ -29,6 +29,7 @@ import me.lorenzo0111.elections.api.IElectionsPlusAPI;
 import me.lorenzo0111.elections.api.objects.Election;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.api.objects.Vote;
+import me.lorenzo0111.elections.cache.CacheManager;
 import org.bukkit.OfflinePlayer;
 
 import java.util.List;
@@ -40,6 +41,11 @@ public class ElectionsPlusAPI implements IElectionsPlusAPI {
 
     public ElectionsPlusAPI(ElectionsPlus plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public CacheManager getCache() {
+        return plugin.getCache();
     }
 
     @Override

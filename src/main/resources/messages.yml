@@ -4,6 +4,7 @@
 errors:
   console: "&cThis command can be used from Players only."
   election-exists: "Election already exists."
+  not-found: "Election <name> does not exists."
 
 # Placeholder: <name>
 disband: "&7Party <name> deleted."

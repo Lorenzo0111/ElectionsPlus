@@ -22,6 +22,49 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion')
+package me.lorenzo0111.elections.cache;
 
+import me.lorenzo0111.elections.api.objects.Cache;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapCache<String,V> implements Cache<String,V> {
+    private final Map<String,V> map = new HashMap<>();
+
+    @Override
+    public int size() {
+        return map.size();
+    }
+
+    @Override
+    public void reset() {
+        map.clear();
+    }
+
+    @Override
+    public void add(String key, V value) {
+        map.put(key,value);
+    }
+
+    @Override
+    public boolean remove(String key, V value) {
+        return map.remove(key,value);
+    }
+
+    @Override
+    public V remove(String key) {
+        return map.remove(key);
+    }
+
+    @Override
+    public V get(String key) {
+        return map.get(key);
+    }
+
+    @Override
+    public Map<String, V> map() {
+        return map;
+    }
+
+}

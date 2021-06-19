@@ -64,6 +64,13 @@ public class VoteChild extends SubCommand {
         ElectionsPlus.getInstance()
                 .getApi()
                 .getElection(args[1])
-                .thenAccept((election) -> new VoteMenu((Player) sender,election).setup());
+                .thenAccept((election) -> {
+                    if (election == null) {
+                        Messages.send(sender,true, Messages.single("name", args[1]), "errors", "not-found");
+                        return;
+                    }
+
+                    new VoteMenu((Player) sender,election).setup();
+                });
     }
 }

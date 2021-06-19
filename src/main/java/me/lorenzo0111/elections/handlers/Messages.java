@@ -56,14 +56,14 @@ public class Messages {
     public static String prefix() { return prefix; }
     public static ConfigurationNode config() { return config; }
 
-    public static Map<String,Object> single(String key, String value) {
-        Map<String,Object> map = new HashMap<>();
+    public static Map<String,String> single(String key, String value) {
+        Map<String,String> map = new HashMap<>();
         map.put(key,ChatColor.translateAlternateColorCodes('&', value));
         return map;
     }
 
-    public static Map<String,Object> keys(String... keys) {
-        Map<String,Object> map = new HashMap<>();
+    public static Map<String,String> keys(String... keys) {
+        Map<String,String> map = new HashMap<>();
         Arrays.asList(keys).forEach(k -> map.put(k,get(k)));
         return map;
     }
@@ -72,7 +72,7 @@ public class Messages {
         return component(prefix,new HashMap<>(),path);
     }
 
-    public static Component component(boolean prefix, Map<String,Object> placeholders, Object... path) {
+    public static Component component(boolean prefix, Map<String,String> placeholders, Object... path) {
         String p = prefix ? prefix() : "";
 
         return MiniMessage.get().parse(ChatColor.translateAlternateColorCodes('&', p + config.node(path).getString(NOT_FOUND)), placeholders);
@@ -86,7 +86,7 @@ public class Messages {
         send(player, prefix , new HashMap<>(),path);
     }
 
-    public static void send(CommandSender player, boolean prefix, Map<String,Object> placeholders, Object... path) {
+    public static void send(CommandSender player, boolean prefix, Map<String,String> placeholders, Object... path) {
         audiences.sender(player).sendMessage(component(prefix,placeholders,path));
     }
 }

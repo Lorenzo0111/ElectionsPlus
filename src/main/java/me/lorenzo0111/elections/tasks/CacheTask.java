@@ -22,25 +22,38 @@
  * SOFTWARE.
  */
 
-package me.lorenzo0111.elections.api;
+package me.lorenzo0111.elections.tasks;
 
-import me.lorenzo0111.elections.api.objects.Election;
-import me.lorenzo0111.elections.api.objects.Party;
-import me.lorenzo0111.elections.api.objects.Vote;
 import me.lorenzo0111.elections.cache.CacheManager;
-import org.bukkit.OfflinePlayer;
+import me.lorenzo0111.elections.database.IDatabaseManager;
 
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+public class CacheTask implements Runnable{
+    private final IDatabaseManager database;
+    private final CacheManager cache;
 
-public interface IElectionsPlusAPI {
-    CacheManager getCache();
-    CompletableFuture<List<Vote>> getVotes();
-    CompletableFuture<Vote> getVote(UUID player, String election, String party);
-    CompletableFuture<Party> getParty(String name);
-    CompletableFuture<Election> getElection(String name);
-    CompletableFuture<List<Election>> getElections();
-    CompletableFuture<Boolean> addVote(OfflinePlayer player, Election election, Party party);
-    CompletableFuture<Boolean> addVote(Vote vote);
+    public CacheTask(IDatabaseManager database, CacheManager cache) {
+        this.database = database;
+        this.cache = cache;
+    }
+
+    @Override
+    public void run() {
+        database.getParties()
+                .thenAccept((parties) -> {
+                    cache.getParties().reset();
+                    parties.forEach(party -> cache.getParties().add(party.getName(),party));
+                });
+
+        database.getElections()
+                .thenAccept((elections) -> {
+                    cache.getElections().reset();
+                    elections.forEach(election -> cache.getElections().add(election.getName(),election));
+                });
+
+        database.getVotes()
+                .thenAccept((votes) -> {
+                   cache.getVotes().reset();
+                   votes.forEach(vote -> cache.getVotes().add(vote.getElection()+"||"+vote.getPlayer(),vote));
+                });
+    }
 }

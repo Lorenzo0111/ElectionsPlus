@@ -22,6 +22,33 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion')
+package me.lorenzo0111.elections.cache;
 
+import me.lorenzo0111.elections.api.objects.Cache;
+import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.api.objects.Vote;
+
+public class CacheManager {
+    private final Cache<String, Party> parties;
+    private final Cache<String, Election> elections;
+    private final Cache<String, Vote> votes;
+
+    public CacheManager() {
+        this.parties = new MapCache<>();
+        this.elections = new MapCache<>();
+        this.votes = new MapCache<>();
+    }
+
+    public Cache<String, Party> getParties() {
+        return parties;
+    }
+
+    public Cache<String, Election> getElections() {
+        return elections;
+    }
+
+    public Cache<String, Vote> getVotes() {
+        return votes;
+    }
+}

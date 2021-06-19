@@ -14,3 +14,10 @@ join-notification: true
 
 # String to quit an input conversation
 escape: "cancel"
+
+# If set to 5 every 5 minutes the plugin will clear and recreate the cache with all the database values (without lag)
+# The PlaceholderAPI expansion will use the plugin's cache, so more time you set as duration more outdated will the data in the placeholders be
+# The duration is in minutes
+# Please note: the plugin will add 1 minute to your number: If you put 5 the duration will be 6
+# Default 5
+cache-duration: 5

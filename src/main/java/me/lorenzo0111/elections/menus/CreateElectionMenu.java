@@ -100,7 +100,7 @@ public class CreateElectionMenu extends BaseGui {
                 .lore(Messages.component(false, "guis","add-lore"))
                 .asGuiItem(e -> {
                     e.getWhoClicked().closeInventory();
-                    Messages.send(e.getWhoClicked(), false, "loading");
+                    Messages.send(e.getWhoClicked(), true, "loading");
                     plugin.getManager()
                             .getParties()
                             .thenAccept((parties1) -> new AddPartyMenu(plugin,this,parties1,(Player) e.getWhoClicked(),parties).setup());

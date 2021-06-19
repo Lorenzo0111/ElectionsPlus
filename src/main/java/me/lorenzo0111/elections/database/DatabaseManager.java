@@ -32,14 +32,15 @@ import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.api.objects.Vote;
+import me.lorenzo0111.elections.tasks.CacheTask;
 import me.lorenzo0111.pluginslib.database.connection.HikariConnection;
 import me.lorenzo0111.pluginslib.database.connection.IConnectionHandler;
 import me.lorenzo0111.pluginslib.database.connection.SQLiteConnection;
 import me.lorenzo0111.pluginslib.database.objects.Column;
 import me.lorenzo0111.pluginslib.database.objects.Table;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.IOException;
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class DatabaseManager implements IDatabaseManager {
@@ -101,7 +103,7 @@ public class DatabaseManager implements IDatabaseManager {
         this.tables(plugin);
     }
 
-    private void tables(JavaPlugin plugin) {
+    private void tables(ElectionsPlus plugin) {
         // Votes
         List<Column> votesColumns = new ArrayList<>();
         votesColumns.add(new Column("uuid", "TEXT"));
@@ -127,6 +129,7 @@ public class DatabaseManager implements IDatabaseManager {
         this.electionsTable = new Table(plugin,connectionHandler,"elections",electionsColumns);
         this.electionsTable.create();
 
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,new CacheTask(this,plugin.getCache()),60 * 20L, TimeUnit.MINUTES.toSeconds(plugin.getConfig().getInt("cache-duration", 5)) * 20L);
     }
 
     public Table getPartiesTable() {
@@ -159,6 +162,7 @@ public class DatabaseManager implements IDatabaseManager {
                         }
 
                         this.getElectionsTable().add(election);
+                        ElectionsPlus.getInstance().getCache().getElections().add(election.getName(),election);
                         future.complete(election);
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -272,6 +276,7 @@ public class DatabaseManager implements IDatabaseManager {
 
                         Party party = new Party(name, owner.getUniqueId());
                         partiesTable.add(party);
+                        ElectionsPlus.getInstance().getCache().getParties().add(party.getName(),party);
                         partyFuture.complete(party);
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -283,28 +288,35 @@ public class DatabaseManager implements IDatabaseManager {
 
     @Override
     public void deleteParty(String name) {
+        ElectionsPlus.getInstance().getCache().getParties().remove(name);
         partiesTable.removeWhere("name",name);
     }
 
     @Override
     public void deleteParty(Party party) {
+        ElectionsPlus.getInstance().getCache().getParties().remove(party.getName());
         partiesTable.removeWhere("name",party);
     }
 
     @Override
     public void updateParty(Party party) {
+        ElectionsPlus.getInstance().getCache().getParties().remove(party.getName());
+        ElectionsPlus.getInstance().getCache().getParties().add(party.getName(),party);
         partiesTable.removeWhere("name",party)
                 .thenRun(() -> partiesTable.add(party));
     }
 
     @Override
     public void updateElection(Election election) {
+        ElectionsPlus.getInstance().getCache().getElections().remove(election.getName());
+        ElectionsPlus.getInstance().getCache().getElections().add(election.getName(),election);
         electionsTable.removeWhere("name",election)
                 .thenRun(() -> electionsTable.add(election));
     }
 
     @Override
     public void deleteElection(Election election) {
+        ElectionsPlus.getInstance().getCache().getElections().remove(election.getName());
         electionsTable.removeWhere("name",election);
     }
 
@@ -354,6 +366,10 @@ public class DatabaseManager implements IDatabaseManager {
                         }
 
                         this.getVotesTable().add(vote);
+                        ElectionsPlus.getInstance()
+                                .getCache()
+                                .getVotes()
+                                .add(vote.getElection()+"||"+vote.getPlayer(), vote);
                         future.complete(true);
                     } catch (SQLException e) {
                         e.printStackTrace();

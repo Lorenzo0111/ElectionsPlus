@@ -26,6 +26,7 @@ package me.lorenzo0111.elections;
 
 import me.lorenzo0111.elections.api.IElectionsPlusAPI;
 import me.lorenzo0111.elections.api.implementations.ElectionsPlusAPI;
+import me.lorenzo0111.elections.cache.CacheManager;
 import me.lorenzo0111.elections.commands.ElectionsCommand;
 import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
@@ -47,6 +48,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 public final class ElectionsPlus extends JavaPlugin {
+    private final CacheManager cache = new CacheManager();
     private boolean loaded;
     private IDatabaseManager manager;
     private static ElectionsPlus instance;
@@ -74,6 +76,8 @@ public final class ElectionsPlus extends JavaPlugin {
          } catch (SQLException e) {
              e.printStackTrace();
          }
+
+         Bukkit.getScheduler().cancelTasks(this);
 
          Messages.close();
 
@@ -151,5 +155,9 @@ public final class ElectionsPlus extends JavaPlugin {
 
     public UpdateChecker getUpdater() {
         return updater;
+    }
+
+    public CacheManager getCache() {
+        return cache;
     }
 }
