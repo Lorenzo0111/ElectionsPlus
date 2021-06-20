@@ -1,7 +1,7 @@
 name: ElectionsPlus
 version: 1.0
 main: me.lorenzo0111.elections.ElectionsPlus
-api-version: 1.16
+api-version: 1.13
 authors: [ Lorenzo0111 ]
 commands:
   elections:
