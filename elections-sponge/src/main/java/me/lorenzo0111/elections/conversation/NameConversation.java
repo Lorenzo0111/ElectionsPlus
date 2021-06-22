@@ -22,6 +22,43 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.conversation;
 
+import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.menus.CreateElectionMenu;
+import me.lorenzo0111.pluginslib.conversation.Conversation;
+import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
+
+public class NameConversation implements Conversation {
+    private final CreateElectionMenu menu;
+    private final ElectionsPlus plugin;
+
+    public NameConversation(ElectionsPlus plugin, CreateElectionMenu menu) {
+        this.menu = menu;
+        this.plugin = plugin;
+    }
+
+    @Override
+    public void handle(Player player, @Nullable Text input) {
+        if (input == null || input.isEmpty()) {
+            return;
+        }
+
+        menu.setName(input.toPlain());
+        menu.setup();
+    }
+
+    @Override
+    public Component reason() {
+        return Messages.component(true, "conversations", "name");
+    }
+
+    @Override
+    public @Nullable Text escape() {
+        return Text.of(plugin.config("escape"));
+    }
+}

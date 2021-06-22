@@ -22,6 +22,32 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.listeners;
 
+import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.constants.Getters;
+import me.lorenzo0111.elections.handlers.Messages;
+import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.network.ClientConnectionEvent;
+
+public class JoinListener {
+
+    @Listener
+    public void onJoin(ClientConnectionEvent.Join event) {
+        if (!ElectionsPlus.getInstance().config().node("join-notification").getBoolean())
+            return;
+
+        if (event.getTargetEntity().hasPermission("elections.update"))
+            Getters.updater()
+                    .sendUpdateCheck(Messages.audience(event.getTargetEntity()));
+
+        ElectionsPlus.getInstance()
+                .getManager()
+                .getElections()
+                .thenAccept((elections) -> elections.stream()
+                        .filter(Election::isOpen)
+                        .findFirst()
+                        .ifPresent((e) -> Messages.send(Messages.audience(event.getTargetEntity()), true, "join")));
+    }
+}

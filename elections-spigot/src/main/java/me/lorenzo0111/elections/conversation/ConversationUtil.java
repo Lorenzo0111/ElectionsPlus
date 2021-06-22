@@ -22,6 +22,24 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.conversation;
 
+import me.lorenzo0111.elections.ElectionsPlus;
+import org.bukkit.ChatColor;
+import org.bukkit.conversations.ConversationFactory;
+
+public class ConversationUtil {
+
+    public static void createConversation(ElectionsPlus plugin, Conversation conversation) {
+        ConversationFactory factory = new ConversationFactory(plugin)
+                .withPrefix(context -> ChatColor.translateAlternateColorCodes('&', plugin.config("prefix")))
+                .withEscapeSequence(plugin.config("escape"))
+                .withTimeout(60)
+                .withModality(true)
+                .withFirstPrompt(conversation)
+                .withLocalEcho(false);
+
+        factory.buildConversation(conversation.getAuthor()).begin();
+    }
+
+}

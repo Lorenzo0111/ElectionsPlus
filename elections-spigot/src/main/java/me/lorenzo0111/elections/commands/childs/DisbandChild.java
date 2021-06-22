@@ -22,6 +22,44 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.commands.childs;
 
+import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.pluginslib.audience.User;
+import me.lorenzo0111.pluginslib.command.Command;
+import me.lorenzo0111.pluginslib.command.SubCommand;
+import me.lorenzo0111.pluginslib.command.annotations.Permission;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class DisbandChild extends SubCommand {
+
+    public DisbandChild(Command command) {
+        super(command);
+    }
+
+    @Override
+    public String getName() {
+        return "disband";
+    }
+
+    @Permission("elections.disband")
+    @Override
+    public void handleSubcommand(User<?> sender, String[] args) {
+        if(args.length != 2) {
+            return;
+        }
+
+        ElectionsPlus
+                .getInstance()
+                .getManager()
+                .deleteParty(args[1]);
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("name",args[1]);
+        Messages
+                .send(sender.audience(),true, map, "disband");
+    }
+}

@@ -22,6 +22,18 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+plugins {
+    id 'java'
+}
 
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public/' }
+}
+
+dependencies {
+    implementation("com.google.guava:guava:30.1.1-jre")
+    implementation('com.google.code.gson:gson:2.8.7')
+    compileOnly('org.jetbrains:annotations:16.0.2')
+    implementation('space.rocketplugins.pluginslib:common:2.0.1')
+}

@@ -22,6 +22,18 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.constants;
 
+import me.lorenzo0111.elections.database.IDatabaseManager;
+import me.lorenzo0111.pluginslib.updater.UpdateChecker;
+
+public final class Getters {
+    private static IDatabaseManager database;
+    private static UpdateChecker updater;
+
+    public static IDatabaseManager database() { return database; }
+    public static void database(IDatabaseManager database) { Getters.database = database; }
+
+    public static UpdateChecker updater() { return updater; }
+    public static void updater(UpdateChecker updater) { Getters.updater = updater; }
+}

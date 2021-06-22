@@ -21,69 +21,66 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
 
-plugins {
-    id 'java'
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
-    id 'io.github.slimjar' version '1.2.1'
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+        classpath "io.github.slimjar:gradle-plugin:1.2.1"
+    }
 }
-
-group = 'me.lorenzo0111'
-version = '1.0'
-
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-compileJava.options.encoding = "UTF-8"
-compileTestJava.options.encoding = "UTF-8"
 
 ext {
     libsBase = 'me.lorenzo0111.elections.libs'
 }
 
-repositories {
-    mavenCentral()
-    maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
-    }
-    maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public/' }
-    maven { url "https://repo.mattstudios.me/artifactory/public/" }
-}
-
-dependencies {
-    compileOnly('org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT')
-    implementation('me.lorenzo0111:pluginslib:1.4')
-    implementation('org.bstats:bstats-bukkit:2.2.1')
-    implementation("dev.triumphteam:triumph-gui:3.0.2")
-    slim('com.github.cryptomorin:XSeries:8.1.0')
-    slim("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
-    slim("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
-    slim('net.kyori:adventure-api:4.8.1')
-    slim('net.kyori:adventure-text-serializer-legacy:4.8.1')
-    slim('mysql:mysql-connector-java:8.0.25')
-    slim('org.xerial:sqlite-jdbc:3.34.0')
-    slim('com.zaxxer:HikariCP:4.0.3')
-}
-
-shadowJar {
-    relocate('org.yaml.snakeyaml',"${libsBase}.yaml")
-}
-
-slimJar {
-    relocate('org.bstats', "${libsBase}.bstats")
-    relocate('dev.triumphteam',"${libsBase}")
-    relocate('google',"${libsBase}.google")
-    relocate('org.slf4j',"${libsBase}.slf4j")
-    relocate('org.sqlite.native',"${libsBase}.jdbc.sqlite")
-    relocate('com.cryptomorin.xseries',"${libsBase}.xseries")
-    relocate('com.zaxxer.hikari',"${libsBase}.hikari")
-}
 
 subprojects {
-    version = project.version
-    group = project.group
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: "io.github.slimjar"
+
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+    compileJava.options.encoding = "UTF-8"
+    compileTestJava.options.encoding = "UTF-8"
+
+    version = "1.1"
+    group = "me.lorenzo0111"
+
+    repositories {
+        mavenCentral()
+        maven {
+            name = 'sonatype'
+            url = 'https://oss.sonatype.org/content/groups/public/'
+        }
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public'}
+    }
+
+    dependencies {
+        implementation('org.spongepowered:configurate-yaml:4.0.0')
+        slim("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
+        slim('net.kyori:adventure-api:4.8.1')
+        slim('net.kyori:adventure-text-serializer-legacy:4.8.1')
+        slim('mysql:mysql-connector-java:8.0.25')
+        slim('org.xerial:sqlite-jdbc:3.34.0')
+        slim('com.zaxxer:HikariCP:4.0.3')
+    }
+
+    shadowJar {
+        relocate('org.yaml.snakeyaml',"${libsBase}.yaml")
+    }
+
+    slimJar {
+        relocate('org.bstats', "${libsBase}.bstats")
+        relocate('dev.triumphteam',"${libsBase}")
+        relocate('google',"${libsBase}.google")
+        relocate('org.slf4j',"${libsBase}.slf4j")
+        relocate('org.sqlite.native',"${libsBase}.jdbc.sqlite")
+        relocate('com.cryptomorin.xseries',"${libsBase}.xseries")
+        relocate('com.zaxxer.hikari',"${libsBase}.hikari")
+    }
 }

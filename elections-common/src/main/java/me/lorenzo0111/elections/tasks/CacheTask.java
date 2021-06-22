@@ -22,26 +22,39 @@
  * SOFTWARE.
  */
 
-plugins {
-    id 'java'
-}
+package me.lorenzo0111.elections.tasks;
 
-repositories {
-    mavenCentral()
-    maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
-        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
-    }
-    maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public/' }
-}
+import me.lorenzo0111.elections.cache.CacheManager;
+import me.lorenzo0111.elections.database.IDatabaseManager;
 
-dependencies {
-    compileOnly('org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT')
-    compileOnly('me.clip:placeholderapi:2.10.9')
-    compileOnly('org.jetbrains:annotations:21.0.1')
-    compileOnly project(':elections-api')
-    implementation('space.rocketplugins.pluginslib:common:2.0.1')
+public class CacheTask implements Runnable {
+    private final IDatabaseManager database;
+    private final CacheManager cache;
+
+    public CacheTask(IDatabaseManager database, CacheManager cache) {
+        this.database = database;
+        this.cache = cache;
+    }
+
+    @Override
+    public void run() {
+        database.getParties()
+                .thenAccept((parties) -> {
+                    cache.getParties().reset();
+                    parties.forEach(party -> cache.getParties().add(party.getName(),party));
+                });
+
+        database.getElections()
+                .thenAccept((elections) -> {
+                    cache.getElections().reset();
+                    elections.forEach(election -> cache.getElections().add(election.getName(),election));
+                });
+
+        database.getVotes()
+                .thenAccept((votes) -> {
+                    cache.getVotes().reset();
+                    votes.forEach(vote -> cache.getVotes().add(vote.getElection()+"||"+vote.getPlayer(),vote));
+                });
+    }
+
 }

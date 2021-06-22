@@ -22,6 +22,27 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.scheduler;
 
+import org.spongepowered.api.Sponge;
+
+import java.util.concurrent.TimeUnit;
+
+public class SpongeScheduler extends me.lorenzo0111.pluginslib.scheduler.SpongeScheduler implements IAdvancedScheduler{
+    private final Object plugin;
+
+    public SpongeScheduler(Object plugin) {
+        super(plugin);
+        this.plugin = plugin;
+    }
+
+    @Override
+    public void repeating(Runnable runnable, long delayTicks, int time, TimeUnit unit) {
+        Sponge.getScheduler()
+                .createTaskBuilder()
+                .delayTicks(delayTicks)
+                .interval(time,unit)
+                .execute(runnable)
+                .submit(plugin);
+    }
+}

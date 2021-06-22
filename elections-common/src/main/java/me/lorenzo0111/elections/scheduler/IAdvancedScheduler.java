@@ -22,6 +22,12 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.scheduler;
 
+import me.lorenzo0111.pluginslib.scheduler.IScheduler;
+
+import java.util.concurrent.TimeUnit;
+
+public interface IAdvancedScheduler extends IScheduler {
+    void repeating(Runnable runnable, long delayTicks, int time, TimeUnit unit);
+}

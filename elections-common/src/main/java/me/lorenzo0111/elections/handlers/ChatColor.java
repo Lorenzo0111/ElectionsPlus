@@ -22,6 +22,24 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.handlers;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
+
+public class ChatColor {
+    @NotNull
+    public static String translateAlternateColorCodes(char altColorChar, @NotNull String textToTranslate) {
+        Objects.requireNonNull(textToTranslate, "Cannot translate null text");
+
+        char[] b = textToTranslate.toCharArray();
+        for (int i = 0; i < b.length - 1; i++) {
+            if (b[i] == altColorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRrXx".indexOf(b[i + 1]) > -1) {
+                b[i] = '§';
+                b[i + 1] = Character.toLowerCase(b[i + 1]);
+            }
+        }
+        return new String(b);
+    }
+}

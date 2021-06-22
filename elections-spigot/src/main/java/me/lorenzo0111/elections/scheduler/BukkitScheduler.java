@@ -22,6 +22,23 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.scheduler;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.concurrent.TimeUnit;
+
+public class BukkitScheduler extends me.lorenzo0111.pluginslib.scheduler.BukkitScheduler implements IAdvancedScheduler {
+    private final JavaPlugin plugin;
+
+    public BukkitScheduler(JavaPlugin plugin) {
+        super(plugin);
+        this.plugin = plugin;
+    }
+
+    @Override
+    public void repeating(Runnable runnable, long delayTicks, int time, TimeUnit unit) {
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin,runnable,delayTicks,unit.toSeconds(time) * 20L);
+    }
+}

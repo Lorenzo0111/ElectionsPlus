@@ -22,6 +22,35 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.listeners;
 
+import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.handlers.Messages;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+
+public class JoinListener implements Listener {
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onJoin(PlayerJoinEvent event) {
+        if (!ElectionsPlus.getInstance().getConfig().getBoolean("join-notification"))
+            return;
+
+        if (event.getPlayer().hasPermission("elections.update"))
+            ElectionsPlus.getInstance()
+                    .getUpdater()
+                    .sendUpdateCheck(Messages.audience(event.getPlayer()));
+
+        ElectionsPlus.getInstance()
+                .getManager()
+                .getElections()
+                .thenAccept((elections) -> elections.stream()
+                        .filter(Election::isOpen)
+                        .findFirst()
+                        .ifPresent((e) -> Messages.send(event.getPlayer(), true, "join")));
+    }
+
+}

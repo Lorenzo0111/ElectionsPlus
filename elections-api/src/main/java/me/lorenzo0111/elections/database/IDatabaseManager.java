@@ -22,6 +22,29 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.database;
 
+import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.api.objects.Vote;
+
+import java.sql.SQLException;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+public interface IDatabaseManager {
+    CompletableFuture<Election> createElection(String name, List<Party> parties);
+    void closeConnection() throws SQLException;
+    CompletableFuture<List<Election>> getElections();
+    CompletableFuture<List<Party>> getParties();
+    CompletableFuture<Party> createParty(String name, UUID owner);
+    void deleteParty(String name);
+    void deleteParty(Party party);
+    void updateParty(Party party);
+    void updateElection(Election election);
+    void deleteElection(Election election);
+    CompletableFuture<List<Vote>> getVotes();
+    CompletableFuture<Boolean> vote(UUID player, Party party, Election election);
+    CompletableFuture<Boolean> vote(Vote vote);
+}

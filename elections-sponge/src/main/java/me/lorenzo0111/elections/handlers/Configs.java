@@ -22,6 +22,32 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.handlers;
 
+import com.google.inject.Inject;
+import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.pluginslib.config.ConfigExtractor;
+import org.spongepowered.api.config.ConfigDir;
+import org.spongepowered.configurate.ConfigurateException;
+import org.spongepowered.configurate.ConfigurationNode;
+
+import java.nio.file.Path;
+import java.util.Objects;
+
+public final class Configs {
+    @Inject @ConfigDir(sharedRoot = false)
+    private static Path directory;
+
+    public static ConfigurationNode config() throws ConfigurateException {
+        return Objects.requireNonNull(new ConfigExtractor(ElectionsPlus.class, directory.toFile(), "config.yml")
+                .extract())
+                .toConfigurate();
+    }
+
+    public static ConfigurationNode messages() throws ConfigurateException {
+        return Objects.requireNonNull(new ConfigExtractor(ElectionsPlus.class, directory.toFile(), "messages.yml")
+                .extract())
+                .toConfigurate();
+    }
+
+}

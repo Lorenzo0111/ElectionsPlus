@@ -22,6 +22,24 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.api;
 
+import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.api.objects.Vote;
+import me.lorenzo0111.elections.cache.CacheManager;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+
+public interface IElectionsPlusAPI {
+    CacheManager getCache();
+    CompletableFuture<List<Vote>> getVotes();
+    CompletableFuture<Vote> getVote(UUID player, String election, String party);
+    CompletableFuture<Party> getParty(String name);
+    CompletableFuture<Election> getElection(String name);
+    CompletableFuture<List<Election>> getElections();
+    CompletableFuture<Boolean> addVote(UUID player, Election election, Party party);
+    CompletableFuture<Boolean> addVote(Vote vote);
+}

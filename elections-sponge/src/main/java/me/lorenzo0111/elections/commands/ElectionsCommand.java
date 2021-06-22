@@ -22,6 +22,26 @@
  * SOFTWARE.
  */
 
-rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+package me.lorenzo0111.elections.commands;
 
+import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.commands.childs.*;
+import me.lorenzo0111.pluginslib.command.Command;
+import me.lorenzo0111.pluginslib.command.Customization;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
+
+public class ElectionsCommand extends Command {
+    public ElectionsCommand(Object plugin, String command, List<String> argsSchema, @Nullable Customization customization) {
+        super(plugin, command, argsSchema, customization);
+
+        this.addSubcommand(new CreateChild(this, (ElectionsPlus) plugin));
+        this.addSubcommand(new PartiesChild(this, (ElectionsPlus) plugin));
+        this.addSubcommand(new ListChild(this));
+        this.addSubcommand(new DisbandChild(this));
+        this.addSubcommand(new HelpChild(this));
+        this.addSubcommand(new VoteChild(this));
+        this.addSubcommand(new ReloadChild(this));
+    }
+}
