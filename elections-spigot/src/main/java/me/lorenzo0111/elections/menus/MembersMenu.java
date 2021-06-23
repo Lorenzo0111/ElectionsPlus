@@ -51,7 +51,7 @@ public class MembersMenu extends PaginatedGui {
     private final List<OfflinePlayer> added = new ArrayList<>();
 
     public MembersMenu(ElectionsPlus plugin, Party party, Player owner) {
-        super(3, Messages.component(false, Messages.single("name",party.getName()), "guis", "members-title"));
+        super(3, Messages.componentString(false, Messages.single("name",party.getName()), "guis", "members-title"));
 
         this.party = party;
         this.owner = owner;

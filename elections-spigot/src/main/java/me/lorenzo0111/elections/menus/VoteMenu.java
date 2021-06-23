@@ -43,7 +43,7 @@ public class VoteMenu extends PaginatedGui {
     private final Election election;
 
     public VoteMenu(Player owner, Election election) {
-        super(3, Messages.component(false, Messages.single("name",election.getName()),"guis", "vote-title"));
+        super(3, Messages.componentString(false, Messages.single("name",election.getName()),"guis", "vote-title"));
 
         this.owner = owner;
         this.election = election;

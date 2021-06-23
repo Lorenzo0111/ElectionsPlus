@@ -47,7 +47,7 @@ public class PartiesMenu extends PaginatedGui {
     private final ElectionsPlus plugin;
 
     public PartiesMenu(Player owner, List<Party> parties, ElectionsPlus plugin) {
-        super(5, Messages.component(false, "guis", "parties"));
+        super(5, Messages.componentString(false, "guis", "parties"));
 
         this.owner = owner;
         this.parties = parties;
