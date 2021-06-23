@@ -24,30 +24,34 @@
 
 package me.lorenzo0111.elections.menus;
 
-import com.cryptomorin.xseries.XMaterial;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
-import dev.triumphteam.gui.builder.item.SkullBuilder;
-import dev.triumphteam.gui.guis.PaginatedGui;
+import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.Page;
+import com.codehusky.huskyui.states.action.ActionType;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
-import me.lorenzo0111.elections.conversation.ConversationUtil;
-import me.lorenzo0111.elections.conversation.conversations.CreatePartyConversation;
+import me.lorenzo0111.elections.conversation.CreatePartyConversation;
 import me.lorenzo0111.elections.handlers.Messages;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import me.lorenzo0111.pluginslib.conversation.ConversationUtil;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.text.Text;
 
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
-public class PartiesMenu extends PaginatedGui {
+public class PartiesMenu {
     private final Player owner;
     private final List<Party> parties;
     private final ElectionsPlus plugin;
+    private final StateContainer state;
+    private final Page.PageBuilder page;
 
     public PartiesMenu(Player owner, List<Party> parties, ElectionsPlus plugin) {
-        super(5, Messages.component(false, "guis", "parties"));
+        this.state = new StateContainer();
+        this.page = GuiUtils.create(Messages.text("guis", "parties"));
 
         this.owner = owner;
         this.parties = parties;
@@ -55,47 +59,36 @@ public class PartiesMenu extends PaginatedGui {
     }
 
     public void setup() {
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            this.setDefaultClickAction(e -> e.setCancelled(true));
-            this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-            this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
-
+        ElectionsPlus.getInstance().getScheduler().sync(() -> {
             if (owner.hasPermission("elections.party.create")) {
-                this.setItem(5, 5, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem()))
-                        .name(Messages.component(false, "guis", "create-party"))
-                        .lore(Messages.component(false, "guis", "create-party-lore"))
-                        .asGuiItem(e -> {
-                            e.getWhoClicked().closeInventory();
-                            ConversationUtil.createConversation(plugin,new CreatePartyConversation(owner,plugin));
-                        }));
+                GuiUtils.element(state,page,35, ItemStack.builder()
+                .itemType(ItemTypes.STONE_BUTTON)
+                .add(Keys.DISPLAY_NAME, Messages.text("guis", "create-party"))
+                .add(Keys.ITEM_LORE, Collections.singletonList(Messages.text("guis", "create-party-lore")))
+                .build(), ActionType.CLOSE, (e) -> ConversationUtil.startConversation(owner,new CreatePartyConversation(plugin)));
             }
-
-            this.getFiller().fillBottom(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
 
             for (Party party : parties) {
-                SkullBuilder item = ItemBuilder.skull()
-                        .name(Component.text("§9" + party.getName()))
-                        .lore(canEdit(owner,party) ? Messages.component(false, "guis", "edit-party") : Messages.component(false, "guis", "no-edit-party"));
+                ItemStack.Builder item = ItemStack.builder()
+                        .itemType(ItemTypes.SKULL)
+                        .add(Keys.DISPLAY_NAME, Text.of("§9" + party.getName()))
+                        .add(Keys.ITEM_LORE, Collections.singletonList(canEdit(owner,party) ? Messages.text( "guis", "edit-party") : Messages.text( "guis", "no-edit-party")));
 
-                item.owner(Bukkit.getOfflinePlayer(party.getOwner()));
+                item.add(Keys.REPRESENTED_PLAYER, Sponge.getServer().getPlayer(party.getOwner()).get().getProfile());
 
                 if (party.getIcon() != null)
-                    item.texture(party.getIcon());
+                    GuiUtils.texture(item,party.getIcon());
 
-                this.addItem(item.asGuiItem(e -> new EditPartyMenu(owner,party,item,plugin).setup()));
-
+                GuiUtils.element(state,page,item.build(),ActionType.NORMAL, e -> new EditPartyMenu(owner,party,item,plugin).setup());
             }
 
-            this.open(owner);
+            state.addState(page.build("page"));
+            state.launchFor(owner);
         });
     }
 
     private boolean canEdit(Player player, Party party) {
         return player.getUniqueId().equals(party.getOwner());
-    }
-
-    public Player getOwner() {
-        return owner;
     }
 
     public List<Party> getParties() {

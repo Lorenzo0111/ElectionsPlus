@@ -29,7 +29,9 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.spongeapi.SpongeAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.text.Text;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.Arrays;
@@ -61,6 +63,18 @@ public class Messages {
         Arrays.asList(keys).forEach(k -> map.put(k,get(k)));
         return map;
     }
+
+    public static Text text(Object... path) {
+        return text(component(false,path));
+    }
+
+    public static Text text(Component component) {
+        return Text.of(LegacyComponentSerializer.builder()
+                .hexColors()
+                .useUnusualXRepeatedCharacterHexFormat()
+                .build().serialize(component));
+    }
+
 
     public static Component component(boolean prefix, Object... path) {
         return component(prefix,new HashMap<>(),path);

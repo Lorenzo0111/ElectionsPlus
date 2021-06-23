@@ -24,28 +24,32 @@
 
 package me.lorenzo0111.elections.menus;
 
-import com.cryptomorin.xseries.XMaterial;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
-import dev.triumphteam.gui.guis.PaginatedGui;
+import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.Page;
+import com.codehusky.huskyui.states.action.ActionType;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
 import me.lorenzo0111.elections.handlers.Messages;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.event.inventory.ClickType;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.text.Text;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
-public class ElectionsMenu extends PaginatedGui {
+public class ElectionsMenu {
     private final Player owner;
     private final List<Election> elections;
     private final ElectionsPlus plugin;
+    private final StateContainer state;
+    private final Page.PageBuilder page;
 
     public ElectionsMenu(Player owner, List<Election> elections, ElectionsPlus plugin) {
-        super(3, Messages.component(false,"guis","elections"));
+        this.state = new StateContainer();
+        this.page = GuiUtils.create(Messages.text("guis", "elections"));
 
         this.owner = owner;
         this.elections = elections;
@@ -53,21 +57,15 @@ public class ElectionsMenu extends PaginatedGui {
     }
 
     public void setup() {
-        Bukkit.getScheduler().runTask(plugin, () -> {
-            this.setDefaultClickAction(e -> e.setCancelled(true));
-            this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-            this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
-            this.getFiller().fillBorder(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
-
+        plugin.getScheduler().sync(() -> {
             for (Election election : elections) {
-                this.addItem(ItemBuilder
-                        .from(Objects.requireNonNull(XMaterial.YELLOW_BANNER.parseItem()))
-                        .name(Component.text("§9" + election.getName()))
-                        .lore(Messages.component(false, Messages.single("state", election.isOpen() ? Messages.get("open") : Messages.get("close")),"guis", "state"), election.isOpen() ? Messages.component(false, "guis", "vote") : Component.empty(), getRightLore(election))
-                        .asGuiItem(e -> {
-                            if (e.getWhoClicked().hasPermission("elections.edit") && e.getClick().equals(ClickType.RIGHT)) {
-                                this.close(e.getWhoClicked());
-
+                GuiUtils.element(state,page, ItemStack.builder()
+                        .itemType(ItemTypes.BANNER)
+                        .add(Keys.BANNER_BASE_COLOR, DyeColors.YELLOW)
+                        .add(Keys.DISPLAY_NAME, Text.of("§9" + election.getName()))
+                        .add(Keys.ITEM_LORE, Arrays.asList(Messages.text(Messages.component(false, Messages.single("state", election.isOpen() ? Messages.get("open") : Messages.get("close")),"guis", "state")), election.isOpen() ? Messages.text("guis", "vote") : Text.EMPTY, getRightLore(election)))
+                        .build(), ActionType.CLOSE, (e) -> {
+                            if (e.getObserver().hasPermission("elections.edit")) {
                                 if (election.isOpen()) {
                                     election.close();
                                     return;
@@ -82,21 +80,22 @@ public class ElectionsMenu extends PaginatedGui {
                                 return;
 
                             new VoteMenu(owner,election).setup();
-                        }));
+                        });
             }
 
-            this.open(owner);
+            state.addState(page.build("page"));
+            state.launchFor(owner);
         });
     }
 
 
-    public Component getRightLore(Election election) {
+    public Text getRightLore(Election election) {
         if (!owner.hasPermission("elections.edit"))
-            return Component.empty();
+            return Text.EMPTY;
 
         if (election.isOpen())
-            return Messages.component(false, "guis", "close-election");
+            return Messages.text("guis", "close-election");
 
-        return Messages.component(false, "guis", "delete-election");
+        return Messages.text( "guis", "delete-election");
     }
 }

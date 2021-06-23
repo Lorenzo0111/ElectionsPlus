@@ -1,0 +1,9 @@
+[{
+  "modid": "electionsplus",
+  "name": "ElectionsPlus",
+  "version": "@version@",
+  "description": "Elections plugin",
+  "authorList": [
+    "Lorenzo0111"
+  ]
+}]

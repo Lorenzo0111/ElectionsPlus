@@ -24,34 +24,34 @@
 
 package me.lorenzo0111.elections.menus;
 
-import com.cryptomorin.xseries.XMaterial;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
-import dev.triumphteam.gui.builder.item.SkullBuilder;
-import dev.triumphteam.gui.guis.PaginatedGui;
+import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.Page;
+import com.codehusky.huskyui.states.action.ActionType;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
-import me.lorenzo0111.elections.conversation.ConversationUtil;
-import me.lorenzo0111.elections.conversation.conversations.AddMemberConversation;
+import me.lorenzo0111.elections.conversation.AddMemberConversation;
 import me.lorenzo0111.elections.handlers.Messages;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
+import me.lorenzo0111.pluginslib.conversation.ConversationUtil;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.text.Text;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
-public class MembersMenu extends PaginatedGui {
+public class MembersMenu {
     private final Party party;
     private final Player owner;
     private final ElectionsPlus plugin;
-    private final List<OfflinePlayer> added = new ArrayList<>();
+    private final List<UUID> added = new ArrayList<>();
+    private final StateContainer state;
+    private final Page.PageBuilder page;
 
     public MembersMenu(ElectionsPlus plugin, Party party, Player owner) {
-        super(3, Messages.component(false, Messages.single("name",party.getName()), "guis", "members-title"));
+        this.state = new StateContainer();
+        this.page = GuiUtils.create(Messages.text(Messages.component(false, Messages.single("name",party.getName()), "guis", "members-title")));
 
         this.party = party;
         this.owner = owner;
@@ -59,46 +59,37 @@ public class MembersMenu extends PaginatedGui {
     }
 
     public void setup() {
-        this.setDefaultClickAction(e -> e.setCancelled(true));
-        this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-        this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
-        this.setItem(3,5, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem())).name(Messages.component(false, "guis", "add-member")).asGuiItem(e -> {
-            e.getWhoClicked().closeInventory();
-            ConversationUtil.createConversation(plugin,new AddMemberConversation(party,owner,plugin));
-        }));
-        this.getFiller().fillBottom(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
+        page.setUpdatable(true);
+        page.setUpdater((page) -> {
+            page.getObserver().closeInventory();
+            this.setup();
+        });
+
+        GuiUtils.element(state,page,22, ItemStack.builder()
+                .itemType(ItemTypes.STONE_BUTTON)
+                .add(Keys.DISPLAY_NAME, Messages.text("guis","add-member"))
+                .build(),
+                ActionType.CLOSE, (e) -> ConversationUtil.startConversation(e.getObserver(), new AddMemberConversation(plugin,party)));
 
         for (UUID uuid : party.getMembers()) {
-            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-            if (player.getName() == null)
+            Optional<Player> player = Sponge.getServer().getPlayer(uuid);
+            if (!player.isPresent())
                 continue;
-            if (added.contains(player))
+            if (added.contains(uuid))
                 continue;
-            added.add(player);
+            added.add(uuid);
 
-            SkullBuilder item = ItemBuilder.skull()
-                    .name(Component.text("§9" + player.getName()))
-                    .lore(Messages.component(false, "guis", "kick-member"),Messages.component(false, "guis", "set-owner"))
-                    .owner(player);
+            ItemStack.Builder item = ItemStack.builder()
+                    .itemType(ItemTypes.SKULL)
+                    .add(Keys.DISPLAY_NAME,Text.of("§9" + player.get().getName()))
+                    .add(Keys.ITEM_LORE, Collections.singletonList(Messages.text("guis", "kick-member")))
+                    .add(Keys.REPRESENTED_PLAYER, player.get().getProfile());
 
-            this.addItem(item.asGuiItem(e -> {
-                switch (e.getClick()) {
-                    case LEFT:
-                        party.removeMember(player.getUniqueId());
-                        this.close(e.getWhoClicked());
-                        break;
-                    case RIGHT:
-                        this.close(e.getWhoClicked());
-                        party.setOwner(player.getUniqueId());
-                        break;
-                    default:
-                        break;
-                }
-
-            }));
+            GuiUtils.element(state,page,item.build(), ActionType.REFRESH, e -> party.removeMember(player.get().getUniqueId()));
         }
 
-        this.open(owner);
+        state.setInitialState(page.build("page"));
+        state.launchFor(owner);
     }
 
 }

@@ -21,6 +21,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+import org.apache.tools.ant.filters.ReplaceTokens
+
 buildscript {
     repositories {
         maven { url 'https://plugins.gradle.org/m2/' }
@@ -72,6 +74,9 @@ subprojects {
 
     shadowJar {
         relocate('org.yaml.snakeyaml',"${libsBase}.yaml")
+
+        // Remove META-INF
+        exclude 'META-INF', 'META-INF/**'
     }
 
     slimJar {
@@ -82,5 +87,12 @@ subprojects {
         relocate('org.sqlite.native',"${libsBase}.jdbc.sqlite")
         relocate('com.cryptomorin.xseries',"${libsBase}.xseries")
         relocate('com.zaxxer.hikari',"${libsBase}.hikari")
+    }
+
+    processResources {
+        from(project.sourceSets.main.resources.srcDirs) {
+            duplicatesStrategy DuplicatesStrategy.INCLUDE
+            filter ReplaceTokens, tokens: [version: version]
+        }
     }
 }

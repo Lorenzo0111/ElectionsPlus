@@ -24,58 +24,65 @@
 
 package me.lorenzo0111.elections.menus;
 
-import com.cryptomorin.xseries.XMaterial;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
+import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.Page;
+import com.codehusky.huskyui.states.action.ActionType;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.handlers.Messages;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.text.Text;
 
-import java.util.Objects;
+import java.util.Collections;
 
 public class VoteMenu {
     private final Player owner;
     private final Election election;
+    private final StateContainer state;
+    private final Page.PageBuilder page;
 
     public VoteMenu(Player owner, Election election) {
-        super(3, Messages.component(false, Messages.single("name",election.getName()),"guis", "vote-title"));
+        this.state = new StateContainer();
+        this.page = GuiUtils.create(Messages.text(Messages.component(false, Messages.single("name",election.getName()),"guis", "vote-title")));
 
         this.owner = owner;
         this.election = election;
     }
 
     public void setup() {
-        this.setDefaultClickAction(e -> e.setCancelled(true));
-        this.getFiller().fillBorder(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
-        this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-        this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
-
         for (Party party : election.getParties()) {
-            this.addItem(ItemBuilder.skull()
-                    .name(Component.text("§9" + party.getName()))
-                    .lore(Messages.component(false, "guis","vote"))
-                    .texture(party.getIcon())
-                    .owner(Bukkit.getOfflinePlayer(party.getOwner()))
-                    .asGuiItem(e -> {
-                        this.close(e.getWhoClicked());
-                        ElectionsPlus.getInstance()
-                                .getManager()
-                                .vote(e.getWhoClicked().getUniqueId(), party, election)
-                                .thenAccept((b) -> {
-                                   if (b) {
-                                       Messages.send(e.getWhoClicked(),true, Messages.single("name", party.getName()),"vote", "success");
-                                       return;
-                                   }
+            ItemStack.Builder item = ItemStack.builder()
+                    .itemType(ItemTypes.SKULL)
+                    .add(Keys.DISPLAY_NAME, Text.of("§9" + party.getName()))
+                    .add(Keys.ITEM_LORE, Collections.singletonList(Messages.text("guis", "vote")));
 
-                                    Messages.send(e.getWhoClicked(),true,"vote", "already");
-                                });
-                    }));
+            if (party.getIcon() != null) {
+                GuiUtils.texture(item,party.getIcon());
+            } else {
+                item.add(Keys.REPRESENTED_PLAYER, Sponge.getServer().getPlayer(party.getOwner()).get().getProfile());
+            }
+
+            GuiUtils.element(state,page,item.build(), ActionType.CLOSE, (e) -> {
+                ElectionsPlus.getInstance()
+                        .getManager()
+                        .vote(e.getObserver().getUniqueId(), party, election)
+                        .thenAccept((b) -> {
+                            if (b) {
+                                Messages.send(Messages.audience(e.getObserver()),true, Messages.single("name", party.getName()),"vote", "success");
+                                return;
+                            }
+
+                            Messages.send(Messages.audience(e.getObserver()),true,"vote", "already");
+                        });
+            });
         }
 
-        this.open(owner);
+        state.setInitialState(page.build("page"));
+        state.launchFor(owner);
     }
 }

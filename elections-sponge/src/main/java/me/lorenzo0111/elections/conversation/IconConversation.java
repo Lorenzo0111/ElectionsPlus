@@ -39,7 +39,7 @@ public class IconConversation implements Conversation {
     private final EditPartyMenu menu;
     private final ElectionsPlus plugin;
 
-    public IconConversation(EditPartyMenu menu, Party party, Player author, ElectionsPlus plugin) {
+    public IconConversation(EditPartyMenu menu, Party party,  ElectionsPlus plugin) {
         this.party = party;
         this.menu = menu;
         this.plugin = plugin;

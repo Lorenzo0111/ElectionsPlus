@@ -24,24 +24,34 @@
 
 package me.lorenzo0111.elections.menus;
 
+import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.Page;
+import com.codehusky.huskyui.states.action.ActionType;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.conversation.NameConversation;
 import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.pluginslib.conversation.ConversationUtil;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
+import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class CreateElectionMenu {
     private String name;
     private final Player player;
     private final ElectionsPlus plugin;
     private final List<Party> parties = new ArrayList<>();
+    private final StateContainer state;
+    private final Page.PageBuilder page;
 
     public CreateElectionMenu(ElectionsPlus plugin, String name, Player player) {
-        super(5, Messages.component(false,"guis", "create"), EnumSet.noneOf(InteractionModifier.class));
+        this.state = new StateContainer();
+        this.page = GuiUtils.create(Messages.text(Messages.component(false,"guis", "create")));
 
         this.name = name;
         this.player = player;
@@ -51,56 +61,48 @@ public class CreateElectionMenu {
     }
 
     public void setup() {
-        this.setDefaultClickAction((e) -> e.setCancelled(true));
+        GuiUtils.element(state,page, ItemStack.builder().itemType(ItemTypes.BOOK)
+                .add(Keys.DISPLAY_NAME, Messages.text(Messages.component(false,Messages.single("name",name),"guis","current-name")))
+                .add(Keys.ITEM_LORE, Collections.singletonList(Messages.text("guis", "edit-name")))
+                .build(), ActionType.CLOSE, (event) -> ConversationUtil.startConversation(player,new NameConversation(plugin,this)));
 
-        GuiItem nameItem = ItemBuilder.from(Material.BOOK)
-                .name(Messages.component(false,Messages.single("name",name),"guis","current-name"))
-                .lore(Messages.component(false,"guis", "edit-name"))
-                .asGuiItem(e -> {
-                    e.getWhoClicked().closeInventory();
-                    ConversationUtil.createConversation(plugin,new NameConversation(player,plugin,this));
-                });
+        GuiUtils.element(state,page, ItemStack.builder().itemType(ItemTypes.BARRIER)
+                .add(Keys.DISPLAY_NAME, Messages.text("guis", "cancel"))
+                .build(), ActionType.CLOSE, (event) -> {});
 
-        GuiItem close = ItemBuilder.from(Material.BARRIER)
-                .name(Messages.component(false,"guis", "cancel"))
-                .asGuiItem(e -> e.getWhoClicked().closeInventory());
+        GuiUtils.element(state,page, ItemStack.builder().itemType(ItemTypes.EMERALD_BLOCK)
+                .add(Keys.DISPLAY_NAME, Messages.text("guis", "save"))
+                .add(Keys.ITEM_LORE, Collections.singletonList(Messages.text("guis", "save-lore")))
+                .build(), ActionType.CLOSE, (event) -> plugin.getManager()
+                        .createElection(name,parties)
+                        .thenAccept(election -> {
+                            if (election == null) {
+                                Messages.send(Messages.audience(player), true, "errors", "election-exists");
+                                return;
+                            }
 
-        GuiItem save = ItemBuilder.from(Material.EMERALD_BLOCK)
-                .name(Messages.component(false,"guis", "save"))
-                .lore(Messages.component(false, "guis", "save-lore"))
-                .asGuiItem(e -> {
-                    e.getWhoClicked().closeInventory();
-                    plugin.getManager()
-                            .createElection(name,parties)
-                            .thenAccept(election -> {
-                                if (election == null) {
-                                    Messages.send(player, true, "errors", "election-exists");
-                                    return;
-                                }
-
-                                Messages.send(player,true,"election-created");
-                            });
-                });
+                            Messages.send(Messages.audience(player),true,"election-created");
+                        }));
 
 
-        this.setItem(5,5, close);
+/*        this.setItem(5,5, close);
         this.setItem(5,6, nameItem);
-        this.setItem(5,9, save);
+        this.setItem(5,9, save);*/
 
-        this.setItem(2,2, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem()))
-                .name(Messages.component(false, "guis","add-name"))
-                .lore(Messages.component(false, "guis","add-lore"))
-                .asGuiItem(e -> {
-                    e.getWhoClicked().closeInventory();
-                    Messages.send(e.getWhoClicked(), true, "loading");
+        GuiUtils.element(state,page, ItemStack.builder().itemType(ItemTypes.STONE_BUTTON)
+                .add(Keys.DISPLAY_NAME, Messages.text("guis", "add-name"))
+                .add(Keys.ITEM_LORE, Collections.singletonList(Messages.text("guis", "add-lore")))
+                .build(), ActionType.CLOSE, (event) -> plugin.getManager()
+                .createElection(name,parties)
+                .thenAccept(election -> {
+                    Messages.send(Messages.audience(player),true,"loading");
                     plugin.getManager()
                             .getParties()
-                            .thenAccept((parties1) -> new AddPartyMenu(plugin,this,parties1,(Player) e.getWhoClicked(),parties).setup());
+                            .thenAccept((parties1) -> new AddPartyMenu(plugin,this,parties1,event.getObserver(),parties).setup());
                 }));
 
-        this.getFiller().fill(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
-
-        this.open(player);
+        state.setInitialState(page.build("page"));
+        state.launchFor(player);
     }
 
     public String getName() {

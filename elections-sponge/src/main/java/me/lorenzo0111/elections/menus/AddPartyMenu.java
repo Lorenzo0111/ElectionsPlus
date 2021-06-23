@@ -24,15 +24,22 @@
 
 package me.lorenzo0111.elections.menus;
 
+import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.Page;
+import com.codehusky.huskyui.states.action.ActionType;
+import com.codehusky.huskyui.states.action.runnable.UIRunnable;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.handlers.Messages;
-import net.kyori.adventure.text.Component;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.text.Text;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class AddPartyMenu {
     private final List<Party> parties;
@@ -40,8 +47,13 @@ public class AddPartyMenu {
     private final ElectionsPlus plugin;
     private final CreateElectionMenu menu;
     private final List<Party> added = new ArrayList<>();
+    private final StateContainer state;
+    private final Page.PageBuilder page;
 
     public AddPartyMenu(ElectionsPlus plugin, CreateElectionMenu menu, List<Party> party, Player owner) {
+        this.state = new StateContainer();
+        this.page = GuiUtils.create(Messages.text(Messages.component(false, Messages.single("name",menu.getName()), "guis", "add-party")));
+
         this.menu = menu;
         this.parties = party;
         this.owner = owner;
@@ -56,50 +68,58 @@ public class AddPartyMenu {
 
     public void setup() {
         ElectionsPlus.getInstance().getScheduler().sync(() -> {
+            page.setUpdatable(true);
+            /* page.setUpdater((page) -> {
+                page.getElements().forEach((slot,item) -> {
+                    String name = ChatColor.stripColor(item.getItem()
+                            .get(Keys.DISPLAY_NAME)
+                            .orElse(Text.EMPTY).toString());
 
-            this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-            this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
-            this.setItem(3,5, ItemBuilder.from(Objects.requireNonNull(XMaterial.EMERALD_BLOCK.parseItem())).name(Messages.component(false, "guis", "save")).asGuiItem(e -> {
-                e.getWhoClicked().closeInventory();
+                    parties.stream()
+                            .filter((p) -> p.getName().equals(name))
+                            .findFirst()
+                            .ifPresent(item.getItem().offer(Keys.DISPLAY_NAME, Text.of()));
+                });
+            }); */
+
+            GuiUtils.element(state,page,ItemStack.builder().itemType(ItemTypes.EMERALD_BLOCK).add(Keys.DISPLAY_NAME, Messages.text( "guis", "save")).build(), ActionType.CLOSE, (event) -> {
                 menu.getParties().addAll(added);
                 menu.setup();
-            }));
-            this.getFiller().fillBottom(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
+            });
 
             for (Party party : parties) {
-                SkullBuilder item = ItemBuilder.skull()
-                        .owner(Bukkit.getOfflinePlayer(party.getOwner()))
-                        .name(Component.text("§9" + party.getName()))
-                        .lore(Messages.component(false, "guis", "add"), Messages.component(false, "guis", "remove"));
+                List<Text> lore = new ArrayList<>();
+                lore.add(Messages.text("guis", "add"));
+                lore.add(Messages.text("guis", "remove"));
+
+                ItemStack.Builder item = ItemStack.builder()
+                        .itemType(ItemTypes.SKULL)
+                        .add(Keys.REPRESENTED_PLAYER, Sponge.getServer().getPlayer(party.getOwner()).get().getProfile())
+                        .add(Keys.DISPLAY_NAME, Text.of("§9" + party.getName()))
+                        .add(Keys.ITEM_LORE, lore);
 
                 if (party.getIcon() != null) {
-                    item.texture(party.getIcon());
+                    GuiUtils.texture(item,party.getIcon());
                 }
 
-                this.addItem(item.asGuiItem(this.createAddAction(party,item)));
+                GuiUtils.element(state,page,item.build(), ActionType.CLOSE,createAddAction(party,item));
             }
 
-            this.open(owner);
+            state.addState(page.build("page"));
+            state.launchFor(owner);
         });
     }
 
-    public GuiAction<InventoryClickEvent> createAddAction(Party party, SkullBuilder item) {
+    public UIRunnable createAddAction(Party party, ItemStack.Builder item) {
         return (e -> {
-            switch (e.getClick()) {
-                case LEFT:
-                    if (!added.contains(party))
-                        added.add(party);
-                    item.name(Component.text("§9" + party.getName() + Messages.get("guis","added")));
-                    this.updatePageItem(e.getSlot(),item.asGuiItem(createAddAction(party,item)));
-                    break;
-                case RIGHT:
-                    added.remove(party);
-                    item.name(Component.text("§9" + party.getName()));
-                    this.updatePageItem(e.getSlot(),item.asGuiItem(createAddAction(party,item)));
-                    break;
-                default:
-                    break;
+            if (added.contains(party)) {
+                added.remove(party);
+                item.add(Keys.DISPLAY_NAME, Text.of("§9" + party.getName()));
+                return;
             }
+
+            added.add(party);
+            item.add(Keys.DISPLAY_NAME,Text.of("§9" + party.getName() + Messages.get("guis","added")));
         });
     }
 }

@@ -24,32 +24,34 @@
 
 package me.lorenzo0111.elections.menus;
 
-import com.cryptomorin.xseries.XMaterial;
-import dev.triumphteam.gui.builder.item.ItemBuilder;
-import dev.triumphteam.gui.builder.item.SkullBuilder;
-import dev.triumphteam.gui.components.InteractionModifier;
-import dev.triumphteam.gui.guis.BaseGui;
-import dev.triumphteam.gui.guis.GuiItem;
+import com.codehusky.huskyui.StateContainer;
+import com.codehusky.huskyui.states.Page;
+import com.codehusky.huskyui.states.action.ActionType;
+import com.codehusky.huskyui.states.element.Element;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
-import me.lorenzo0111.elections.conversation.ConversationUtil;
-import me.lorenzo0111.elections.conversation.conversations.IconConversation;
+import me.lorenzo0111.elections.conversation.IconConversation;
 import me.lorenzo0111.elections.handlers.Messages;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import me.lorenzo0111.pluginslib.conversation.ConversationUtil;
+import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStack;
 
-import java.util.EnumSet;
-import java.util.Objects;
+import java.util.Arrays;
+import java.util.Collections;
 
-public class EditPartyMenu extends BaseGui {
+public class EditPartyMenu {
     private final Player owner;
     private final Party party;
-    private final SkullBuilder item;
+    private final ItemStack.Builder item;
     private final ElectionsPlus plugin;
+    private final StateContainer state;
+    private final Page.PageBuilder page;
 
-    public EditPartyMenu(Player owner, Party party, SkullBuilder item, ElectionsPlus plugin) {
-        super(5, Messages.component(false, "guis", "edit-party-title"), EnumSet.noneOf(InteractionModifier.class));
+    public EditPartyMenu(Player owner, Party party, ItemStack.Builder item, ElectionsPlus plugin) {
+        this.state = new StateContainer();
+        this.page = GuiUtils.create(Messages.text("guis", "edit-party-title"));
 
         this.owner = owner;
         this.party = party;
@@ -58,46 +60,51 @@ public class EditPartyMenu extends BaseGui {
     }
 
     public void setup() {
-        this.setDefaultClickAction((e) -> e.setCancelled(true));
+        GuiUtils.element(state,page,13,item.add(Keys.ITEM_LORE, Collections.emptyList()).build(), ActionType.NORMAL, (e) -> {});
 
-        this.setItem(2, 5, item.lore(Component.empty()).asGuiItem());
-        this.setItem(4,3, ItemBuilder.from(Material.BARRIER).name(Messages.component(false, "guis", "delete")).lore(Messages.component(false, "guis", "delete-party-lore")).asGuiItem(e -> {
-            e.getWhoClicked().closeInventory();
-            if (party.getOwner().equals(owner.getUniqueId())) {
-                plugin.getManager()
-                        .deleteParty(party);
-                Messages.send(e.getWhoClicked(),true,"party-deleted");
-                return;
-            }
+        GuiUtils.element(state,page,29, ItemStack.builder()
+                .itemType(ItemTypes.BARRIER)
+                .add(Keys.DISPLAY_NAME, Messages.text("guis", "delete"))
+                .add(Keys.ITEM_LORE, Collections.singletonList(Messages.text("guis", "delete-party-lore")))
+                .build(),
+                ActionType.CLOSE,
+                (event) -> {
+                    if (party.getOwner().equals(owner.getUniqueId())) {
+                        plugin.getManager()
+                                .deleteParty(party);
+                        Messages.send(Messages.audience(event.getObserver()),true,"party-deleted");
+                        return;
+                    }
 
-            Messages.send(e.getWhoClicked(),true,"no-permission-delete");
-        }));
-        this.setItem(4,5, ItemBuilder
-                .from(Objects.requireNonNull(XMaterial.OAK_SIGN.parseItem()))
-                .name(Messages.component(false, "guis", "members"))
-                .lore(Messages.component(false,"guis","members-lore"), Messages.component(false, "guis", "refresh"))
-                .asGuiItem(e -> new MembersMenu(plugin,party,owner).setup()));
+                    Messages.send(Messages.audience(event.getObserver()),true,"no-permission-delete");
+                });
 
-        GuiItem item;
+        GuiUtils.element(state,page,31, ItemStack.builder()
+                .itemType(ItemTypes.SIGN)
+                .add(Keys.DISPLAY_NAME, Messages.text("guis", "members"))
+                .add(Keys.ITEM_LORE, Arrays.asList(Messages.text("guis", "members-lore"), Messages.text("guis", "refresh")))
+                .build(), ActionType.CLOSE, (e) -> new MembersMenu(plugin,party,e.getObserver()).setup());
+
+        Element item;
 
         if (owner.hasPermission("elections.party.icon")) {
-            item = ItemBuilder.from(Material.EMERALD)
-                    .name(Messages.component(false, "guis", "icon"))
-                    .lore(Messages.component(false, "guis", "icon-lore"), Messages.component(false, "guis", "icon-lore2"))
-                    .asGuiItem(e -> {
-                    e.getWhoClicked().closeInventory();
-                    ConversationUtil.createConversation(plugin,new IconConversation(this,party,owner,plugin));
-                });
+            item = GuiUtils.build(state, ItemStack.builder()
+                    .itemType(ItemTypes.EMERALD)
+                    .add(Keys.DISPLAY_NAME, Messages.text("guis", "icon"))
+                    .add(Keys.ITEM_LORE, Arrays.asList(Messages.text("guis", "icon-lore"), Messages.text("guis", "icon-lore2")))
+                    .build(), ActionType.CLOSE, (e) -> ConversationUtil.startConversation(owner,new IconConversation(this,party,plugin)));
         } else {
-            item = ItemBuilder.from(Material.BARRIER)
-                    .name(Messages.component(false, "guis", "no-icon"))
-                    .lore(Messages.component(false, "guis", "no-icon-description"), Messages.component(false, "guis", "no-icon-description2"))
-                    .asGuiItem();
+            item = GuiUtils.build(state, ItemStack.builder()
+                    .itemType(ItemTypes.BARRIER)
+                    .add(Keys.DISPLAY_NAME, Messages.text("guis", "no-icon"))
+                    .add(Keys.ITEM_LORE, Arrays.asList(Messages.text("guis", "no-icon-description"), Messages.text("guis", "no-icon-description2")))
+                    .build(), ActionType.CLOSE, (e) -> {});
         }
 
-        this.setItem(4, 7, item);
+        page.putElement(33, item);
 
-        this.open(owner);
+        state.setInitialState(page.build("page"));
+        state.launchFor(owner);
     }
 
 }
