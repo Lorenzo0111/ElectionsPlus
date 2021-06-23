@@ -24,6 +24,7 @@
 
 package me.lorenzo0111.elections.handlers;
 
+import dev.triumphteam.gui.components.util.Legacy;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -68,6 +69,14 @@ public class Messages {
         Map<String,String> map = new HashMap<>();
         Arrays.asList(keys).forEach(k -> map.put(k,get(k)));
         return map;
+    }
+
+    public static String componentString(boolean prefix, Object... path) {
+        return Legacy.SERIALIZER.serialize(component(prefix,path));
+    }
+
+    public static String componentString(boolean prefix, Map<String,String> placeholders, Object... path) {
+        return Legacy.SERIALIZER.serialize(component(prefix, placeholders, path));
     }
 
     public static Component component(boolean prefix, Object... path) {

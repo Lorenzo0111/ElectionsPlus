@@ -49,7 +49,7 @@ public class CreateElectionMenu extends BaseGui {
     private final List<Party> parties = new ArrayList<>();
 
     public CreateElectionMenu(ElectionsPlus plugin, String name, Player player) {
-        super(5, Messages.component(false,"guis", "create"), EnumSet.noneOf(InteractionModifier.class));
+        super(5, Messages.componentString(false,"guis", "create"), EnumSet.noneOf(InteractionModifier.class));
 
         this.name = name;
         this.player = player;
