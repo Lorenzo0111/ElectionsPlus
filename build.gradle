@@ -63,7 +63,7 @@ subprojects {
     }
 
     dependencies {
-        implementation('org.spongepowered:configurate-yaml:4.0.0')
+        implementation('org.spongepowered:configurate-yaml:4.1.1')
         slim("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
         slim('net.kyori:adventure-api:4.8.1')
         slim('net.kyori:adventure-text-serializer-legacy:4.8.1')
