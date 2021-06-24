@@ -100,6 +100,9 @@ public final class ElectionsPlus extends JavaPlugin {
         this.config = configExtractor.toConfigurate();
 
         this.reload();
+
+        GenericMain.init(getDataFolder().toPath());
+
         this.api = new ElectionsPlusAPI(this);
         Bukkit.getServicesManager().register(IElectionsPlusAPI.class,api,this, ServicePriority.Normal);
         Bukkit.getPluginManager().registerEvents(new JoinListener(),this);

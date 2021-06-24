@@ -106,6 +106,8 @@ public class ElectionsPlus {
 
         Getters.updater(new UpdateChecker(new SpongeScheduler(this),plugin.getVersion().orElse(""),plugin.getName(),93463,null,null,null));
 
+        GenericMain.init(directory);
+
         this.api = new ElectionsPlusAPI(this);
         Sponge.getServiceManager().setProvider(this,IElectionsPlusAPI.class, api);
         Sponge.getEventManager().registerListeners(this,new JoinListener());

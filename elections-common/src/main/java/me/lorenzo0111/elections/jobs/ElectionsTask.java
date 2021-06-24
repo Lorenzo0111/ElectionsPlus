@@ -22,27 +22,28 @@
  * SOFTWARE.
  */
 
-repositories {
-    mavenCentral()
-    maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
-    }
-    maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public/' }
-    maven { url "https://repo.mattstudios.me/artifactory/public/" }
-}
+package me.lorenzo0111.elections.jobs;
 
-dependencies {
-    implementation project(':elections-common')
-    implementation project(':elections-api')
-    compileOnly('org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT')
-    implementation('space.rocketplugins.pluginslib:bukkit:2.0.1')
-    implementation("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
-    implementation('org.bstats:bstats-bukkit:2.2.1')
-    implementation("dev.triumphteam:triumph-gui:3.0.3")
-    slim('com.github.cryptomorin:XSeries:8.1.0')
+import me.lorenzo0111.elections.constants.Getters;
+import me.lorenzo0111.elections.database.IDatabaseManager;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+
+import java.time.LocalDateTime;
+
+public class ElectionsTask implements Job {
+
+    @Override
+    public void execute(JobExecutionContext context) {
+        String name = (String) context.get("name");
+        LocalDateTime time = LocalDateTime.now();
+        name = name.replace("%y", String.valueOf(time.getYear()));
+        name = name.replace("%m", String.valueOf(time.getMonthValue()));
+
+        final String finalName = name;
+        IDatabaseManager database = Getters.database();
+        database.getParties()
+                .thenAccept((parties) -> database.createElection(finalName,parties));
+    }
+
 }

@@ -22,27 +22,37 @@
  * SOFTWARE.
  */
 
-repositories {
-    mavenCentral()
-    maven {
-        name = 'spigotmc-repo'
-        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
-    }
-    maven {
-        name = 'sonatype'
-        url = 'https://oss.sonatype.org/content/groups/public/'
-    }
-    maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public/' }
-    maven { url "https://repo.mattstudios.me/artifactory/public/" }
-}
+package me.lorenzo0111.elections.config;
 
-dependencies {
-    implementation project(':elections-common')
-    implementation project(':elections-api')
-    compileOnly('org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT')
-    implementation('space.rocketplugins.pluginslib:bukkit:2.0.1')
-    implementation("net.kyori:adventure-platform-bukkit:4.0.0-SNAPSHOT")
-    implementation('org.bstats:bstats-bukkit:2.2.1')
-    implementation("dev.triumphteam:triumph-gui:3.0.3")
-    slim('com.github.cryptomorin:XSeries:8.1.0')
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
+
+import java.util.Map;
+
+public class ConfigUpdater {
+    private final Map<Object[],Object> values;
+
+    public ConfigUpdater(Map<Object[],Object> values) {
+        this.values = values;
+    }
+
+    public ConfigurationNode update(ConfigurationNode config) throws SerializationException {
+        boolean updated = false;
+
+        for (Object[] key : values.keySet()) {
+
+            if (config.node(key) == null || config.empty()) {
+                updated = true;
+                config.node(key).set(values.get(key));
+            }
+
+        }
+
+        if (updated) {
+            int previous = config.node("config-version").getInt(0);
+            config.node("updater-version").set(previous+1);
+        }
+
+        return config;
+    }
 }

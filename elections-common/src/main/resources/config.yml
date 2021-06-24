@@ -21,3 +21,14 @@ escape: "cancel"
 # Please note: the plugin will add 1 minute to your number: If you put 5 the duration will be 6
 # Default 5
 cache-duration: 5
+
+# Chron allows you tu automatically open elections every time you want
+# You have to set a syntax that specify the time to open them
+# You can learn more about chron tab on https://www.adminschoice.com/crontab-quick-reference
+# Here is a chron tab generator: https://crontab.guru
+# Examples: https://crontab.guru/examples.html
+# Name variables: %y: Year; %m: Month
+chron:
+  enabled: false
+  syntax: "0 0 1 * *"
+  name: "%y-%m"
