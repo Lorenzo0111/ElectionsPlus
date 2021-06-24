@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Vote implements DatabaseSerializable {
@@ -74,5 +75,18 @@ public class Vote implements DatabaseSerializable {
         map.put("party",party);
         map.put("election",election);
         return map;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Vote vote = (Vote) o;
+        return Objects.equals(player, vote.player) && Objects.equals(party, vote.party) && Objects.equals(election, vote.election);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(player, party, election);
     }
 }

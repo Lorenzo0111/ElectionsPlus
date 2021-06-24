@@ -46,8 +46,12 @@ public class HelpChild extends SubCommand {
     public void handleSubcommand(User<?> sender, String[] args) {
         sender.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', ((ElectionsPlus) getCommand().getPlugin()).config("prefix") + "&7Available commands:")));
         sender.audience().sendMessage(this.formatHelp("create <name>", "Create an election"));
-        if (sender.hasPermission(""))
+        if (sender.hasPermission("elections.disband"))
             sender.audience().sendMessage(this.formatHelp("disband <name>", "Disband a party"));
+        if (sender.hasPermission("elections.info"))
+            sender.audience().sendMessage(this.formatHelp("info <name>", "Get votes of an election"));
+        if (sender.hasPermission("elections.close"))
+            sender.audience().sendMessage(this.formatHelp("close <name>", "Close an election"));
         sender.audience().sendMessage(this.formatHelp("list", "View the list of elections"));
         sender.audience().sendMessage(this.formatHelp("parties", "View the list of parties"));
         sender.audience().sendMessage(this.formatHelp("vote [name]", "Vote to an election"));

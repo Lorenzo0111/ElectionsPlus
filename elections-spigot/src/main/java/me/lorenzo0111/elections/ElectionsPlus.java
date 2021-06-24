@@ -34,6 +34,7 @@ import me.lorenzo0111.elections.database.IDatabaseManager;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.elections.listeners.JoinListener;
 import me.lorenzo0111.elections.scheduler.BukkitScheduler;
+import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import me.lorenzo0111.pluginslib.command.Customization;
 import me.lorenzo0111.pluginslib.config.ConfigExtractor;
 import me.lorenzo0111.pluginslib.database.connection.SQLiteConnection;
@@ -86,6 +87,8 @@ public final class ElectionsPlus extends JavaPlugin {
 
          Messages.close();
 
+         if (BukkitAudienceManager.initialized())
+             BukkitAudienceManager.shutdown();
     }
 
     public void start() throws ConfigurateException {

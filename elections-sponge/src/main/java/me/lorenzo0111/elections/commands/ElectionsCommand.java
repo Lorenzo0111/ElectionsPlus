@@ -43,5 +43,7 @@ public class ElectionsCommand extends Command {
         this.addSubcommand(new HelpChild(this));
         this.addSubcommand(new VoteChild(this));
         this.addSubcommand(new ReloadChild(this));
+        this.addSubcommand(new CloseChild(this));
+        this.addSubcommand(new InfoChild(this));
     }
 }
