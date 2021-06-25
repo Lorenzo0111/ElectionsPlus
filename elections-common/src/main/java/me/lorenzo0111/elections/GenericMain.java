@@ -53,10 +53,14 @@ public class GenericMain {
 
         JobDataMap map = new JobDataMap();
         map.put("name", config.node("chron","syntax").getString());
-        try {
-            ChronHandler.schedule(ElectionsTask.class,map);
-        } catch (SchedulerException e) {
-            e.printStackTrace();
+
+        if (config.node("chron","enabled").getBoolean()) {
+            try {
+                ChronHandler.schedule(ElectionsTask.class,map);
+            } catch (SchedulerException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 }
