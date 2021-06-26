@@ -26,6 +26,7 @@ package me.lorenzo0111.elections.menus;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.components.InteractionModifier;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
@@ -36,6 +37,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,7 +47,7 @@ public class ElectionsMenu extends PaginatedGui {
     private final ElectionsPlus plugin;
 
     public ElectionsMenu(Player owner, List<Election> elections, ElectionsPlus plugin) {
-        super(3, Messages.componentString(false,"guis","elections"));
+        super(3, 17, Messages.componentString(false,"guis","elections"), EnumSet.noneOf(InteractionModifier.class));
 
         this.owner = owner;
         this.elections = elections;

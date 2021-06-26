@@ -27,6 +27,7 @@ package me.lorenzo0111.elections.commands.childs;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Vote;
 import me.lorenzo0111.elections.handlers.ChatColor;
+import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
@@ -83,9 +84,9 @@ public class InfoChild extends SubCommand {
                         voteMap.replace(vote.getParty(),voteCount,voteCount+1);
                     }
 
-                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "&8&m=============&e Votes &8&m=============&e")));
+                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "&8&m=============&e " + Messages.get("votes","title") + " &8&m=============&e")));
                     for (String party : voteMap.keySet()) {
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "  &6&l• &7" + party + " &e&l» &e&n" + voteMap.get(party) + "&7 votes (&e&o" + (voteMap.get(party)*100/total) + "%&7)")));
+                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "  &6&l• &7" + party + " &e&l» &e&n" + voteMap.get(party) + "&7 " + Messages.get("votes","name") + " (&e&o" + (voteMap.get(party)*100/total) + "%&7)")));
                     }
                 });
     }

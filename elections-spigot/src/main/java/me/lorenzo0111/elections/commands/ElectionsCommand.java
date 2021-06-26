@@ -31,7 +31,6 @@ import me.lorenzo0111.pluginslib.command.Customization;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,11 +40,11 @@ import java.util.Objects;
 
 public class ElectionsCommand extends Command implements TabExecutor {
 
-    public ElectionsCommand(JavaPlugin plugin, String command, @Nullable Customization customization) {
+    public ElectionsCommand(ElectionsPlus plugin, String command, @Nullable Customization customization) {
         super(plugin, command, customization);
 
-        this.addSubcommand(new CreateChild(this, (ElectionsPlus) plugin));
-        this.addSubcommand(new PartiesChild(this, (ElectionsPlus) plugin));
+        this.addSubcommand(new CreateChild(this, plugin));
+        this.addSubcommand(new PartiesChild(this, plugin));
         this.addSubcommand(new ListChild(this));
         this.addSubcommand(new DisbandChild(this));
         this.addSubcommand(new HelpChild(this));

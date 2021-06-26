@@ -74,8 +74,13 @@ vote:
   already: "You have already voted in this elections."
   success: "You have voted <name>"
 
+# Used for the /elections info <name>
+votes:
+  title: "&eVotes"
+  name: "votes"
+
 loading: "Loading.."
 election-created: "Election created."
 party-deleted: "&7Party deleted. &o(Refresh may take some seconds)"
 no-permission-delete: "&cYou can't delete this party."
-join: "&7There is currently an election open. <click:run_command:elections list>Click here to vote</click>"
+join: "&7There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
