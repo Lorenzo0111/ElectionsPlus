@@ -39,6 +39,7 @@ public class ElectionsTask implements Job {
         LocalDateTime time = LocalDateTime.now();
         name = name.replace("%y", String.valueOf(time.getYear()));
         name = name.replace("%m", String.valueOf(time.getMonthValue()));
+        name = name.replace("%d", String.valueOf(time.getDayOfMonth()));
 
         final String finalName = name;
         IDatabaseManager database = Getters.database();

@@ -27,8 +27,13 @@ cache-duration: 5
 # You can learn more about chron tab on https://www.adminschoice.com/crontab-quick-reference
 # Here is a chron tab generator: https://crontab.guru
 # Examples: https://crontab.guru/examples.html
-# Name variables: %y: Year; %m: Month
+# Name variables: %y: Year; %m: Month; %d: Day
 chron:
   enabled: false
   syntax: "0 0 1 * *"
-  name: "%y-%m"
+  name: "%y-%m-%d"
+
+rank:
+  enabled: false
+  name: "President"
+  strategy: "none" # None, both

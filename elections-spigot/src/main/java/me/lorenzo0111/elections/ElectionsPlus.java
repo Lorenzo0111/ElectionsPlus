@@ -40,8 +40,10 @@ import me.lorenzo0111.pluginslib.config.ConfigExtractor;
 import me.lorenzo0111.pluginslib.database.connection.SQLiteConnection;
 import me.lorenzo0111.pluginslib.dependency.slimjar.SlimJarDependencyManager;
 import me.lorenzo0111.pluginslib.updater.UpdateChecker;
+import net.milkbowl.vault.permission.Permission;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spongepowered.configurate.ConfigurateException;
@@ -51,6 +53,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.UUID;
 
 public final class ElectionsPlus extends JavaPlugin {
     private final CacheManager cache = new CacheManager();
@@ -61,6 +64,8 @@ public final class ElectionsPlus extends JavaPlugin {
 
     private ConfigurationNode config;
     private ConfigurationNode messages;
+
+    private Permission permissions;
 
     @Override
     public void onEnable() {
@@ -97,6 +102,12 @@ public final class ElectionsPlus extends JavaPlugin {
         this.reload();
 
         GenericMain.init(getDataFolder().toPath());
+
+        if (config.node("rank","enabled").getBoolean()) {
+            RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
+            if (rsp != null)
+                permissions = rsp.getProvider();
+        }
 
         this.api = new ElectionsPlusAPI(this);
         Bukkit.getServicesManager().register(IElectionsPlusAPI.class,api,this, ServicePriority.Normal);
@@ -152,6 +163,13 @@ public final class ElectionsPlus extends JavaPlugin {
         configExtractor.extract();
         this.config = configExtractor.toConfigurate();
         Messages.init(messages,config("prefix"),this);
+    }
+
+    public void win(UUID uuid) {
+        if (permissions == null)
+            return;
+
+        permissions.playerAddGroup(Bukkit.getWorlds().get(0).getName(), Bukkit.getOfflinePlayer(uuid), config.node("rank","name").getString());
     }
 
     public ConfigurationNode config() {

@@ -44,7 +44,7 @@ public class GenericMain {
 
         values.put(new Object[]{"chron","enabled"}, false);
         values.put(new Object[]{"chron","syntax"},"0 0 1 * *");
-        values.put(new Object[]{"chron","name"},"%y-%m");
+        values.put(new Object[]{"chron","name"},"%y-%m-%d");
 
         ConfigUpdater updater = new ConfigUpdater(values);
         ConfigExtractor manager = new ConfigExtractor(GenericMain.class,folder.toFile(),"config.yml");

@@ -57,10 +57,9 @@ public class CloseChild extends SubCommand {
                 .getElection(args[1])
                 .thenAccept((election) -> {
                     if (election != null) {
-                        plugin.getManager()
-                                .deleteElection(election);
+                        election.close();
 
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&7Election deleted")));
+                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&7Election closed, if you want to automatically grant the rank to the winner run &e&n/elections proceed " + election.getName())));
                         return;
                     }
 

@@ -34,6 +34,7 @@ repositories {
     }
     maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public/' }
     maven { url "https://repo.mattstudios.me/artifactory/public/" }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -45,4 +46,5 @@ dependencies {
     implementation('org.bstats:bstats-bukkit:2.2.1')
     implementation("dev.triumphteam:triumph-gui:3.0.3")
     slim('com.github.cryptomorin:XSeries:8.1.0')
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 }
