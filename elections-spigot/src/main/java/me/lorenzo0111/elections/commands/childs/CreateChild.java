@@ -56,10 +56,10 @@ public class CreateChild extends SubCommand {
             return;
         }
 
-        CreateElectionMenu menu = new CreateElectionMenu(plugin,"None",(Player) sender);
+        CreateElectionMenu menu = new CreateElectionMenu(plugin,"None",(Player) sender.player());
 
         if (args.length != 2) {
-            ConversationUtil.createConversation(plugin,new NameConversation((Player) sender,plugin,menu));
+            ConversationUtil.createConversation(plugin,new NameConversation((Player) sender.player(),plugin,menu));
             return;
         }
 

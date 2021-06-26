@@ -27,6 +27,7 @@ package me.lorenzo0111.elections.menus;
 import com.cryptomorin.xseries.XMaterial;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.builder.item.SkullBuilder;
+import dev.triumphteam.gui.components.InteractionModifier;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
@@ -38,6 +39,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,7 +49,7 @@ public class PartiesMenu extends PaginatedGui {
     private final ElectionsPlus plugin;
 
     public PartiesMenu(Player owner, List<Party> parties, ElectionsPlus plugin) {
-        super(5, Messages.componentString(false, "guis", "parties"));
+        super(3, 17, Messages.componentString(false, "guis", "parties"), EnumSet.noneOf(InteractionModifier.class));
 
         this.owner = owner;
         this.parties = parties;
@@ -61,7 +63,7 @@ public class PartiesMenu extends PaginatedGui {
             this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
 
             if (owner.hasPermission("elections.party.create")) {
-                this.setItem(5, 5, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem()))
+                this.setItem(3, 5, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem()))
                         .name(Messages.component(false, "guis", "create-party"))
                         .lore(Messages.component(false, "guis", "create-party-lore"))
                         .asGuiItem(e -> {

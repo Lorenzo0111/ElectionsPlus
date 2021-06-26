@@ -94,14 +94,6 @@ public final class ElectionsPlus extends JavaPlugin {
     public void start() throws ConfigurateException {
         this.loaded = true;
 
-        ConfigExtractor messagesExtractor = new ConfigExtractor(this.getClass(),this.getDataFolder(),"messages.yml");
-        messagesExtractor.extract();
-        this.messages = messagesExtractor.toConfigurate();
-
-        ConfigExtractor configExtractor = new ConfigExtractor(this.getClass(),this.getDataFolder(),"config.yml");
-        configExtractor.extract();
-        this.config = configExtractor.toConfigurate();
-
         this.reload();
 
         GenericMain.init(getDataFolder().toPath());
@@ -152,6 +144,13 @@ public final class ElectionsPlus extends JavaPlugin {
     }
 
     public void reload() throws ConfigurateException {
+        ConfigExtractor messagesExtractor = new ConfigExtractor(this.getClass(),this.getDataFolder(),"messages.yml");
+        messagesExtractor.extract();
+        this.messages = messagesExtractor.toConfigurate();
+
+        ConfigExtractor configExtractor = new ConfigExtractor(this.getClass(),this.getDataFolder(),"config.yml");
+        configExtractor.extract();
+        this.config = configExtractor.toConfigurate();
         Messages.init(messages,config("prefix"),this);
     }
 
