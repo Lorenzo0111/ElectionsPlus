@@ -36,6 +36,6 @@ dependencies {
     compileOnly('org.spongepowered:spongeapi:7.3.0')
     compileOnly('com.github.codeHusky:HuskyUI-Plugin:v0.6.0-PRE4')
     slim('mysql:mysql-connector-java:8.0.25')
-    slim('org.xerial:sqlite-jdbc:3.34.0')
+    slim('org.xerial:sqlite-jdbc:3.36.0')
     slim('com.zaxxer:HikariCP:4.0.3')
 }
