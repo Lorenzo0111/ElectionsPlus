@@ -31,6 +31,15 @@ buildscript {
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
         classpath "io.github.slimjar:gradle-plugin:1.2.1"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3"
+    }
+}
+
+apply plugin: "org.sonarqube"
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "Lorenzo0111_ElectionsPlus"
     }
 }
 

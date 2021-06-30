@@ -48,3 +48,7 @@ dependencies {
     slim('com.github.cryptomorin:XSeries:8.1.0')
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 }
+
+artifacts {
+    shadowJar
+}

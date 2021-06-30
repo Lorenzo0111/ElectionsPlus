@@ -39,3 +39,7 @@ dependencies {
     slim('org.xerial:sqlite-jdbc:3.36.0')
     slim('com.zaxxer:HikariCP:4.0.3')
 }
+
+artifacts {
+    shadowJar
+}
