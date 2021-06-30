@@ -35,14 +35,6 @@ buildscript {
     }
 }
 
-apply plugin: "org.sonarqube"
-
-sonarqube {
-    properties {
-        property "sonar.projectKey", "Lorenzo0111_ElectionsPlus"
-    }
-}
-
 ext {
     libsBase = 'me.lorenzo0111.elections.libs'
 }
@@ -52,6 +44,7 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: "io.github.slimjar"
+    apply plugin: "org.sonarqube"
 
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
@@ -80,6 +73,12 @@ subprojects {
         slim('mysql:mysql-connector-java:8.0.25')
         slim('org.xerial:sqlite-jdbc:3.36.0')
         slim('com.zaxxer:HikariCP:4.0.3')
+    }
+
+    sonarqube {
+        properties {
+            property "sonar.projectKey", "Lorenzo0111_ElectionsPlus"
+        }
     }
 
     shadowJar {
