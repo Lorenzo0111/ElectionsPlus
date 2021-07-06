@@ -24,9 +24,11 @@
 
 package me.lorenzo0111.elections.config;
 
+import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
+import java.io.File;
 import java.util.Map;
 
 public class ConfigUpdater {
@@ -36,7 +38,7 @@ public class ConfigUpdater {
         this.values = values;
     }
 
-    public ConfigurationNode update(ConfigurationNode config) throws SerializationException {
+    public ConfigurationNode update(File file, ConfigurationNode config) throws ConfigurateException {
         boolean updated = false;
 
         for (Object[] key : values.keySet()) {
@@ -52,6 +54,12 @@ public class ConfigUpdater {
             int previous = config.node("config-version").getInt(0);
             config.node("updater-version").set(previous+1);
         }
+
+        YamlConfigurationLoader
+                .builder()
+                .file(file)
+                .build()
+                .save(config);
 
         return config;
     }

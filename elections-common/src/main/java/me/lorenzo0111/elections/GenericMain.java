@@ -49,7 +49,7 @@ public class GenericMain {
         ConfigUpdater updater = new ConfigUpdater(values);
         ConfigExtractor manager = new ConfigExtractor(GenericMain.class,folder.toFile(),"config.yml");
         manager.extract(); // This is fake because the file has already been extracted.
-        ConfigurationNode config = updater.update(manager.toConfigurate());
+        ConfigurationNode config = updater.update(manager.getFile(), manager.toConfigurate());
 
         JobDataMap map = new JobDataMap();
         map.put("name", config.node("chron","syntax").getString());
