@@ -61,7 +61,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 @SuppressWarnings("unused")
-@Plugin(id = "electionsplus", name = "ElectionsPlus", version = "1.0", authors = "Lorenzo0111")
+@Plugin(id = "electionsplus", name = "ElectionsPlus", version = "1.2", authors = "Lorenzo0111")
 public class ElectionsPlus {
     private final CacheManager cache;
     private final Path directory;

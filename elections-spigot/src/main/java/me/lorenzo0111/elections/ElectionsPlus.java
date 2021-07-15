@@ -33,6 +33,7 @@ import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.elections.listeners.JoinListener;
+import me.lorenzo0111.elections.premium.PremiumHandler;
 import me.lorenzo0111.elections.scheduler.BukkitScheduler;
 import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import me.lorenzo0111.pluginslib.command.Customization;
@@ -136,7 +137,10 @@ public final class ElectionsPlus extends JavaPlugin {
                 break;
         }
 
-        Customization customization = new Customization(config("prefix") + "&7Running &eElections &7v" + this.getDescription().getVersion() + " by Lorenzo0111",config("prefix") + "&cCommand not found",config("prefix") + "&7Run /$cmd help for command help.");
+        String header = PremiumHandler.isPremium() ? null : config("prefix") + "&7Running &eElections &7v" + this.getDescription().getVersion() + " by Lorenzo0111";
+        String noArgs = PremiumHandler.isPremium() ? config("prefix") + "&7Running &eElections &7v" + this.getDescription().getVersion() + " by Lorenzo0111" : config("prefix") + "&7Run /$cmd help for command help.";
+        Customization customization = new Customization(header,config("prefix") + "&cCommand not found",noArgs);
+
         new ElectionsCommand(this,"elections",customization);
     }
 
