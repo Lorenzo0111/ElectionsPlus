@@ -35,7 +35,7 @@ dependencies {
     implementation project(':elections-api')
     compileOnly('org.spongepowered:spongeapi:7.3.0')
     compileOnly('com.github.codeHusky:HuskyUI-Plugin:v0.6.0-PRE4')
-    slim('mysql:mysql-connector-java:8.0.25')
+    slim('mysql:mysql-connector-java:8.0.26')
     slim('org.xerial:sqlite-jdbc:3.36.0.1')
     slim('com.zaxxer:HikariCP:5.0.0')
 }
