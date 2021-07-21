@@ -64,7 +64,6 @@ subprojects {
     }
 
     dependencies {
-        implementation('io.github.slimjar:slimjar:1.2.4')
         implementation('org.quartz-scheduler:quartz:2.3.2')
         implementation('org.spongepowered:configurate-yaml:4.1.1')
         implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
@@ -72,7 +71,7 @@ subprojects {
         implementation('net.kyori:adventure-text-serializer-legacy:4.8.1')
         slim('mysql:mysql-connector-java:8.0.26')
         slim('org.xerial:sqlite-jdbc:3.36.0.1')
-        slim('com.zaxxer:HikariCP:5.0.0')
+        slim('com.zaxxer:HikariCP:4.0.3')
     }
 
     shadowJar {
@@ -85,6 +84,17 @@ subprojects {
     }
 
     slimJar {
+        relocate('com.google.common', "${libsBase}.google.common")
+        relocate('com.google.errorprone', "${libsBase}.google.errorprone")
+        relocate('com.google.gson', "${libsBase}.gson")
+        relocate('com.google.j2objc', "${libsBase}.j2obc")
+        relocate('com.google.thirdparty', "${libsBase}.thirdparty")
+        relocate('com.mchange', "${libsBase}.mchange")
+        relocate('org.checkerframework', "${libsBase}.checkerframework")
+        relocate('org.quartz', "${libsBase}.quartz")
+        relocate('org.spongepowered.configurate', "${libsBase}.configurate")
+        relocate('org.terracotta.quartz', "${libsBase}.terracotta")
+        relocate('io.github.slimjar', "${libsBase}.slimjar")
         relocate('org.bstats', "${libsBase}.bstats")
         relocate('dev.triumphteam',"${libsBase}")
         relocate('google',"${libsBase}.google")
