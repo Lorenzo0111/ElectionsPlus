@@ -39,7 +39,7 @@ import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import me.lorenzo0111.pluginslib.command.Customization;
 import me.lorenzo0111.pluginslib.config.ConfigExtractor;
 import me.lorenzo0111.pluginslib.database.connection.SQLiteConnection;
-import me.lorenzo0111.pluginslib.dependency.slimjar.SlimJarDependencyManager;
+import me.lorenzo0111.pluginslib.dependency.DependencyManager;
 import me.lorenzo0111.pluginslib.updater.UpdateChecker;
 import net.milkbowl.vault.permission.Permission;
 import org.bstats.bukkit.Metrics;
@@ -149,7 +149,7 @@ public final class ElectionsPlus extends JavaPlugin {
             this.getLogger().info("Loading libraries..");
             this.getLogger().info("Note: This might take a few minutes on first run.");
 
-            SlimJarDependencyManager manager = new SlimJarDependencyManager(getName(),getDataFolder().toPath());
+            DependencyManager manager = new DependencyManager(getName(),getDataFolder().toPath());
             long time = manager.build();
             this.getLogger().info("Loaded all libraries in " + time + "ms");
             this.start();

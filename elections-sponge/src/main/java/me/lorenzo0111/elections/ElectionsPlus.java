@@ -40,7 +40,7 @@ import me.lorenzo0111.elections.scheduler.SpongeScheduler;
 import me.lorenzo0111.pluginslib.command.Customization;
 import me.lorenzo0111.pluginslib.conversation.ConversationUtil;
 import me.lorenzo0111.pluginslib.database.connection.SQLiteConnection;
-import me.lorenzo0111.pluginslib.dependency.slimjar.SlimJarDependencyManager;
+import me.lorenzo0111.pluginslib.dependency.DependencyManager;
 import me.lorenzo0111.pluginslib.updater.UpdateChecker;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
@@ -93,7 +93,7 @@ public class ElectionsPlus {
             logger.info("Loading libraries..");
             logger.info("Note: This might take a few minutes on first run.");
 
-            long time = new SlimJarDependencyManager("ElectionsPlus", directory)
+            long time = new DependencyManager("ElectionsPlus", directory)
                     .build();
 
             logger.info("Loaded all libraries in " + time + "ms");

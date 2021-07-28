@@ -43,5 +43,5 @@ dependencies {
     compileOnly('me.clip:placeholderapi:2.10.10')
     compileOnly('org.jetbrains:annotations:21.0.1')
     compileOnly project(':elections-api')
-    implementation('space.rocketplugins.pluginslib:common:2.0.1.2')
+    implementation('space.rocketplugins.pluginslib:common:2.0.2.1')
 }
