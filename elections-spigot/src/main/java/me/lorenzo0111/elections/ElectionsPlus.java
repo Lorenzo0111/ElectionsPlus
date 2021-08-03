@@ -103,6 +103,7 @@ public final class ElectionsPlus extends JavaPlugin {
 
         this.reload();
 
+        this.getLogger().info("Loading scheduler..");
         GlobalMain.init(getDataFolder().toPath());
 
         if (config.node("rank","enabled").getBoolean()) {
@@ -171,6 +172,12 @@ public final class ElectionsPlus extends JavaPlugin {
     }
 
     public void win(UUID uuid) {
+        String name = Bukkit.getOfflinePlayer(uuid).getName();
+
+        if (!this.config("rank", "command").equalsIgnoreCase("none") && name != null) {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), this.config("rank", "command").replace("%player%", name));
+        }
+
         if (permissions == null)
             return;
 

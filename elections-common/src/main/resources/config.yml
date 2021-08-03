@@ -37,5 +37,6 @@ chron: # Yea, it is a typo but i can't actually fix this.
 rank:
   enabled: false
   name: "President"
+  command: "none"
   # Who should win if there are two or more winners?
   strategy: "none" # None, both
