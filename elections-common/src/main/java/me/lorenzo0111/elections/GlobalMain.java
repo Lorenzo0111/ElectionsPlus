@@ -47,7 +47,7 @@ public class GlobalMain {
         }
 
         JobDataMap map = new JobDataMap();
-        map.put("name", config.node("chron","syntax").getString());
+        map.put("name", config.node("chron","name").getString());
 
         if (config.node("chron","enabled").getBoolean()) {
             try {

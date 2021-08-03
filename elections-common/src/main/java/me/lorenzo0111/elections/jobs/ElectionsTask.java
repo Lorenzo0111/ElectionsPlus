@@ -35,16 +35,14 @@ public class ElectionsTask implements Job {
 
     @Override
     public void execute(JobExecutionContext context) {
-        String name = (String) context.get("name");
         LocalDateTime time = LocalDateTime.now();
-        name = name.replace("%y", String.valueOf(time.getYear()));
-        name = name.replace("%m", String.valueOf(time.getMonthValue()));
-        name = name.replace("%d", String.valueOf(time.getDayOfMonth()));
+        String name = context.getJobDetail().getJobDataMap().getString("name").replace("%y", String.valueOf(time.getYear()))
+                .replace("%m", String.valueOf(time.getMonthValue()))
+                .replace("%d", String.valueOf(time.getDayOfMonth()));
 
-        final String finalName = name;
         IDatabaseManager database = Getters.database();
         database.getParties()
-                .thenAccept((parties) -> database.createElection(finalName,parties));
+                .thenAccept((parties) -> database.createElection(name,parties));
     }
 
 }

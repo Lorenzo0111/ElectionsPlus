@@ -49,7 +49,7 @@ subprojects {
     compileJava.options.encoding = "UTF-8"
     compileTestJava.options.encoding = "UTF-8"
 
-    version = "1.4"
+    version = "1.5"
     group = "me.lorenzo0111"
 
     repositories {

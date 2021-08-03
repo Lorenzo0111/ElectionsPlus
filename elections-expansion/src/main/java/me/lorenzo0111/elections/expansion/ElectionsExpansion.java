@@ -33,6 +33,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -57,16 +58,21 @@ public class ElectionsExpansion extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return "1.2";
+        return "1.3";
+    }
+
+    @Override
+    public @Nullable String getRequiredPlugin() {
+        return "ElectionsPlus";
     }
 
     /*
-    Placeholders:
-    %elections_open%
-    %election_isopen%
-    %elections_isopen_<name>%
-    %elections_voted_<election>%
-     */
+        Placeholders:
+        %elections_open%
+        %election_isopen%
+        %elections_isopen_<name>%
+        %elections_voted_<election>%
+         */
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         if (params.equalsIgnoreCase("open")) {
