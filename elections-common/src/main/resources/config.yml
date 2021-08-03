@@ -22,13 +22,14 @@ escape: "cancel"
 # Default 5
 cache-duration: 5
 
-# Chron allows you tu automatically open elections every time you want
+# Cron allows you tu automatically open elections every time you want
 # You have to set a syntax that specify the time to open them
 # You can learn more about chron tab on https://www.adminschoice.com/crontab-quick-reference
-# Here is a chron tab generator: https://crontab.guru
 # Examples: https://crontab.guru/examples.html
+# WARNING: The syntax is different: [seconds,minutes,hours,daysOfMonth,months,daysOfWeek,years].
+# Documentation: https://www.quartz-scheduler.org/api/2.3.0/index.html
 # Name variables: %y: Year; %m: Month; %d: Day
-chron:
+chron: # Yea, it is a typo but i can't actually fix this.
   enabled: false
   syntax: "0 0 1 * *"
   name: "%y-%m-%d"
@@ -36,4 +37,5 @@ chron:
 rank:
   enabled: false
   name: "President"
+  # Who should win if there are two or more winners?
   strategy: "none" # None, both

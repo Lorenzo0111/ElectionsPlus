@@ -24,43 +24,46 @@
 
 package me.lorenzo0111.elections;
 
-import me.lorenzo0111.elections.config.ConfigUpdater;
 import me.lorenzo0111.elections.jobs.ElectionsTask;
-import me.lorenzo0111.elections.scheduler.ChronHandler;
+import me.lorenzo0111.elections.scheduler.CronHandler;
 import me.lorenzo0111.pluginslib.config.ConfigExtractor;
+import org.jetbrains.annotations.NotNull;
 import org.quartz.JobDataMap;
 import org.quartz.SchedulerException;
 import org.spongepowered.configurate.ConfigurateException;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
 
-public class GenericMain {
+public class GlobalMain {
 
-    public static void init(Path folder) throws ConfigurateException {
-        Map<Object[],Object> values = new HashMap<>();
-
-        values.put(new Object[]{"chron","enabled"}, false);
-        values.put(new Object[]{"chron","syntax"},"0 0 1 * *");
-        values.put(new Object[]{"chron","name"},"%y-%m-%d");
-
-        ConfigUpdater updater = new ConfigUpdater(values);
-        ConfigExtractor manager = new ConfigExtractor(GenericMain.class,folder.toFile(),"config.yml");
+    public static void init(@NotNull Path folder) throws ConfigurateException {
+        ConfigExtractor manager = new ConfigExtractor(GlobalMain.class,folder.toFile(),"config.yml");
         manager.extract(); // This is fake because the file has already been extracted.
-        ConfigurationNode config = updater.update(manager.getFile(), manager.toConfigurate());
+        ConfigurationNode config = manager.toConfigurate();
+
+        if (config == null) {
+            return;
+        }
 
         JobDataMap map = new JobDataMap();
         map.put("name", config.node("chron","syntax").getString());
 
         if (config.node("chron","enabled").getBoolean()) {
             try {
-                ChronHandler.schedule(ElectionsTask.class,map);
+                CronHandler.schedule(ElectionsTask.class, config.node("chron","syntax").getString(), map);
             } catch (SchedulerException e) {
                 e.printStackTrace();
             }
         }
 
+    }
+
+    public static void shutdown() {
+        try {
+            CronHandler.shutdown();
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
     }
 }

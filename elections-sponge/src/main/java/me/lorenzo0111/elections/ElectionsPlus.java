@@ -47,6 +47,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
+import org.spongepowered.api.event.game.state.GameStoppedEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.configurate.ConfigurateException;
@@ -106,7 +107,7 @@ public class ElectionsPlus {
 
         Getters.updater(new UpdateChecker(new SpongeScheduler(this),plugin.getVersion().orElse(""),plugin.getName(),93463,null,null,null));
 
-        GenericMain.init(directory);
+        GlobalMain.init(directory);
 
         this.api = new ElectionsPlusAPI(this);
         Sponge.getServiceManager().setProvider(this,IElectionsPlusAPI.class, api);
@@ -134,6 +135,11 @@ public class ElectionsPlus {
 
         Customization customization = new Customization(config("prefix") + "&7Running &eElections &7v1.1 by Lorenzo0111",config("prefix") + "&cCommand not found",config("prefix") + "&7Run /$cmd help for command help.");
         new ElectionsCommand(this,"elections", Collections.singletonList("name"),customization);
+    }
+
+    @Listener
+    public void onServerClose(GameStoppedEvent event) {
+        GlobalMain.shutdown();
     }
 
     public void reload() throws ConfigurateException {

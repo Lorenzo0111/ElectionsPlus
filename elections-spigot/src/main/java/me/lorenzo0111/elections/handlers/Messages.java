@@ -25,8 +25,8 @@
 package me.lorenzo0111.elections.handlers;
 
 import dev.triumphteam.gui.components.util.Legacy;
+import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.ChatColor;
@@ -42,18 +42,16 @@ import java.util.Map;
 public class Messages {
     private static ConfigurationNode config;
     private static String prefix;
-    private static BukkitAudiences audiences;
     private static final String NOT_FOUND = "&cString not found in the messages.yml file.";
 
     public static void init(ConfigurationNode config, String prefix, JavaPlugin plugin) {
         Messages.config = config;
         Messages.prefix = prefix;
-        if (Messages.audiences == null)
-            Messages.audiences = BukkitAudiences.create(plugin);
     }
 
     public static void close() {
-        audiences.close();
+        if (BukkitAudienceManager.initialized())
+            BukkitAudienceManager.shutdown();
     }
 
     public static String prefix() { return prefix; }
@@ -94,11 +92,11 @@ public class Messages {
     }
 
     public static void send(CommandSender sender, boolean prefix, Object... path) {
-        send(audiences.sender(sender), prefix , new HashMap<>(),path);
+        send(BukkitAudienceManager.audience(sender), prefix , new HashMap<>(),path);
     }
 
     public static void send(CommandSender player, boolean prefix, Map<String,String> placeholders, Object... path) {
-        send(audiences.sender(player),prefix,placeholders,path);
+        send(BukkitAudienceManager.audience(player),prefix,placeholders,path);
     }
 
     public static void send(Audience player, boolean prefix, Object... path) {
@@ -110,6 +108,6 @@ public class Messages {
     }
 
     public static Audience audience(Player player) {
-        return audiences.player(player);
+        return BukkitAudienceManager.audience(player);
     }
 }

@@ -24,50 +24,86 @@
 
 package me.lorenzo0111.elections.scheduler;
 
-import org.quartz.*;
+import org.jetbrains.annotations.NotNull;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.CronTrigger;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.spi.MutableTrigger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 
-public class ChronHandler {
+public class CronHandler {
     private static final List<Class<? extends Job>> JOBS = new ArrayList<>();
-    private static final SchedulerFactory FACTORY = new StdSchedulerFactory();
+    private static final SchedulerFactory FACTORY;
     private static Scheduler scheduler;
 
+    static {
+        SchedulerFactory factory;
+
+        Properties properties = new Properties();
+        properties.setProperty("org.quartz.scheduler.instanceName", "ElectionsScheduler");
+        properties.setProperty("org.quartz.threadPool.threadCount", "1");
+
+        try {
+            factory = new StdSchedulerFactory(properties);
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+            factory = new StdSchedulerFactory();
+        }
+
+        FACTORY = factory;
+    }
+
     public static Scheduler getScheduler() throws SchedulerException {
-        if (scheduler != null) return scheduler;
-        Scheduler scheduler = FACTORY.getScheduler();
-        scheduler.start();
+        if (scheduler == null) {
+            scheduler = FACTORY.getScheduler();
+            scheduler.start();
+        }
+
         return scheduler;
     }
 
-    public static void unSchedule(Class<? extends Job> job) throws SchedulerException {
+    public static void unSchedule(@NotNull Class<? extends Job> job) throws SchedulerException {
         Scheduler scheduler = getScheduler();
         scheduler.unscheduleJob(TriggerKey.triggerKey(job.getName()));
         JOBS.remove(job);
     }
 
-    public static void schedule(Class<? extends Job> job, JobDataMap values) throws SchedulerException {
+    public static void schedule(Class<? extends Job> job, String expression, JobDataMap values) throws SchedulerException {
         Scheduler scheduler = getScheduler();
         JobDetail jobDetail = JobBuilder.newJob(job)
-                .withIdentity(job.getName())
+                .withIdentity(job.getName(), "elections")
                 .setJobData(values)
                 .build();
 
-        MutableTrigger trigger = CronScheduleBuilder.cronSchedule("").build();
+        CronTrigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity(job.getName(),"elections")
+                .withSchedule(CronScheduleBuilder.cronSchedule(expression))
+                .build();
+
         scheduler.scheduleJob(jobDetail,trigger);
         scheduler.start();
         JOBS.add(job);
     }
 
-    public static void schedule(Class<? extends Job> job) throws SchedulerException {
-        schedule(job,new JobDataMap());
+    public static void schedule(Class<? extends Job> job, String expression) throws SchedulerException {
+        schedule(job, expression, new JobDataMap());
     }
 
     public static void shutdown() throws SchedulerException {
+        if (scheduler == null) return;
+
         getScheduler().shutdown();
     }
 

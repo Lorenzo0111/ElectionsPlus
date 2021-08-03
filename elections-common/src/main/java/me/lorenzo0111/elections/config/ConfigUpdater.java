@@ -24,8 +24,8 @@
 
 package me.lorenzo0111.elections.config;
 
+import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.ConfigurateException;
-import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
@@ -38,7 +38,7 @@ public class ConfigUpdater {
         this.values = values;
     }
 
-    public ConfigurationNode update(File file, ConfigurationNode config) throws ConfigurateException {
+    public CommentedConfigurationNode update(File file, CommentedConfigurationNode config) throws ConfigurateException {
         boolean updated = false;
 
         for (Object[] key : values.keySet()) {

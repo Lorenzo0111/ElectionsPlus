@@ -72,6 +72,7 @@ public final class ElectionsPlus extends JavaPlugin {
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
+        BukkitAudienceManager.init(this);
         new Metrics(this,11735);
         Getters.updater(new UpdateChecker(new BukkitScheduler(this), this.getDescription().getVersion(), this.getName(),93463, "https://www.spigotmc.org/resources/93463/", null, null));
         this.load();
@@ -79,8 +80,11 @@ public final class ElectionsPlus extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        GlobalMain.shutdown();
+
         if (!this.loaded) {
             this.getLogger().warning("Plugin is not initialized.");
+            return;
         }
 
          try {
@@ -92,9 +96,6 @@ public final class ElectionsPlus extends JavaPlugin {
          Bukkit.getScheduler().cancelTasks(this);
 
          Messages.close();
-
-         if (BukkitAudienceManager.initialized())
-             BukkitAudienceManager.shutdown();
     }
 
     public void start() throws ConfigurateException {
@@ -102,7 +103,7 @@ public final class ElectionsPlus extends JavaPlugin {
 
         this.reload();
 
-        GenericMain.init(getDataFolder().toPath());
+        GlobalMain.init(getDataFolder().toPath());
 
         if (config.node("rank","enabled").getBoolean()) {
             RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
