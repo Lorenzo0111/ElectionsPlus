@@ -27,7 +27,7 @@ cache-duration: 5
 # You can learn more about chron tab on https://www.adminschoice.com/crontab-quick-reference
 # Examples: https://crontab.guru/examples.html
 # WARNING: The syntax is different: [seconds,minutes,hours,daysOfMonth,months,daysOfWeek,years].
-# Documentation: https://www.quartz-scheduler.org/api/2.3.0/index.html
+# Documentation: https://www.quartz-scheduler.org/api/2.3.0/org/quartz/CronExpression.html
 # Name variables: %y: Year; %m: Month; %d: Day
 chron: # Yea, it is a typo but i can't actually fix this.
   enabled: false
