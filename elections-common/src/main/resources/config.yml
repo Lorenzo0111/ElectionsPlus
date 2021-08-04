@@ -31,7 +31,7 @@ cache-duration: 5
 # Name variables: %y: Year; %m: Month; %d: Day
 chron: # Yea, it is a typo but i can't actually fix this.
   enabled: false
-  syntax: "0 0 1 * *"
+  syntax: "0 0 0 1 * ? *"
   name: "%y-%m-%d"
 
 rank:
