@@ -115,6 +115,8 @@ public final class ElectionsPlus extends JavaPlugin {
         Bukkit.getServicesManager().register(IElectionsPlusAPI.class,api,this, ServicePriority.Normal);
         Bukkit.getPluginManager().registerEvents(new JoinListener(),this);
         switch (getConfig().getString("database.type", "NULL").toUpperCase()) {
+            case "REDIS":
+                this.getLogger().warning("The redis feature is not implemented yet. Using SQLITE..");
             case "SQLITE":
                 try {
                     this.manager = new DatabaseManager(new BukkitScheduler(this),cache,config(),new SQLiteConnection(getDataFolder().toPath()));
@@ -129,9 +131,6 @@ public final class ElectionsPlus extends JavaPlugin {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-                break;
-            case "REDIS":
-                this.getLogger().warning("The redis feature is not implemented yet");
                 break;
             default:
                 this.getLogger().severe("Invalid database type");
