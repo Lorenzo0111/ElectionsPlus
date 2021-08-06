@@ -30,7 +30,7 @@ buildscript {
 
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
-        classpath "io.github.slimjar:gradle-plugin:1.2.1"
+        classpath "io.github.slimjar:gradle-plugin:1.2.2"
     }
 }
 
