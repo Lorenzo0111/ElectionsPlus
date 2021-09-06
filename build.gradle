@@ -67,7 +67,7 @@ subprojects {
         implementation('org.quartz-scheduler:quartz:2.3.2')
         implementation('org.spongepowered:configurate-yaml:4.1.2')
         implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
-        implementation('net.kyori:adventure-api:4.8.1')
+        implementation('net.kyori:adventure-api:4.9.0')
         implementation('net.kyori:adventure-text-serializer-legacy:4.8.1')
         slim('org.slf4j:slf4j-simple:1.7.32')
         slim('mysql:mysql-connector-java:8.0.26')
