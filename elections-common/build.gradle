@@ -31,5 +31,5 @@ dependencies {
     implementation project(':elections-api')
     implementation("com.google.guava:guava:31.0.1-jre")
     implementation('com.google.code.gson:gson:2.8.9')
-    implementation('space.rocketplugins.pluginslib:common:2.0.2.1')
+    implementation('space.rocketplugins.pluginslib:common:2.0.3')
 }
