@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    implementation('space.rocketplugins.pluginslib:sponge:2.0.2.1')
+    implementation('space.rocketplugins.pluginslib:sponge:2.0.3')
     implementation project(':elections-common')
     implementation project(':elections-api')
     compileOnly('org.spongepowered:spongeapi:7.3.0')
