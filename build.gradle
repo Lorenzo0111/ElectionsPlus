@@ -49,7 +49,7 @@ subprojects {
     compileJava.options.encoding = "UTF-8"
     compileTestJava.options.encoding = "UTF-8"
 
-    version = "1.5"
+    version = "1.6"
     group = "me.lorenzo0111"
 
     repositories {
@@ -60,7 +60,7 @@ subprojects {
         }
         maven { url 'https://jitpack.io' }
         maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public'}
-        maven { url 'https://repo.vshnv.tech/releases/' }
+        maven { url 'https://dl.lorenzo0111.me' }
     }
 
     dependencies {
