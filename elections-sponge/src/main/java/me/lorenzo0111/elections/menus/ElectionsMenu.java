@@ -30,6 +30,7 @@ import com.codehusky.huskyui.states.action.ActionType;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
 import me.lorenzo0111.elections.handlers.Messages;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.data.type.DyeColors;
 import org.spongepowered.api.entity.living.player.Player;
@@ -63,7 +64,7 @@ public class ElectionsMenu {
                         .itemType(ItemTypes.BANNER)
                         .add(Keys.BANNER_BASE_COLOR, DyeColors.YELLOW)
                         .add(Keys.DISPLAY_NAME, Text.of("§9" + election.getName()))
-                        .add(Keys.ITEM_LORE, Arrays.asList(Messages.text(Messages.component(false, Messages.single("state", election.isOpen() ? Messages.get("open") : Messages.get("close")),"guis", "state")), election.isOpen() ? Messages.text("guis", "vote") : Text.EMPTY, getRightLore(election)))
+                        .add(Keys.ITEM_LORE, Arrays.asList(Messages.text(Messages.component(false, Placeholder.parsed("state", election.isOpen() ? Messages.get("open") : Messages.get("close")),"guis", "state")), election.isOpen() ? Messages.text("guis", "vote") : Text.EMPTY, getRightLore(election)))
                         .build(), ActionType.CLOSE, (e) -> {
                             if (e.getObserver().hasPermission("elections.edit")) {
                                 if (election.isOpen()) {

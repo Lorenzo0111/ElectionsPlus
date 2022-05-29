@@ -29,6 +29,7 @@ import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -81,10 +82,12 @@ public class Messages {
         return component(prefix,new HashMap<>(),path);
     }
 
-    public static Component component(boolean prefix, Map<String,String> placeholders, Object... path) {
+    public static Component component(boolean prefix, TagResolver placeholders, Object... path) {
         String p = prefix ? prefix() : "";
 
-        return MiniMessage.get().parse(ChatColor.translateAlternateColorCodes('&', p + config.node(path).getString(NOT_FOUND)), placeholders);
+        return MiniMessage.miniMessage()
+                .deserialize(ChatColor.translateAlternateColorCodes(
+                        '&', p + config.node(path).getString(NOT_FOUND)), placeholders);
     }
 
     public static String get(Object... path) {

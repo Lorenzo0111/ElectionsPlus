@@ -31,6 +31,7 @@ import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.handlers.Messages;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -48,7 +49,7 @@ public class VoteMenu {
 
     public VoteMenu(Player owner, Election election) {
         this.state = new StateContainer();
-        this.page = GuiUtils.create(Messages.text(Messages.component(false, Messages.single("name",election.getName()),"guis", "vote-title")));
+        this.page = GuiUtils.create(Messages.text(Messages.component(false, Placeholder.parsed("name", election.getName()),"guis", "vote-title")));
 
         this.owner = owner;
         this.election = election;
@@ -73,7 +74,7 @@ public class VoteMenu {
                         .vote(e.getObserver().getUniqueId(), party, election)
                         .thenAccept((b) -> {
                             if (b) {
-                                Messages.send(Messages.audience(e.getObserver()),true, Messages.single("name", party.getName()),"vote", "success");
+                                Messages.send(Messages.audience(e.getObserver()),true, Placeholder.parsed("name", party.getName()),"vote", "success");
                                 return;
                             }
 

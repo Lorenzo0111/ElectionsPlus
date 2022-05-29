@@ -60,15 +60,15 @@ subprojects {
         }
         maven { url 'https://jitpack.io' }
         maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public'}
-        maven { url 'https://dl.lorenzo0111.me' }
+        maven { url 'https://dl.lorenzo0111.me/releases' }
     }
 
     dependencies {
         implementation('org.quartz-scheduler:quartz:2.3.2')
         implementation('org.spongepowered:configurate-yaml:4.1.2')
-        implementation("net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT")
-        implementation('net.kyori:adventure-api:4.9.3')
-        implementation('net.kyori:adventure-text-serializer-legacy:4.9.3')
+        implementation("net.kyori:adventure-text-minimessage:4.10.1")
+        implementation('net.kyori:adventure-api:4.10.1')
+        implementation('net.kyori:adventure-text-serializer-legacy:4.10.1')
         slim('org.slf4j:slf4j-simple:1.7.36')
         slim('mysql:mysql-connector-java:8.0.28')
         slim('org.xerial:sqlite-jdbc:3.36.0.3')

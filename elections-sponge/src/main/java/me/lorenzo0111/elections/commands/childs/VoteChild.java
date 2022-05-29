@@ -32,6 +32,8 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.spongepowered.api.entity.living.player.Player;
 
 public class VoteChild extends SubCommand {
@@ -66,7 +68,7 @@ public class VoteChild extends SubCommand {
                 .getElection(args[1])
                 .thenAccept((election) -> {
                     if (election == null) {
-                        Messages.send(sender.audience(),true, Messages.single("name", args[1]), "errors", "not-found");
+                        Messages.send(sender.audience(),true, Placeholder.parsed("name", args[1]), "errors", "not-found");
                         return;
                     }
 

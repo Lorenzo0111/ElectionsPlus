@@ -29,6 +29,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.spongeapi.SpongeAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.text.Text;
@@ -52,12 +53,6 @@ public class Messages {
     public static String prefix() { return prefix; }
     public static ConfigurationNode config() { return config; }
 
-    public static Map<String,String> single(String key, String value) {
-        Map<String,String> map = new HashMap<>();
-        map.put(key,ChatColor.translateAlternateColorCodes('&', value));
-        return map;
-    }
-
     public static Map<String,String> keys(String... keys) {
         Map<String,String> map = new HashMap<>();
         Arrays.asList(keys).forEach(k -> map.put(k,get(k)));
@@ -80,10 +75,10 @@ public class Messages {
         return component(prefix,new HashMap<>(),path);
     }
 
-    public static Component component(boolean prefix, Map<String,String> placeholders, Object... path) {
+    public static Component component(boolean prefix, TagResolver placeholders, Object... path) {
         String p = prefix ? prefix() : "";
 
-        return MiniMessage.get().parse(ChatColor.translateAlternateColorCodes('&', p + config.node(path).getString(NOT_FOUND)), placeholders);
+        return MiniMessage.miniMessage().deserialize(ChatColor.translateAlternateColorCodes('&', p + config.node(path).getString(NOT_FOUND)), placeholders);
     }
 
     public static String get(Object... path) {

@@ -32,6 +32,7 @@ import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.NameConversation;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.conversation.ConversationUtil;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.ItemTypes;
@@ -62,7 +63,7 @@ public class CreateElectionMenu {
 
     public void setup() {
         GuiUtils.element(state,page, ItemStack.builder().itemType(ItemTypes.BOOK)
-                .add(Keys.DISPLAY_NAME, Messages.text(Messages.component(false,Messages.single("name",name),"guis","current-name")))
+                .add(Keys.DISPLAY_NAME, Messages.text(Messages.component(false, Placeholder.parsed("name", name),"guis","current-name")))
                 .add(Keys.ITEM_LORE, Collections.singletonList(Messages.text("guis", "edit-name")))
                 .build(), ActionType.CLOSE, (event) -> ConversationUtil.startConversation(player,new NameConversation(plugin,this)));
 

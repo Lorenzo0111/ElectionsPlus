@@ -32,6 +32,7 @@ import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.AddMemberConversation;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.conversation.ConversationUtil;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.entity.living.player.Player;
@@ -51,7 +52,7 @@ public class MembersMenu {
 
     public MembersMenu(ElectionsPlus plugin, Party party, Player owner) {
         this.state = new StateContainer();
-        this.page = GuiUtils.create(Messages.text(Messages.component(false, Messages.single("name",party.getName()), "guis", "members-title")));
+        this.page = GuiUtils.create(Messages.text(Messages.component(false, Placeholder.parsed("name", party.getName()), "guis", "members-title")));
 
         this.party = party;
         this.owner = owner;
