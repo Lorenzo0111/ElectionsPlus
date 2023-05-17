@@ -30,6 +30,7 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -43,7 +44,7 @@ import java.util.Map;
 public class Messages {
     private static ConfigurationNode config;
     private static String prefix;
-    private static final String NOT_FOUND = "&cString not found in the messages.yml file.";
+    private static final String NOT_FOUND = ": <red>String not found in the messages.yml file.";
 
     public static void init(ConfigurationNode config, String prefix, JavaPlugin plugin) {
         Messages.config = config;
@@ -71,7 +72,7 @@ public class Messages {
     }
 
     public static String componentString(boolean prefix, Object... path) {
-        return Legacy.SERIALIZER.serialize(component(prefix,path));
+        return Legacy.SERIALIZER.serialize(component(prefix, path));
     }
 
     public static String componentString(boolean prefix, Map<String,String> placeholders, Object... path) {
@@ -79,7 +80,16 @@ public class Messages {
     }
 
     public static Component component(boolean prefix, Object... path) {
-        return component(prefix,new HashMap<>(),path);
+        String p = prefix ? prefix() : "";
+
+        String paths = "";
+        for(Object o : path) {
+            String t = o.getClass().getName();
+            String v = o.toString();
+            paths = paths + "[" + t + ":" + v + "]";
+        }
+
+        return MiniMessage.miniMessage().deserialize(p + config.node(path).getString(paths + NOT_FOUND));
     }
 
     public static Component component(boolean prefix, TagResolver placeholders, Object... path) {
@@ -87,11 +97,11 @@ public class Messages {
 
         return MiniMessage.miniMessage()
                 .deserialize(ChatColor.translateAlternateColorCodes(
-                        '&', p + config.node(path).getString(NOT_FOUND)), placeholders);
+                        '&', p + config.node(path).getString(path.toString() + NOT_FOUND)), placeholders);
     }
 
     public static String get(Object... path) {
-        return ChatColor.translateAlternateColorCodes('&', config.node(path).getString(NOT_FOUND));
+        return ChatColor.translateAlternateColorCodes('&', config.node(path).getString(path.toString() + NOT_FOUND));
     }
 
     public static void send(CommandSender sender, boolean prefix, Object... path) {

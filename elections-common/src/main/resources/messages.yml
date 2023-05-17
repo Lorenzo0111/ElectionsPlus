@@ -2,18 +2,18 @@
 # Here is the documentation: https://docs.adventure.kyori.net/minimessage.html#format
 
 errors:
-  console: "&cThis command can be used from Players only."
+  console: "<red>This command can be used from Players only."
   election-exists: "Election already exists."
   not-found: "Election <name> does not exists."
 
 # Placeholder: <name>
-disband: "&7Party <name> deleted."
+disband: "<gray>Party <name> deleted."
 
-open: "&aOpen"
-close: "&cClose"
+open: "<green>Open"
+close: "<red>Close"
 
 conversations:
-  name: "&7Insert the name of the elections."
+  name: "Insert the name of the elections."
   add: "Write the name of the player to add."
   create: "Insert the name of the new party"
   icon: "Write the icon base64 in chat."
@@ -21,54 +21,54 @@ conversations:
 # Guis titles
 guis:
   # General
-  next: "&7Next"
-  back: "&7Back"
-  cancel: "&cCancel"
-  save: "&aSave"
-  delete: "&cDelete"
+  next: "<gray>Next"
+  back: "<gray>Back"
+  cancel: "<red>Cancel"
+  save: "<green>Save"
+  delete: "<red>Delete"
   # Add party to election
-  add: "&e&nLeft click&7 to add"
-  remove: "&e&nRight click&7 to remove"
-  added: " &8[&aADDED&7]"
-  add-party: "&9&l» &7<name> &9&l» &7Add Party"
+  add: "<yellow><#B4684D>Left click<gray> to add"
+  remove: "<yellow><#B4684D>Right click<gray> to remove"
+  added: " <dark_gray>[<green>ADDED<gray>]"
+  add-party: "<blue><bold>» <gray><name> <blue><bold>» <gray>Add Party"
   # Create election
-  create: "&9&l» &7Create Election"
-  current-name: "&7Current Name: &e<name>"
-  edit-name: "&7&oClick to edit"
-  save-lore: "&7Click to save and create elections."
-  add-name: "&aAdd Parties"
-  add-lore: "&7Click to add parties to the elections"
+  create: "<blue><bold>» <gray>Create Election"
+  current-name: "<gray>Current Name: <yellow><name>"
+  edit-name: "<gray><i>Click to edit"
+  save-lore: "<gray>Click to save and create elections."
+  add-name: "<green>Add Parties"
+  add-lore: "<gray>Click to add parties to the elections"
   # Edit party
-  edit-party-title: "&9&l» &7Parties &9&l» &7<name>"
-  delete-party-lore: "&7Click to delete the party"
-  members: "&7Members"
-  members-lore: "&7Click to &e&nedit&7 the member list"
-  refresh: "&7Refresh may take some seconds"
-  icon: "&7Edit the icon"
-  icon-lore: "&7Edit the party &a&nicon"
-  icon-lore2: "&7that will be displayed in elections"
-  no-icon: "&cYou can't edit the icon"
-  no-icon-description: "&7You don't have the permission"
-  no-icon-description2: "&7to set the item icon"
+  edit-party-title: "<blue><bold>» <gray>Parties <blue><bold>» <gray><name>"
+  delete-party-lore: "<gray>Click to delete the party"
+  members: "<gray>Members"
+  members-lore: "<gray>Click to <yellow><#B4684D>edit<gray> the member list"
+  refresh: "<gray>Refresh may take some seconds"
+  icon: "<gray>Edit the icon"
+  icon-lore: "<gray>Edit the party <green><#B4684D>icon"
+  icon-lore2: "<gray>that will be displayed in elections"
+  no-icon: "<red>You can't edit the icon"
+  no-icon-description: "<gray>You don't have the permission"
+  no-icon-description2: "<gray>to set the item icon"
   # Elections
-  elections: "&9&l» &7Elections"
-  state: "&7State: <state>"
-  vote: "&7Click to vote"
-  close-election: "&7Right click to close"
-  delete-election: "&7Right click to delete"
+  elections: "<blue><bold>» <gray>Elections"
+  state: "<gray>State: <state>"
+  vote: "<gray>Click to vote"
+  close-election: "<gray>Right click to close"
+  delete-election: "<gray>Right click to delete"
   # Members
-  members-title: "&9&l» &7<name> &9&l» &7Members"
-  add-member: "&aAdd Member"
-  kick-member: "&e&nLeft click&7 to kick"
-  set-owner: "&e&nRight click&7 to set as owner"
+  members-title: "<blue><bold>» <gray><name> <blue><bold>» <gray>Members"
+  add-member: "<green>Add Member"
+  kick-member: "<yellow><#B4684D>Left click<gray> to kick"
+  set-owner: "<yellow><#B4684D>Right click<gray> to set as owner"
   # Parties
-  parties: "&9&l» &7Parties"
-  create-party: "&aCreate"
-  create-party-lore: "&7Click to create a new party."
-  edit-party: "&7Click to edit"
-  no-edit-party: "&cYou can't edit this party"
+  parties: "<blue><bold>» <gray>Parties"
+  create-party: "<green>Create"
+  create-party-lore: "<gray>Click to create a new party."
+  edit-party: "<gray>Click to edit"
+  no-edit-party: "<red>You can't edit this party"
   # Vote
-  vote-title: "&9&l» &7<name> &9&l» &7Vote"
+  vote-title: "<blue><bold>» <gray><name> <blue><bold>» <gray>Vote"
 
 vote:
   already: "You have already voted in this elections."
@@ -76,11 +76,11 @@ vote:
 
 # Used for the /elections info <name>
 votes:
-  title: "&eVotes"
+  title: "<yellow>Votes"
   name: "votes"
 
 loading: "Loading.."
 election-created: "Election created."
-party-deleted: "&7Party deleted. &o(Refresh may take some seconds)"
-no-permission-delete: "&cYou can't delete this party."
-join: "&7There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
+party-deleted: "<gray>Party deleted. <i>(Refresh may take some seconds)"
+no-permission-delete: "<red>You can't delete this party."
+join: "<gray>There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
