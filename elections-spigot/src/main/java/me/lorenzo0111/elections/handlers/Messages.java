@@ -50,7 +50,7 @@ import java.util.Set;
 public class Messages {
     private static ConfigurationNode config;
     private static String prefix;
-    private static final String NOT_FOUND = ": <red>String not found in the messages.yml file.";
+    private static final String NOT_FOUND = ": <red>String not found in messages.yml";
 
     public static void init(ConfigurationNode config, String prefix, JavaPlugin plugin) {
         Messages.config = config;
@@ -96,6 +96,7 @@ public class Messages {
         return paths + NOT_FOUND;
     }
 
+    /*
     private static TagResolver mkPlaceholders(Object o) {
         if (!(o instanceof Map)) {
             return null;
@@ -112,28 +113,38 @@ public class Messages {
 
         return b.build();
     }
+    */
 
     public static Component component(boolean prefix, Object... path) {
         String p = prefix ? prefix() : "";
 
-        TagResolver placeholders = null;
-
+        Builder b = TagResolver.builder();
+        Boolean empty = true;
         ArrayList<String> newPath = new ArrayList<String>();
+
         for(Object o : path) {
             if (o instanceof String) {
                 newPath.add((String)o);
-            } else if (placeholders == null) {
-                placeholders = mkPlaceholders(o);
+            } else if (o instanceof Map) {
+                Map<String, String> m = (Map<String,String>)o;
+                Set<String> keys = m.keySet();
+                for (String k : keys) {
+                    String v = m.get(k);
+                    b.tag(k, Tag.preProcessParsed(v));
+                    empty = false;
+                }
             } else {
-                return MiniMessage.miniMessage().deserialize(p + "too many placeholders");
+                return MiniMessage.miniMessage().deserialize(p + "U:" + notfound(o));
             }
         }
 
         ConfigurationNode n = config.node(newPath);
 
-        if (placeholders == null) {
+        if (empty) {
             return MiniMessage.miniMessage().deserialize(p + n.getString("x:" + n.toString() + ":" + notfound(path)));
         }
+
+        TagResolver placeholders = b.build();
 
         return MiniMessage.miniMessage().deserialize(p + n.getString("x:" + n.toString() + ":" + notfound(path)), placeholders);
     }

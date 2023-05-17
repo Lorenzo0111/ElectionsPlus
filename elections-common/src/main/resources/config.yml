@@ -1,4 +1,4 @@
-prefix: "&8[&eElections&9+&8] &r"
+prefix: "<dark_gray>[<yellow>Elections<blue>+<dark_gray>] <reset>"
 
 database:
   type: "SQLITE" # SQLITE, MYSQL, REDIS
