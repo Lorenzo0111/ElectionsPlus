@@ -35,7 +35,7 @@ guis:
   create: "<blue><bold>» <gray>Create Election"
   current-name: "<gray>Current Name: <yellow><name>"
   edit-name: "<gray><i>Click to edit"
-  save-lore: "<gray>Click to save and create elections."
+  save-lore: "<gray>Click to save and create elections"
   add-name: "<green>Add Parties"
   add-lore: "<gray>Click to add parties to the elections"
   # Edit party

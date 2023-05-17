@@ -29,17 +29,23 @@ import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.Tag;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Builder;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.ScopedConfigurationNode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class Messages {
     private static ConfigurationNode config;
@@ -79,9 +85,7 @@ public class Messages {
         return Legacy.SERIALIZER.serialize(component(prefix, placeholders, path));
     }
 
-    public static Component component(boolean prefix, Object... path) {
-        String p = prefix ? prefix() : "";
-
+    private static String notfound(Object... path) {
         String paths = "";
         for(Object o : path) {
             String t = o.getClass().getName();
@@ -89,7 +93,49 @@ public class Messages {
             paths = paths + "[" + t + ":" + v + "]";
         }
 
-        return MiniMessage.miniMessage().deserialize(p + config.node(path).getString(paths + NOT_FOUND));
+        return paths + NOT_FOUND;
+    }
+
+    private static TagResolver mkPlaceholders(Object o) {
+        if (!(o instanceof Map)) {
+            return null;
+        }
+
+        Map<String, String> m = (Map<String,String>)o;
+        Set<String> keys = m.keySet();
+
+        Builder b = TagResolver.builder();
+        for (String k : keys) {
+            String v = m.get(k);
+            b.tag(k, Tag.preProcessParsed(v));
+        }
+
+        return b.build();
+    }
+
+    public static Component component(boolean prefix, Object... path) {
+        String p = prefix ? prefix() : "";
+
+        TagResolver placeholders = null;
+
+        ArrayList<String> newPath = new ArrayList<String>();
+        for(Object o : path) {
+            if (o instanceof String) {
+                newPath.add((String)o);
+            } else if (placeholders == null) {
+                placeholders = mkPlaceholders(o);
+            } else {
+                return MiniMessage.miniMessage().deserialize(p + "too many placeholders");
+            }
+        }
+
+        ConfigurationNode n = config.node(newPath);
+
+        if (placeholders == null) {
+            return MiniMessage.miniMessage().deserialize(p + n.getString("x:" + n.toString() + ":" + notfound(path)));
+        }
+
+        return MiniMessage.miniMessage().deserialize(p + n.getString("x:" + n.toString() + ":" + notfound(path)), placeholders);
     }
 
     public static Component component(boolean prefix, TagResolver placeholders, Object... path) {
@@ -97,11 +143,11 @@ public class Messages {
 
         return MiniMessage.miniMessage()
                 .deserialize(ChatColor.translateAlternateColorCodes(
-                        '&', p + config.node(path).getString(path.toString() + NOT_FOUND)), placeholders);
+                        '&', p + config.node(path).getString(notfound(path))), placeholders);
     }
 
     public static String get(Object... path) {
-        return ChatColor.translateAlternateColorCodes('&', config.node(path).getString(path.toString() + NOT_FOUND));
+        return ChatColor.translateAlternateColorCodes('&', config.node(path).getString(notfound(path)));
     }
 
     public static void send(CommandSender sender, boolean prefix, Object... path) {
