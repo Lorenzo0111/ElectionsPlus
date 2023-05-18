@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 public class CreatePartyConversation extends Conversation {
 
     public CreatePartyConversation(Player author, ElectionsPlus plugin) {
-        super(Messages.get("conversations", "create"), author, plugin);
+        super(Messages.componentString(false, "conversations", "create"), author, plugin);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class CreatePartyConversation extends Conversation {
                 .createParty(input, this.getAuthor().getUniqueId())
                 .thenAccept((party) -> {
                     if (party == null) {
-                        this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "&cA party with that name already exist."));
+                        this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "&cA party with that name already exists."));
                         return;
                     }
 

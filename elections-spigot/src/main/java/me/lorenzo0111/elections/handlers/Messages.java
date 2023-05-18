@@ -30,16 +30,13 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Builder;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spongepowered.configurate.ConfigurationNode;
-import org.spongepowered.configurate.ScopedConfigurationNode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,25 +93,6 @@ public class Messages {
         return paths + NOT_FOUND;
     }
 
-    /*
-    private static TagResolver mkPlaceholders(Object o) {
-        if (!(o instanceof Map)) {
-            return null;
-        }
-
-        Map<String, String> m = (Map<String,String>)o;
-        Set<String> keys = m.keySet();
-
-        Builder b = TagResolver.builder();
-        for (String k : keys) {
-            String v = m.get(k);
-            b.tag(k, Tag.preProcessParsed(v));
-        }
-
-        return b.build();
-    }
-    */
-
     public static Component component(boolean prefix, Object... path) {
         String p = prefix ? prefix() : "";
 
@@ -133,20 +111,32 @@ public class Messages {
                     b.tag(k, Tag.preProcessParsed(v));
                     empty = false;
                 }
+            } else if (o instanceof Object[]) {
+                Object oa[] = (Object[])o;
+
+                for(Object element : oa) {
+                    if (element instanceof String) {
+                        newPath.add((String)element);
+                    } else {
+                        String t = element.getClass().getName();
+                        String v = element.toString();
+                        return MiniMessage.miniMessage().deserialize(p + "A:" + t + ", " + v);
+                    }
+                }
             } else {
-                return MiniMessage.miniMessage().deserialize(p + "U:" + notfound(o));
+                return MiniMessage.miniMessage().deserialize(p + "B:" + notfound(o));
             }
         }
 
         ConfigurationNode n = config.node(newPath);
 
         if (empty) {
-            return MiniMessage.miniMessage().deserialize(p + n.getString("x:" + n.toString() + ":" + notfound(path)));
+            return MiniMessage.miniMessage().deserialize(p + n.getString("C:" + n.toString() + ":" + notfound(path)));
         }
 
         TagResolver placeholders = b.build();
 
-        return MiniMessage.miniMessage().deserialize(p + n.getString("x:" + n.toString() + ":" + notfound(path)), placeholders);
+        return MiniMessage.miniMessage().deserialize(p + n.getString("D:" + n.toString() + ":" + notfound(path)), placeholders);
     }
 
     public static Component component(boolean prefix, TagResolver placeholders, Object... path) {
