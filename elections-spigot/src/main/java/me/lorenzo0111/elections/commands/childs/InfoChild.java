@@ -33,6 +33,7 @@ import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.HashMap;
 import java.util.List;
@@ -56,11 +57,11 @@ public class InfoChild extends SubCommand {
         ElectionsPlus plugin = (ElectionsPlus) getCommand().getPlugin();
 
         if (args.length != 2) {
-            user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&cInsert a valid election name.")));
+            user.audience().sendMessage(Messages.component(true, "votes", "election-name"));
             return;
         }
 
-        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&7Calculating votes..")));
+        user.audience().sendMessage(Messages.component(true, "votes", "calculating"));
 
         plugin.getApi()
                 .getVotes()
@@ -84,7 +85,7 @@ public class InfoChild extends SubCommand {
                         voteMap.replace(vote.getParty(),voteCount,voteCount+1);
                     }
 
-                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "&8&m=============&e " + Messages.get("votes","title") + " &8&m=============&e")));
+                    user.audience().sendMessage(Messages.component(true, "votes","title"));
                     for (String party : voteMap.keySet()) {
                         user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "  &6&l• &7" + party + " &e&l» &e&n" + voteMap.get(party) + "&7 " + Messages.get("votes","name") + " (&e&o" + (voteMap.get(party)*100/total) + "%&7)")));
                     }

@@ -1,5 +1,6 @@
 # In this file you can use MiniMessage for better colors, click actions and a lot of features
 # Here is the documentation: https://docs.adventure.kyori.net/minimessage.html#format
+prefix: "<dark_gray>[<yellow>Elections<blue>+<dark_gray>] <reset>"
 
 errors:
   console: "<red>This command can be used from Players only."
@@ -76,7 +77,9 @@ vote:
 
 # Used for the /elections info <name>
 votes:
-  title: "<yellow>Votes"
+  election-name: "<red>Insert a valid election name."
+  calculating: "<gray>Calculating Votes..."
+  title: "<dark_gray><st>=============</st><yellow> Votes <dark_gray><st>============="
   name: "votes"
 
 loading: "Loading.."

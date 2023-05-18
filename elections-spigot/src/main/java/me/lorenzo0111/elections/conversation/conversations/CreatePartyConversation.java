@@ -34,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 public class CreatePartyConversation extends Conversation {
 
     public CreatePartyConversation(Player author, ElectionsPlus plugin) {
-        super(Messages.componentString(false, "conversations", "create"), author, plugin);
+        super(Messages.get("conversations", "create"), author, plugin);
     }
 
     @Override

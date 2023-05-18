@@ -148,7 +148,10 @@ public class Messages {
     }
 
     public static String get(Object... path) {
-        return ChatColor.translateAlternateColorCodes('&', config.node(path).getString(notfound(path)));
+        Component c = component(false, path);
+        return MiniMessage.miniMessage().serialize(c);
+        
+//        return ChatColor.translateAlternateColorCodes('&', config.node(path).getString(notfound(path)));
     }
 
     public static void send(CommandSender sender, boolean prefix, Object... path) {
