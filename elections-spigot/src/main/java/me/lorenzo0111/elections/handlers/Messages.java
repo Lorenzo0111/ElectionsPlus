@@ -44,10 +44,8 @@ import org.spongepowered.configurate.ScopedConfigurationNode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class Messages {
     private static ConfigurationNode config;
@@ -135,24 +133,7 @@ public class Messages {
                     b.tag(k, Tag.preProcessParsed(v));
                     empty = false;
                 }
-            } else if (o instanceof ArrayList) {
-                return MiniMessage.miniMessage().deserialize(p + "arraylist");
-            } else if (o instanceof Object[]) {
-                Object oa[] = (Object[])o;
-                String err = null;
-
-                for(Object element : oa) {
-                    String t = element.getClass().getName();
-                    String v = element.toString();
-                    err = "X:" + t + ", " + v;
-                    break;
-                }
-
-                if (err != null) {
-                    return MiniMessage.miniMessage().deserialize(p + err);
-                }
-            }
-            else {
+            } else {
                 return MiniMessage.miniMessage().deserialize(p + "U:" + notfound(o));
             }
         }

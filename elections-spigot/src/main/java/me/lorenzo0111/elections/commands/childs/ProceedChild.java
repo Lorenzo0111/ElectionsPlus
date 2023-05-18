@@ -96,7 +96,7 @@ public class ProceedChild extends SubCommand {
                     }
 
                     if (winners.isEmpty()) {
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "<red>Can't find a winner...")));
+                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&cCan't find a winner...")));
                         return;
                     }
 
@@ -104,7 +104,7 @@ public class ProceedChild extends SubCommand {
                         plugin.getApi()
                                 .getParty(winners.get(0))
                                 .thenAccept((winner) -> plugin.win(winner.getOwner()));
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "<gray>The winner is.. <yellow><u>" + winners.get(0) + "<gray>. Run <yellow><u>/elections info " + args[1] + "<gray> to view the votes.")));
+                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&7The winner is.. &e&n" + winners.get(0) + "&7. Run &e&n/elections info " + args[1] + "&7 to view the votes.")));
                         return;
                     }
 
@@ -115,11 +115,11 @@ public class ProceedChild extends SubCommand {
                                     .thenAccept((winner) -> plugin.win(winner.getOwner()));
                         }
 
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "<gray>Both duplicate strategy has been used. Winners are: <yellow><u>" + winners + "<gray>. Run <yellow><u>/elections info " + args[1] + "<gray> to view the votes.")));
+                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&7Both duplicate strategy has been used. Winners are: &e&n" + winners + "&7. Run &e&n/elections info " + args[1] + "&7 to view the votes.")));
                         return;
                     }
 
-                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "<red>No duplicate strategy has been set, there is more than one winner: <gray>" + winners)));
+                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&cNo duplicate strategy has been set, there is more than one winner: &7" + winners)));
 
                 });
     }

@@ -49,7 +49,7 @@ public class CloseChild extends SubCommand {
         ElectionsPlus plugin = (ElectionsPlus) getCommand().getPlugin();
 
         if (args.length != 2) {
-            user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "<red>Insert a valid election name.")));
+            user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&cInsert a valid election name.")));
             return;
         }
 
@@ -59,11 +59,11 @@ public class CloseChild extends SubCommand {
                     if (election != null) {
                         election.close();
 
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "<gray>Election closed, if you want to automatically grant the rank to the winner run <yellow><u>/elections proceed " + election.getName())));
+                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&7Election closed, if you want to automatically grant the rank to the winner run &e&n/elections proceed " + election.getName())));
                         return;
                     }
 
-                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "<red>Election not found")));
+                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&cElection not found")));
                 });
     }
 }

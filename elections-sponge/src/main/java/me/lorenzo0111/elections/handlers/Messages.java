@@ -42,7 +42,7 @@ import java.util.Map;
 public class Messages {
     private static ConfigurationNode config;
     private static String prefix;
-    private static final String NOT_FOUND = "<red>String not found in the messages.yml file.";
+    private static final String NOT_FOUND = "&cString not found in the messages.yml file.";
     @Inject private static SpongeAudiences adventure;
 
     public static void init(ConfigurationNode config, String prefix) {

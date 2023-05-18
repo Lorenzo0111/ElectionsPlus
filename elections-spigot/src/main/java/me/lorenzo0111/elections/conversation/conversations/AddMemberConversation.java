@@ -49,11 +49,11 @@ public class AddMemberConversation extends Conversation {
 
         Player player = Bukkit.getPlayer(input);
         if (player == null) {
-            this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "<gray>This user is not online."));
+            this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "&7This user is not online."));
             return;
         }
 
         party.addMember(player.getUniqueId());
-        this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "<gray>Member added to the party."));
+        this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "&7Member added to the party."));
     }
 }

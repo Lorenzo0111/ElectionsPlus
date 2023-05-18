@@ -56,11 +56,11 @@ public class InfoChild extends SubCommand {
         ElectionsPlus plugin = (ElectionsPlus) getCommand().getPlugin();
 
         if (args.length != 2) {
-            user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "<red>Insert a valid election name.")));
+            user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&cInsert a valid election name.")));
             return;
         }
 
-        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "<gray>Calculating votes..")));
+        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&7Calculating votes..")));
 
         plugin.getApi()
                 .getVotes()
@@ -84,9 +84,9 @@ public class InfoChild extends SubCommand {
                         voteMap.replace(vote.getParty(),voteCount,voteCount+1);
                     }
 
-                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "<dark_gray><st>=============<yellow> " + Messages.get("votes","title") + " <dark_gray><st>=============<yellow>")));
+                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "&8&m=============&e " + Messages.get("votes","title") + " &8&m=============&e")));
                     for (String party : voteMap.keySet()) {
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "  <gold><b>• <gray>" + party + " <yellow><b>» <yellow><u>" + voteMap.get(party) + "<gray> " + Messages.get("votes","name") + " (<yellow><i>" + (voteMap.get(party)*100/total) + "%<gray>)")));
+                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "  &6&l• &7" + party + " &e&l» &e&n" + voteMap.get(party) + "&7 " + Messages.get("votes","name") + " (&e&o" + (voteMap.get(party)*100/total) + "%&7)")));
                     }
                 });
     }

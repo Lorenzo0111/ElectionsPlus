@@ -47,7 +47,7 @@ public abstract class Conversation extends StringPrompt {
     @NotNull
     @Override
     public String getPromptText(@NotNull ConversationContext context) {
-        return ChatColor.translateAlternateColorCodes('&', "<gray>" + reason);
+        return ChatColor.translateAlternateColorCodes('&', "&7" + reason);
     }
 
     public abstract void handle(@Nullable String input);

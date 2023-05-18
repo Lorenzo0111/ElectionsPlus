@@ -133,7 +133,7 @@ public class ElectionsPlus {
                 break;
         }
 
-        Customization customization = new Customization(config("prefix") + "<gray>Running <yellow>Elections <gray>v1.1 by Lorenzo0111",config("prefix") + "<red>Command not found",config("prefix") + "<gray>Run /$cmd help for command help.");
+        Customization customization = new Customization(config("prefix") + "&7Running &eElections &7v1.1 by Lorenzo0111",config("prefix") + "&cCommand not found",config("prefix") + "&7Run /$cmd help for command help.");
         new ElectionsCommand(this,"elections", Collections.singletonList("name"),customization);
     }
 

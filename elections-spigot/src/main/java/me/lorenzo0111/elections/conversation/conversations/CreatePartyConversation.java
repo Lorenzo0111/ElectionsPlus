@@ -47,11 +47,11 @@ public class CreatePartyConversation extends Conversation {
                 .createParty(input, this.getAuthor().getUniqueId())
                 .thenAccept((party) -> {
                     if (party == null) {
-                        this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "<red>A party with that name already exist."));
+                        this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "&cA party with that name already exist."));
                         return;
                     }
 
-                    this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "<gray>Party created."));
+                    this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "&7Party created."));
                 });
     }
 
