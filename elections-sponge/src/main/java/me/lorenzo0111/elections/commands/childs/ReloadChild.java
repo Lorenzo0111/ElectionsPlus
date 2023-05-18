@@ -58,6 +58,6 @@ public class ReloadChild extends SubCommand {
             errors++;
         }
 
-        sender.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', ElectionsPlus.getInstance().config("prefix") + "&7Plugin reloaded in &e&n" + (System.currentTimeMillis() - now) + "ms&7 with &e&n" + errors + "&7 error(s).")));
+        sender.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', ElectionsPlus.getInstance().config("prefix") + "<gray>Plugin reloaded in <yellow><u>" + (System.currentTimeMillis() - now) + "ms<gray> with <yellow><u>" + errors + "<gray> error(s).")));
     }
 }

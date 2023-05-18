@@ -44,7 +44,7 @@ public class HelpChild extends SubCommand {
 
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
-        sender.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', ((ElectionsPlus) getCommand().getPlugin()).config("prefix") + "&7Available commands:")));
+        sender.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', ((ElectionsPlus) getCommand().getPlugin()).config("prefix") + "<gray>Available commands:")));
         sender.audience().sendMessage(this.formatHelp("create <name>", "Create an election"));
         if (sender.hasPermission("elections.disband"))
             sender.audience().sendMessage(this.formatHelp("disband <name>", "Disband a party"));
@@ -60,6 +60,6 @@ public class HelpChild extends SubCommand {
     }
 
     public Component formatHelp(String command,String description) {
-        return Component.text(ChatColor.translateAlternateColorCodes('&', ((ElectionsPlus) getCommand().getPlugin()).config("prefix") + String.format("&9/elections %s &8» &7%s", command, description)));
+        return Component.text(ChatColor.translateAlternateColorCodes('&', ((ElectionsPlus) getCommand().getPlugin()).config("prefix") + String.format("<blue>/elections %s <dark_gray>» <gray>%s", command, description)));
     }
 }

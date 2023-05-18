@@ -50,11 +50,11 @@ public class CreatePartyConversation implements Conversation {
                 .createParty(input.toPlain(), player.getUniqueId())
                 .thenAccept((party) -> {
                     if (party == null) {
-                        player.sendMessage(Text.of(ChatColor.translateAlternateColorCodes('&', ElectionsPlus.getInstance().config("prefix") + "&cA party with that name already exist.")));
+                        player.sendMessage(Text.of(ChatColor.translateAlternateColorCodes('&', ElectionsPlus.getInstance().config("prefix") + "<red>A party with that name already exist.")));
                         return;
                     }
 
-                    player.sendMessage(Text.of(ChatColor.translateAlternateColorCodes('&', ElectionsPlus.getInstance().config("prefix") + "&7Party created.")));
+                    player.sendMessage(Text.of(ChatColor.translateAlternateColorCodes('&', ElectionsPlus.getInstance().config("prefix") + "<gray>Party created.")));
                 });
     }
 

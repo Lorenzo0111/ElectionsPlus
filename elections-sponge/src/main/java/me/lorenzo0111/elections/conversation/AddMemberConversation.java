@@ -57,12 +57,12 @@ public class AddMemberConversation implements Conversation {
 
         Optional<Player> target = Sponge.getServer().getPlayer(text);
         if (!target.isPresent()) {
-            player.sendMessage(Text.of(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&7This user is not online.")));
+            player.sendMessage(Text.of(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "<gray>This user is not online.")));
             return;
         }
 
         party.addMember(target.get().getUniqueId());
-        player.sendMessage(Text.of(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&7Member added to the party.")));
+        player.sendMessage(Text.of(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "<gray>Member added to the party.")));
     }
 
     @Override

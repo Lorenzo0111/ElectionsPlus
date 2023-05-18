@@ -137,7 +137,7 @@ public final class ElectionsPlus extends JavaPlugin {
                 break;
         }
 
-        Customization customization = new Customization(null,config("prefix") + "&cCommand not found",config("prefix") + "&7Run /$cmd help for command help.");
+        Customization customization = new Customization(null,config("prefix") + "<red>Command not found",config("prefix") + "<gray>Run /$cmd help for command help.");
 
         new ElectionsCommand(this,"elections",customization);
     }
