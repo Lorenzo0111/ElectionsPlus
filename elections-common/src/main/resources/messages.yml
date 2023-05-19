@@ -1,6 +1,5 @@
 # In this file you can use MiniMessage for better colors, click actions and a lot of features
 # Here is the documentation: https://docs.adventure.kyori.net/minimessage.html#format
-prefix: "<dark_gray>[<yellow>Elections<blue>+<dark_gray>] <reset>"
 
 errors:
   console: "<red>This command can be used from Players only."
@@ -15,8 +14,8 @@ close: "<red>Close"
 
 conversations:
   name: "Insert the name of the elections."
-  add: "Write the name of the player to add."
-  create: "Insert the name of the new party"
+  add: "Write the name of the player to add in chat."
+  create: "Insert the name of the new party."
   icon: "Write the icon base64 in chat."
 
 # Guis titles
@@ -81,9 +80,15 @@ votes:
   calculating: "<gray>Calculating Votes..."
   title: "<dark_gray><st>=============</st><yellow> Votes <dark_gray><st>============="
   name: "votes"
+  status: "<gold><b>•</b> <yellow><party> <gray>» <yellow><nvotes><gray> votes (<yellow><i><percent>%<gray>)"
 
 loading: "Loading.."
 election-created: "Election created."
-party-deleted: "<gray>Party deleted. <i>(Refresh may take some seconds)"
+party-deleted: "<gray>Party deleted. <i>(Refresh may take a few seconds)."
+party-created: "<gray>Party created."
+party-duplicate: "<red>A party with that name already exists."
+
 no-permission-delete: "<red>You can't delete this party."
 join: "<gray>There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
+
+

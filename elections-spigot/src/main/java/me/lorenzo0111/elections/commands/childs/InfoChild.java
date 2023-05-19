@@ -85,9 +85,17 @@ public class InfoChild extends SubCommand {
                         voteMap.replace(vote.getParty(),voteCount,voteCount+1);
                     }
 
-                    user.audience().sendMessage(Messages.component(true, "votes","title"));
+                    user.audience().sendMessage(Messages.component(true, "votes", "title"));
                     for (String party : voteMap.keySet()) {
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "  &6&l• &7" + party + " &e&l» &e&n" + voteMap.get(party) + "&7 " + Messages.get("votes","name") + " (&e&o" + (voteMap.get(party)*100/total) + "%&7)")));
+                        Integer nvotes = voteMap.get(party);
+                        Integer percent = nvotes * 100 / total;
+
+                        HashMap<String, String> placeholders = new HashMap<String, String>();
+                        placeholders.put("party", party);
+                        placeholders.put("nvotes", nvotes.toString());
+                        placeholders.put("percent", percent.toString());
+
+                        user.audience().sendMessage(Messages.component(true, placeholders, "votes", "status"));
                     }
                 });
     }

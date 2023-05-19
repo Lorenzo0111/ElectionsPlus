@@ -150,7 +150,7 @@ public class Messages {
     public static String get(Object... path) {
         Component c = component(false, path);
         return MiniMessage.miniMessage().serialize(c);
-        
+
 //        return ChatColor.translateAlternateColorCodes('&', config.node(path).getString(notfound(path)));
     }
 
