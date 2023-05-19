@@ -51,7 +51,9 @@ public class Messages {
 
     public static void init(ConfigurationNode config, String prefix, JavaPlugin plugin) {
         Messages.config = config;
-        Messages.prefix = prefix;
+
+        Component p = component(false, "prefix");
+        Messages.prefix = MiniMessage.miniMessage().serialize(p);
     }
 
     public static void close() {

@@ -1,6 +1,9 @@
 # In this file you can use MiniMessage for better colors, click actions and a lot of features
 # Here is the documentation: https://docs.adventure.kyori.net/minimessage.html#format
 
+prompt: "<gray><prompt>"
+prefix: "<dark_gray>[<yellow>Elections<blue>+<dark_gray>] <reset>"
+
 errors:
   console: "<red>This command can be used from Players only."
   election-exists: "Election already exists."
@@ -15,7 +18,7 @@ close: "<red>Close"
 conversations:
   name: "Insert the name of the elections."
   add: "Write the name of the player to add in chat."
-  create: "Insert the name of the new party."
+  create: "Write the name of the new party in chat."
   icon: "Write the icon base64 in chat."
 
 # Guis titles
