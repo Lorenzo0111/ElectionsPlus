@@ -72,11 +72,11 @@ public class EditPartyMenu {
                     if (party.getOwner().equals(owner.getUniqueId())) {
                         plugin.getManager()
                                 .deleteParty(party);
-                        Messages.send(Messages.audience(event.getObserver()),true,"party-deleted");
+                        Messages.send(Messages.audience(event.getObserver()),true, "parties", "deleted");
                         return;
                     }
 
-                    Messages.send(Messages.audience(event.getObserver()),true,"no-permission-delete");
+                    Messages.send(Messages.audience(event.getObserver()),true, "parties", "no-permission-delete");
                 });
 
         GuiUtils.element(state,page,31, ItemStack.builder()

@@ -79,6 +79,7 @@ vote:
   success: "You have voted <name>."
 
 proceed:
+  missing-election-name: "<red>Missing election name."
   no-winner: "<red>Can't find a winner..."
   winner: "<gray>The winner is <yellow><b><party></b><gray>. Run <yellow>/elections info <election><gray> to view the votes."
   multiple-winners: "<gray>The winners are: <yellow><parties><gray>. Run <yellow>/elections info <election><gray> to view the votes."
@@ -94,11 +95,13 @@ votes:
 
 loading: "Loading..."
 election-created: "Election created."
-party-deleted: "<gray>Party deleted. <i>(Refresh may take a few seconds)."
-party-created: "<gray>Party created."
-party-duplicate: "<red>A party with that name already exists."
 
-no-permission-delete: "<red>You can't delete this party."
+parties:
+  created: "<gray>Party <yellow><party><gray> created."
+  deleted: "<gray>Party deleted. <i>(Refresh may take a few seconds)."
+  duplicate: "<red>A party with that name already exists."
+  no-permission-delete: "<red>You can't delete this party."
+
 join: "<gray>There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
 
 

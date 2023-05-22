@@ -27,7 +27,6 @@ package me.lorenzo0111.elections.conversation.conversations;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.conversation.Conversation;
 import me.lorenzo0111.elections.handlers.Messages;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -51,7 +50,7 @@ public class CreatePartyConversation extends Conversation {
                         return;
                     }
 
-                    this.getAuthor().sendMessage(Messages.componentString(true, "party-created"));
+                    this.getAuthor().sendMessage(Messages.componentString(true, Messages.single("party", party.getName()), "party-created"));
                 });
     }
 

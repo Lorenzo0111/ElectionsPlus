@@ -56,7 +56,7 @@ public class ProceedChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> user, String[] args) {
         if (args.length != 2) {
-            user.audience().sendMessage(Messages.component(true,"conversations", "name"));
+            user.audience().sendMessage(Messages.component(true,"proceed", "missing-election-name"));
             return;
         }
 

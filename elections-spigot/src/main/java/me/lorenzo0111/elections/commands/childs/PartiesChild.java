@@ -52,17 +52,17 @@ public class PartiesChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(),true,"errors", "console");
+            Messages.send(sender.audience(),true, "errors", "console");
             return;
         }
 
         if (args.length == 2 && args[1].equalsIgnoreCase("create")) {
-            ConversationUtil.createConversation(plugin,new CreatePartyConversation((Player) sender,plugin));
+            ConversationUtil.createConversation(plugin, new CreatePartyConversation((Player) sender.player(), plugin));
             return;
         }
 
         plugin.getManager()
                 .getParties()
-                .thenAccept((parties) -> new PartiesMenu((Player) sender.player(),parties,plugin).setup());
+                .thenAccept((parties) -> new PartiesMenu((Player) sender.player(), parties, plugin).setup());
     }
 }
