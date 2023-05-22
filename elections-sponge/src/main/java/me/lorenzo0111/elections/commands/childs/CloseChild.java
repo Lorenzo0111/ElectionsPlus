@@ -26,6 +26,7 @@ package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.handlers.ChatColor;
+import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
@@ -49,7 +50,7 @@ public class CloseChild extends SubCommand {
         ElectionsPlus plugin = (ElectionsPlus) getCommand().getPlugin();
 
         if (args.length != 2) {
-            user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&cInsert a valid election name.")));
+            Messages.send(user.audience(), true, "errors", "election-name-missing");
             return;
         }
 
@@ -60,11 +61,11 @@ public class CloseChild extends SubCommand {
                         plugin.getManager()
                                 .deleteElection(election);
 
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&7Election deleted")));
+                        Messages.send(user.audience(), true, Messages.single("name", election.getName()), "election", "deleted");
                         return;
                     }
 
-                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&cElection not found")));
+                    Messages.send(user.audience(), true, Messages.single("name", args[1]), "errors", "election-not-found");
                 });
     }
 }

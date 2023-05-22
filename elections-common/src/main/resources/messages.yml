@@ -10,8 +10,10 @@ errors:
   console: "<red>This command can be used from Players only."
   election-exists: "<red>Election already exists."
   election-not-found: "<red>Election <yellow><name><red> does not exist."
-  invalid-election-name: "<red>Enter a valid election name."
-  election-closed: "<gray>Election closed. If you want to automatically grant the rank to the winner run <yellow>/elections proceed <name>"
+  invalid-election-name: "<red>Invalid election name."
+  election-not-found: "<red>Election <name> not found."
+  election-name-missing: "<red>Missing election name."
+  election-closed: "<gray>Election closed. Run <yellow>/elections proceed <name> <gray>to declare the winner."
 
 # Placeholder: <name>
 disband:
@@ -99,7 +101,10 @@ votes:
   status: "<gold><b>•</b> <yellow><party> <gray>» <yellow><nvotes><gray> votes (<yellow><i><percent>%<gray>)"
 
 loading: "Loading..."
-election-created: "Election created."
+
+election:
+  deleted: "<gray>Election <name> deleted."
+  created: "Election <name> created."
 
 parties:
   created: "<gray>Party <yellow><party><gray> created."
@@ -109,4 +114,13 @@ parties:
 
 join: "<gray>There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
 
-
+help:
+  header:  "<gray>Available commands:"
+  create:  "<blue>elections create <name> <gray>» Create an election"
+  disband: "<blue>elections disband <name> <gray>» Disband a party"
+  info:    "<blue>elections info <name> <gray>» Get votes of an election"
+  close:   "<blue>elections close <name> <gray>» Close an election"
+  proceed: "<blue>elections proceed <name> <gray>» Calculate the election winner"
+  list:    "<blue>elections list <gray>» View the list of elections"
+  parties: "<blue>elections parties <gray>» View / edit the list of parties"
+  vote:    "<blue>elections vote [name] <gray>» Vote on an election"

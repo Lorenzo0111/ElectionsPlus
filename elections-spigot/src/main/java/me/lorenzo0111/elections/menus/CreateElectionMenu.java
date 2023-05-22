@@ -62,7 +62,7 @@ public class CreateElectionMenu extends BaseGui {
         this.setDefaultClickAction((e) -> e.setCancelled(true));
 
         GuiItem nameItem = ItemBuilder.from(Material.BOOK)
-                .name(Messages.component(false,Messages.single("name",name),"guis","current-name"))
+                .name(Messages.component(false,Messages.single("name", name), "guis", "current-name"))
                 .lore(Messages.component(false,"guis", "edit-name"))
                 .asGuiItem(e -> {
                     e.getWhoClicked().closeInventory();
@@ -86,7 +86,7 @@ public class CreateElectionMenu extends BaseGui {
                                     return;
                                 }
 
-                                Messages.send(player,true,"election-created");
+                                Messages.send(player,true, Messages.single("name", name), "election", "created");
                             });
                 });
 

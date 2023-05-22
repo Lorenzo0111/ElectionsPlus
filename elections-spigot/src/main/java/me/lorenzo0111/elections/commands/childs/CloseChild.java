@@ -25,13 +25,11 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import me.lorenzo0111.elections.handlers.ChatColor;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-import net.kyori.adventure.text.Component;
 
 public class CloseChild extends SubCommand {
 
@@ -50,7 +48,7 @@ public class CloseChild extends SubCommand {
         ElectionsPlus plugin = (ElectionsPlus) getCommand().getPlugin();
 
         if (args.length != 2) {
-            user.audience().sendMessage(Messages.component(true, "errors", "invalid-election-name"));
+            Messages.send(user.audience(), true, "errors", "election-name-missing");
             return;
         }
 
@@ -60,11 +58,12 @@ public class CloseChild extends SubCommand {
                     if (election != null) {
                         election.close();
 
-                        user.audience().sendMessage(Messages.component(true, Messages.single("name", election.getName()), "errors", "election-closed"));
+                        Messages.send(user.audience(), true, Messages.single("name", election.getName()), "errors", "election-closed");
+
                         return;
                     }
 
-                    user.audience().sendMessage(Messages.component(true, Messages.single("name", args[1]), "errors", "election-not-found"));
+                    Messages.send(user.audience(), true, Messages.single("name", args[1]), "errors", "election-not-found");
                 });
     }
 }
