@@ -16,7 +16,7 @@ open: "<green>Open"
 close: "<red>Close"
 
 conversations:
-  name: "Insert the name of the elections."
+  name: "Write the name of the election in chat."
   add: "Write the name of the player to add in chat."
   create: "Write the name of the new party in chat."
   icon: "Write the icon base64 in chat."
@@ -33,14 +33,15 @@ guis:
   add: "<yellow><#B4684D>Left click<gray> to add"
   remove: "<yellow><#B4684D>Right click<gray> to remove"
   added: " <dark_gray>[<green>ADDED<gray>]"
+  party-added: "<blue><name> <dark_gray>[<green>ADDED<gray>]"
   add-party: "<blue><bold>» <gray><name> <blue><bold>» <gray>Add Party"
   # Create election
   create: "<blue><bold>» <gray>Create Election"
   current-name: "<gray>Current Name: <yellow><name>"
   edit-name: "<gray><i>Click to edit"
-  save-lore: "<gray>Click to save and create elections"
+  save-lore: "<gray>Click to save and create election"
   add-name: "<green>Add Parties"
-  add-lore: "<gray>Click to add parties to the elections"
+  add-lore: "<gray>Click to add parties to the election"
   # Edit party
   edit-party-title: "<blue><bold>» <gray>Parties <blue><bold>» <gray><name>"
   delete-party-lore: "<gray>Click to delete the party"
@@ -49,7 +50,7 @@ guis:
   refresh: "<gray>Refresh may take some seconds"
   icon: "<gray>Edit the icon"
   icon-lore: "<gray>Edit the party <green><#B4684D>icon"
-  icon-lore2: "<gray>that will be displayed in elections"
+  icon-lore2: "<gray>that will be displayed in the election"
   no-icon: "<red>You can't edit the icon"
   no-icon-description: "<gray>You don't have the permission"
   no-icon-description2: "<gray>to set the item icon"
@@ -74,8 +75,14 @@ guis:
   vote-title: "<blue><bold>» <gray><name> <blue><bold>» <gray>Vote"
 
 vote:
-  already: "You have already voted in this elections."
-  success: "You have voted <name>"
+  already: "You have already voted in this election."
+  success: "You have voted <name>."
+
+proceed:
+  no-winner: "<red>Can't find a winner..."
+  winner: "<gray>The winner is <yellow><b><party></b><gray>. Run <yellow>/elections info <election><gray> to view the votes."
+  multiple-winners: "<gray>The winners are: <yellow><parties><gray>. Run <yellow>/elections info <election><gray> to view the votes."
+  tie: "<red>Tie with no winners between <yellow><parties><gray>. Run <yellow>/elections info <election><gray> to view the votes."
 
 # Used for the /elections info <name>
 votes:
@@ -85,7 +92,7 @@ votes:
   name: "votes"
   status: "<gold><b>•</b> <yellow><party> <gray>» <yellow><nvotes><gray> votes (<yellow><i><percent>%<gray>)"
 
-loading: "Loading.."
+loading: "Loading..."
 election-created: "Election created."
 party-deleted: "<gray>Party deleted. <i>(Refresh may take a few seconds)."
 party-created: "<gray>Party created."

@@ -50,7 +50,7 @@ public class AddPartyMenu extends PaginatedGui {
     private final List<Party> added = new ArrayList<>();
 
     public AddPartyMenu(ElectionsPlus plugin, CreateElectionMenu menu, List<Party> party, Player owner) {
-        super(3, Messages.componentString(false,Messages.single("name",menu.getName()), "guis", "add-party"));
+        super(3, Messages.componentString(false, Messages.single("name",menu.getName()), "guis", "add-party"));
 
         this.menu = menu;
         this.parties = party;
@@ -99,7 +99,8 @@ public class AddPartyMenu extends PaginatedGui {
                 case LEFT:
                     if (!added.contains(party))
                         added.add(party);
-                    item.name(Component.text("§9" + party.getName() + Messages.get("guis","added")));
+                    item.name(Messages.component(false, Messages.single("name", party.getName()), "guis","party-added"));
+                    //item.name(Component.text("§9" + party.getName() + Messages.get("guis","added")));
                     this.updatePageItem(e.getSlot(),item.asGuiItem(createAddAction(party,item)));
                     break;
                 case RIGHT:

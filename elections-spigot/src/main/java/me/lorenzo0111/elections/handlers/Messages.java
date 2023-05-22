@@ -70,6 +70,26 @@ public class Messages {
         return map;
     }
 
+    public static Map<String,String> multiple(String... path) {
+        Map<String,String> map = new HashMap<>();
+
+        String key = null;
+        for (String s : path) {
+            if (key == null) {
+                key = s;
+            } else {
+                map.put(key, s);
+                key = null;
+            }
+        }
+
+        if (key != null) {
+            map.put(key, "");
+        }
+
+        return map;
+    }
+
     public static Map<String,String> keys(String... keys) {
         Map<String,String> map = new HashMap<>();
         Arrays.asList(keys).forEach(k -> map.put(k,get(k)));
@@ -100,11 +120,13 @@ public class Messages {
 
         Builder b = TagResolver.builder();
         Boolean empty = true;
+        String pathDebug = "";
         ArrayList<String> newPath = new ArrayList<String>();
 
         for(Object o : path) {
             if (o instanceof String) {
                 newPath.add((String)o);
+                pathDebug = pathDebug + (String)o + ".";
             } else if (o instanceof Map) {
                 Map<String, String> m = (Map<String,String>)o;
                 Set<String> keys = m.keySet();
@@ -133,12 +155,12 @@ public class Messages {
         ConfigurationNode n = config.node(newPath);
 
         if (empty) {
-            return MiniMessage.miniMessage().deserialize(p + n.getString("C:" + n.toString() + ":" + notfound(path)));
+            return MiniMessage.miniMessage().deserialize(p + n.getString("C:" + pathDebug));
         }
 
         TagResolver placeholders = b.build();
 
-        return MiniMessage.miniMessage().deserialize(p + n.getString("D:" + n.toString() + ":" + notfound(path)), placeholders);
+        return MiniMessage.miniMessage().deserialize(p + n.getString("D:" + pathDebug), placeholders);
     }
 
     public static Component component(boolean prefix, TagResolver placeholders, Object... path) {
