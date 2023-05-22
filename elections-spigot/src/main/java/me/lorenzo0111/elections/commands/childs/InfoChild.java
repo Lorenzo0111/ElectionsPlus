@@ -57,7 +57,7 @@ public class InfoChild extends SubCommand {
         ElectionsPlus plugin = (ElectionsPlus) getCommand().getPlugin();
 
         if (args.length != 2) {
-            user.audience().sendMessage(Messages.component(true, "votes", "election-name"));
+            user.audience().sendMessage(Messages.component(true, "errors", "election-name-missing"));
             return;
         }
 
