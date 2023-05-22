@@ -102,24 +102,24 @@ public final class ElectionsPlus extends JavaPlugin {
 
         this.reload();
 
-        this.getLogger().info("Loading scheduler..");
+        this.getLogger().info("Loading scheduler...");
         GlobalMain.init(getDataFolder().toPath());
 
-        if (config.node("rank","enabled").getBoolean()) {
+        if (config.node("rank", "enabled").getBoolean()) {
             RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
             if (rsp != null)
                 permissions = rsp.getProvider();
         }
 
         this.api = new ElectionsPlusAPI(this);
-        Bukkit.getServicesManager().register(IElectionsPlusAPI.class,api,this, ServicePriority.Normal);
-        Bukkit.getPluginManager().registerEvents(new JoinListener(),this);
+        Bukkit.getServicesManager().register(IElectionsPlusAPI.class, api, this, ServicePriority.Normal);
+        Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
         switch (getConfig().getString("database.type", "NULL").toUpperCase()) {
             case "REDIS":
                 this.getLogger().warning("The redis feature is not implemented yet. Using SQLITE..");
             case "SQLITE":
                 try {
-                    this.manager = new DatabaseManager(new BukkitScheduler(this),cache,config(),new SQLiteConnection(getDataFolder().toPath()));
+                    this.manager = new DatabaseManager(new BukkitScheduler(this), cache, config(), new SQLiteConnection(getDataFolder().toPath()));
                     Getters.database(manager);
                 } catch (SQLException | IOException e) {
                     e.printStackTrace();
@@ -137,9 +137,14 @@ public final class ElectionsPlus extends JavaPlugin {
                 break;
         }
 
-        Customization customization = new Customization(null,config("prefix") + "&cCommand not found",config("prefix") + "&7Run /$cmd help for command help.");
+        Customization customization = new Customization(null,
+                                            Messages.componentString(true, "errors", "command-not-found"),
+                                            Messages.componentString(true, "errors", "help")
+                                        );
 
-        new ElectionsCommand(this,"elections",customization);
+        //Customization customization = new Customization(null,config("prefix") + "&cCommand not found",config("prefix") + "&7Run /$cmd help for command help.");
+
+        new ElectionsCommand(this, "elections", customization);
     }
 
     private void load() {

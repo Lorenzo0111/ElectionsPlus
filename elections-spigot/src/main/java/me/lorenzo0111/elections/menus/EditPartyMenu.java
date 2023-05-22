@@ -49,7 +49,7 @@ public class EditPartyMenu extends BaseGui {
     private final ElectionsPlus plugin;
 
     public EditPartyMenu(Player owner, Party party, SkullBuilder item, ElectionsPlus plugin) {
-        super(5, Messages.componentString(false, Messages.single("name",party.getName()), "guis", "edit-party-title"), EnumSet.noneOf(InteractionModifier.class));
+        super(5, Messages.componentString(false, Messages.single("name", party.getName()), "guis", "edit-party-title"), EnumSet.noneOf(InteractionModifier.class));
 
         this.owner = owner;
         this.party = party;

@@ -128,12 +128,16 @@ public class Messages {
                 newPath.add((String)o);
                 pathDebug = pathDebug + (String)o + ".";
             } else if (o instanceof Map) {
-                Map<String, String> m = (Map<String,String>)o;
-                Set<String> keys = m.keySet();
-                for (String k : keys) {
-                    String v = m.get(k);
-                    b.tag(k, Tag.preProcessParsed(v));
-                    empty = false;
+                try {
+                    Map<String, String> m = (Map<String, String>)o;
+                   Set<String> keys = m.keySet();
+                    for (String k : keys) {
+                        String v = m.get(k);
+                        b.tag(k, Tag.preProcessParsed(v));
+                        empty = false;
+                    }
+                } catch(Exception e) {
+                    return MiniMessage.miniMessage().deserialize(p + "A:" + pathDebug + ": " + e.toString());
                 }
             } else if (o instanceof Object[]) {
                 Object oa[] = (Object[])o;
@@ -141,49 +145,58 @@ public class Messages {
                 for(Object element : oa) {
                     if (element instanceof String) {
                         newPath.add((String)element);
+                    } else if (element instanceof Map) {
+                        try {
+                            Map<String, String> m = (Map<String, String>)element;
+                            Set<String> keys = m.keySet();
+                            for (String k : keys) {
+                                String v = m.get(k);
+                                b.tag(k, Tag.preProcessParsed(v));
+                                empty = false;
+                            }
+                        } catch(Exception e) {
+                            return MiniMessage.miniMessage().deserialize(p + "B:" + pathDebug + ": " + e.toString());
+                        }        
                     } else {
                         String t = element.getClass().getName();
                         String v = element.toString();
-                        return MiniMessage.miniMessage().deserialize(p + "A:" + t + ", " + v);
+                        return MiniMessage.miniMessage().deserialize(p + "C:" + t + ", " + v);
                     }
                 }
             } else {
-                return MiniMessage.miniMessage().deserialize(p + "B:" + notfound(o));
+                return MiniMessage.miniMessage().deserialize(p + "D:" + notfound(o));
             }
         }
 
         ConfigurationNode n = config.node(newPath);
 
         if (empty) {
-            return MiniMessage.miniMessage().deserialize(p + n.getString("C:" + pathDebug));
+            return MiniMessage.miniMessage().deserialize(p + n.getString("E:" + pathDebug));
         }
 
         TagResolver placeholders = b.build();
 
-        return MiniMessage.miniMessage().deserialize(p + n.getString("D:" + pathDebug), placeholders);
+        return MiniMessage.miniMessage().deserialize(p + n.getString("F:" + pathDebug), placeholders);
     }
 
     public static Component component(boolean prefix, TagResolver placeholders, Object... path) {
         String p = prefix ? prefix() : "";
 
         return MiniMessage.miniMessage()
-                .deserialize(ChatColor.translateAlternateColorCodes(
-                        '&', p + config.node(path).getString(notfound(path))), placeholders);
+                .deserialize(p + config.node(path).getString(notfound(path)), placeholders);
     }
 
     public static String get(Object... path) {
         Component c = component(false, path);
         return MiniMessage.miniMessage().serialize(c);
-
-//        return ChatColor.translateAlternateColorCodes('&', config.node(path).getString(notfound(path)));
     }
 
     public static void send(CommandSender sender, boolean prefix, Object... path) {
-        send(BukkitAudienceManager.audience(sender), prefix , new HashMap<>(),path);
+        send(BukkitAudienceManager.audience(sender), prefix, new HashMap<>(),path);
     }
 
     public static void send(CommandSender player, boolean prefix, Map<String,String> placeholders, Object... path) {
-        send(BukkitAudienceManager.audience(player),prefix,placeholders,path);
+        send(BukkitAudienceManager.audience(player), prefix, placeholders, path);
     }
 
     public static void send(Audience player, boolean prefix, Object... path) {
@@ -191,7 +204,7 @@ public class Messages {
     }
 
     public static void send(Audience player, boolean prefix, Map<String,String> placeholders, Object... path) {
-        player.sendMessage(component(prefix,placeholders,path));
+        player.sendMessage(component(prefix, placeholders, path));
     }
 
     public static Audience audience(Player player) {

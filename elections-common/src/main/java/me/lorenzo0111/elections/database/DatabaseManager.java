@@ -279,13 +279,13 @@ public class DatabaseManager implements IDatabaseManager {
     @Override
     public void deleteParty(String name) {
         cache.getParties().remove(name);
-        partiesTable.removeWhere("name",name);
+        partiesTable.removeWhere("name", name);
     }
 
     @Override
     public void deleteParty(Party party) {
         cache.getParties().remove(party.getName());
-        partiesTable.removeWhere("name",party);
+        partiesTable.removeWhere("name", party);
     }
 
     @Override

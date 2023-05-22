@@ -66,11 +66,11 @@ public class VoteChild extends SubCommand {
                 .getElection(args[1])
                 .thenAccept((election) -> {
                     if (election == null) {
-                        Messages.send(sender.audience(),true, Messages.single("name", args[1]), "errors", "not-found");
+                        Messages.send(sender.audience(),true, Messages.single("name", args[1]), "errors", "election-not-found");
                         return;
                     }
 
-                    new VoteMenu((Player) sender.player(),election).setup();
+                    new VoteMenu((Player) sender.player(), election).setup();
                 });
     }
 }

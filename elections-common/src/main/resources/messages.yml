@@ -5,12 +5,17 @@ prompt: "<gray><prompt>"
 prefix: "<dark_gray>[<yellow>Elections<blue>+<dark_gray>] <reset>"
 
 errors:
+  command-not-found: "<red>Command not found."
+  help: "<gray>Run /$cmd help for command help."
   console: "<red>This command can be used from Players only."
-  election-exists: "Election already exists."
-  not-found: "Election <name> does not exists."
+  election-exists: "<red>Election already exists."
+  election-not-found: "<red>Election <yellow><name><red> does not exist."
+  invalid-election-name: "<red>Enter a valid election name."
+  election-closed: "<gray>Election closed. If you want to automatically grant the rank to the winner run <yellow>/elections proceed <name>"
 
 # Placeholder: <name>
-disband: "<gray>Party <name> deleted."
+disband:
+  deleted: "<gray>Party <yellow><name><gray> deleted."
 
 open: "<green>Open"
 close: "<red>Close"

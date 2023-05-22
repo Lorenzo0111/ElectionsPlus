@@ -46,11 +46,11 @@ public class CreatePartyConversation extends Conversation {
                 .createParty(input, this.getAuthor().getUniqueId())
                 .thenAccept((party) -> {
                     if (party == null) {
-                        this.getAuthor().sendMessage(Messages.componentString(true, "party-duplicate"));
+                        this.getAuthor().sendMessage(Messages.componentString(true, "parties", "duplicate"));
                         return;
                     }
 
-                    this.getAuthor().sendMessage(Messages.componentString(true, Messages.single("party", party.getName()), "party-created"));
+                    this.getAuthor().sendMessage(Messages.componentString(true, Messages.single("party", party.getName()), "parties", "created"));
                 });
     }
 

@@ -57,9 +57,6 @@ public class DisbandChild extends SubCommand {
                 .getManager()
                 .deleteParty(args[1]);
 
-        Map<String,Object> map = new HashMap<>();
-        map.put("name",args[1]);
-        Messages
-                .send(sender.audience(),true, map, "disband");
+        Messages.send(sender.audience(), true, Messages.single("name", args[1]), "disband", "deleted");
     }
 }
