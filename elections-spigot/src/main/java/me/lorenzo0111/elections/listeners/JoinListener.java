@@ -39,10 +39,11 @@ public class JoinListener implements Listener {
         if (!ElectionsPlus.getInstance().getConfig().getBoolean("join-notification"))
             return;
 
-        if (event.getPlayer().hasPermission("elections.update"))
+        if (event.getPlayer().hasPermission("elections.update") && ElectionsPlus.getInstance().getConfig().getBoolean("update.check")) {
             ElectionsPlus.getInstance()
                     .getUpdater()
                     .sendUpdateCheck(Messages.audience(event.getPlayer()));
+        }
 
         ElectionsPlus.getInstance()
                 .getManager()

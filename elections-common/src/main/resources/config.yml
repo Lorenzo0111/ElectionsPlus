@@ -40,3 +40,6 @@ rank:
   command: "none"
   # Who should win if there are two or more winners?
   strategy: "none" # None, both
+
+update:
+  check: false

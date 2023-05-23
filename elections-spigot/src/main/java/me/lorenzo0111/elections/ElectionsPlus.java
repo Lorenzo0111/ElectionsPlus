@@ -72,9 +72,14 @@ public final class ElectionsPlus extends JavaPlugin {
         instance = this;
         this.saveDefaultConfig();
         BukkitAudienceManager.init(this);
-        new Metrics(this,11735);
-        Getters.updater(new UpdateChecker(new BukkitScheduler(this), this.getDescription().getVersion(), this.getName(),93463, "https://www.spigotmc.org/resources/93463/", null, null));
+        new Metrics(this, 11735);
+
         this.load();
+        
+        Boolean checkForUpdates = config.node("update", "check").getBoolean(false);
+        if (checkForUpdates) {
+            Getters.updater(new UpdateChecker(new BukkitScheduler(this), this.getDescription().getVersion(), this.getName(), 93463, "https://www.spigotmc.org/resources/93463/", null, null));
+        }
     }
 
     @Override
