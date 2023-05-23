@@ -124,3 +124,6 @@ help:
   list:    "<blue>elections list <gray>» View the list of elections"
   parties: "<blue>elections parties <gray>» View / edit the list of parties"
   vote:    "<blue>elections vote [name] <gray>» Vote on an election"
+
+plugin:
+  reload: "<gray>Plugin reloaded in <yellow><elapsed>ms<gray> with <yellow><errors><gray> error(s)."

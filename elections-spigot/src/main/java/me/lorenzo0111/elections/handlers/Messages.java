@@ -32,7 +32,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Builder;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -65,8 +64,8 @@ public class Messages {
     public static ConfigurationNode config() { return config; }
 
     public static Map<String,String> single(String key, String value) {
-        Map<String,String> map = new HashMap<>();
-        map.put(key,ChatColor.translateAlternateColorCodes('&', value));
+        Map<String, String> map = new HashMap<>();
+        map.put(key, value);
         return map;
     }
 
@@ -115,6 +114,11 @@ public class Messages {
         return paths + NOT_FOUND;
     }
 
+    @SuppressWarnings("unchecked")
+    private static Map<String, String> obj2strmap(Object o) {
+        return (Map<String, String>)o;
+    }
+
     public static Component component(boolean prefix, Object... path) {
         String p = prefix ? prefix() : "";
 
@@ -129,8 +133,8 @@ public class Messages {
                 pathDebug = pathDebug + (String)o + ".";
             } else if (o instanceof Map) {
                 try {
-                    Map<String, String> m = (Map<String, String>)o;
-                   Set<String> keys = m.keySet();
+                    Map<String, String> m = obj2strmap(o);
+                    Set<String> keys = m.keySet();
                     for (String k : keys) {
                         String v = m.get(k);
                         b.tag(k, Tag.preProcessParsed(v));
@@ -147,7 +151,7 @@ public class Messages {
                         newPath.add((String)element);
                     } else if (element instanceof Map) {
                         try {
-                            Map<String, String> m = (Map<String, String>)element;
+                            Map<String, String> m = obj2strmap(element);
                             Set<String> keys = m.keySet();
                             for (String k : keys) {
                                 String v = m.get(k);

@@ -65,7 +65,7 @@ public class ElectionsMenu extends PaginatedGui {
                 this.addItem(ItemBuilder
                         .from(Objects.requireNonNull(XMaterial.YELLOW_BANNER.parseItem()))
                         .name(Component.text("§9" + election.getName()))
-                        .lore(Messages.component(false, Messages.single("state", election.isOpen() ? Messages.get("open") : Messages.get("close")),"guis", "state"), election.isOpen() ? Messages.component(false, "guis", "vote") : Component.empty(), getRightLore(election))
+                        .lore(Messages.component(false, Messages.single("state", election.isOpen() ? Messages.get("open") : Messages.get("close")), "guis", "state"), election.isOpen() ? Messages.component(false, "guis", "vote") : Component.empty(), getRightLore(election))
                         .asGuiItem(e -> {
                             if (e.getWhoClicked().hasPermission("elections.edit") && e.getClick().equals(ClickType.RIGHT)) {
                                 this.close(e.getWhoClicked());

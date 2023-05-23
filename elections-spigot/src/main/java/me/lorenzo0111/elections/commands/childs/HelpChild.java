@@ -24,13 +24,10 @@
 
 package me.lorenzo0111.elections.commands.childs;
 
-import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
-import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
 
 public class HelpChild extends SubCommand {
 

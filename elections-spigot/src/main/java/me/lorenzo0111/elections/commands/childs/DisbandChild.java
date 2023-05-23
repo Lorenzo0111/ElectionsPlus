@@ -31,9 +31,6 @@ import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class DisbandChild extends SubCommand {
 
     public DisbandChild(Command command) {
