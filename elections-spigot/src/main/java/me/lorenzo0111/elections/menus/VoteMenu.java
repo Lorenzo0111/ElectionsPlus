@@ -26,6 +26,7 @@ package me.lorenzo0111.elections.menus;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.components.InteractionModifier;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
@@ -36,6 +37,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
 import java.util.Objects;
 
 public class VoteMenu extends PaginatedGui {
@@ -43,7 +45,7 @@ public class VoteMenu extends PaginatedGui {
     private final Election election;
 
     public VoteMenu(Player owner, Election election) {
-        super(3, Messages.componentString(false, Messages.single("name",election.getName()),"guis", "vote-title"));
+        super(3, 0, Messages.componentString(false, Messages.single("name",election.getName()),"guis", "vote-title"), new HashSet<InteractionModifier>());
 
         this.owner = owner;
         this.election = election;

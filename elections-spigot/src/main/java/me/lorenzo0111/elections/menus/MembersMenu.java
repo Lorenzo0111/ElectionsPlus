@@ -28,6 +28,7 @@ import com.cryptomorin.xseries.XMaterial;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.builder.item.SkullBuilder;
 import dev.triumphteam.gui.guis.PaginatedGui;
+import dev.triumphteam.gui.components.InteractionModifier;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
@@ -40,6 +41,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -51,7 +53,7 @@ public class MembersMenu extends PaginatedGui {
     private final List<OfflinePlayer> added = new ArrayList<>();
 
     public MembersMenu(ElectionsPlus plugin, Party party, Player owner) {
-        super(3, Messages.componentString(false, Messages.single("name",party.getName()), "guis", "members-title"));
+        super(3, 0, Messages.componentString(false, Messages.single("name", party.getName()), "guis", "members-title"), new HashSet<InteractionModifier>());
 
         this.party = party;
         this.owner = owner;
