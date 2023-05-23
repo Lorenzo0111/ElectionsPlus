@@ -23,7 +23,6 @@
  */
 import org.apache.tools.ant.filters.ReplaceTokens
 
-
 buildscript {
     repositories {
         gradlePluginPortal()
@@ -44,6 +43,8 @@ ext {
     libsBase = 'me.lorenzo0111.elections.libs'
 }
 
+sourceCompatibility = '1.17'
+targetCompatibility = '1.17'
 
 subprojects {
     apply plugin: 'java'
