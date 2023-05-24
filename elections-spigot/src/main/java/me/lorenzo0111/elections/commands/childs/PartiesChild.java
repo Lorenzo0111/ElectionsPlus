@@ -25,14 +25,20 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.CreatePartyConversation;
+import me.lorenzo0111.elections.conversation.conversations.AddMemberConversation;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.elections.menus.PartiesMenu;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.entity.Player;
 
 public class PartiesChild extends SubCommand {
@@ -58,6 +64,51 @@ public class PartiesChild extends SubCommand {
         }
 
         return result;
+    }
+
+    private static ArrayList<String> unquote(String[] args, int start) {
+        String s = array2string(args, start);
+        ArrayList<String> results = new ArrayList<String>();
+        Boolean inQuote = false;
+
+        String element = "";
+        Character quote = Character.valueOf('"');
+        Character space = Character.valueOf(' ');
+        Character last = Character.valueOf('x');
+        
+        for (int i = 0; i < s.length(); i++) {
+            Character c = s.charAt(i);
+
+            if (inQuote) {
+                if (c.equals(quote)) {
+                    inQuote = false;
+                    results.add(element);
+                    element = "";
+                } else {
+                    element += c;
+                }
+            } else {
+                if (c.equals(quote)) {
+                    inQuote = true;
+                } else if (c.equals(space)) {
+                    if (last.equals(quote)) {
+                        // strip it
+                    } else {
+                        results.add(element);
+                        element = "";
+                    }
+                } else {
+                    element += c;
+                }
+            }
+            last = c;
+        }
+
+        if (element.length() > 0) {
+            results.add(element);
+        }
+
+        return results;
     }
 
     @Permission(value = "elections.parties")
@@ -100,6 +151,47 @@ public class PartiesChild extends SubCommand {
             return;
         }
 
+        if (args[1].equalsIgnoreCase("add-member")) {
+            ArrayList<String> a = unquote(args, 2);
+            for (String x : a) {
+                player.sendMessage("ARG: " + x);
+            }
+            if (a.size() != 2) {
+                player.sendMessage(Messages.componentString(true, "errors", "bad-args"));
+                return;
+            }
+
+            String partyName = a.get(0);
+
+            if (partyName == "") {
+                player.sendMessage(Messages.componentString(true, "errors", "party-name-required"));
+                return;
+            }
+            String memberName = a.get(1);
+
+            if (memberName == "") {
+                player.sendMessage(Messages.componentString(true, "errors", "member-name-required"));
+                return;
+            }
+
+            plugin.getManager()
+                .getParties()
+                .thenAccept((parties) -> addMember(player, parties, partyName, memberName));
+
+            return;
+        }
+
         player.sendMessage(Messages.componentString(true, "errors", "command-not-found"));
+    }
+
+    private void addMember(Player player, List<Party> parties, String partyName, String memberName) {
+        for (Party party : parties) {
+            if (party.getName().equals(partyName)) {
+                AddMemberConversation conversation = new AddMemberConversation(party, player, this.plugin);
+                conversation.handle(memberName);
+                return;
+            }
+        }
+        player.sendMessage(Messages.componentString(true, Messages.single("party", partyName), "errors", "party-not-found"));
     }
 }

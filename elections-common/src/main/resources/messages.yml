@@ -5,8 +5,9 @@ prompt: "<gray><prompt>"
 prefix: "<dark_gray>[<yellow>Elections<blue>+<dark_gray>] <reset>"
 
 errors:
+  bad-args: "<red>Incorrect arguments. <gray>Run <yellow>/elections help<gray> for command help."
   command-not-found: "<red>Command not found."
-  help: "<gray>Run /$cmd help for command help."
+  help: "<gray>Run /elections help for command help."
   console: "<red>This command can be used from Players only."
   election-exists: "<red>Election already exists."
   election-not-found: "<red>Election <yellow><name><red> does not exist."
@@ -16,6 +17,8 @@ errors:
   election-closed: "<gray>Election closed. Run <yellow>/elections proceed <name> <gray>to declare the winner."
   user-not-online: "<red>user <yellow><name><red> is not online."
   party-name-required: "<red>party name is required."
+  member-name-required: "<red>member name is required."
+  party-not-found: "<red>Party <party> not found."
 
 # Placeholder: <name>
 disband:
@@ -114,6 +117,7 @@ parties:
   duplicate: "<red>A party with that name already exists."
   no-permission-delete: "<red>You can't delete this party."
   user-added: "<yellow><name><gray> added to party <yellow><party><gray>."
+  add-member-debug: "<gray>Party: <party> Member: <member>"
 
 join: "<gray>There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
 
