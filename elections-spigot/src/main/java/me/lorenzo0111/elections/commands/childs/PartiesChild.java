@@ -48,6 +48,18 @@ public class PartiesChild extends SubCommand {
         return "parties";
     }
 
+    private static String array2string(String[] args, int start) {
+        String result = "";
+        for (int i = start; i < args.length; i++) {
+            if (i > 2) {
+                result = result + " ";
+            }
+            result = result + args[i];
+        }
+
+        return result;
+    }
+
     @Permission(value = "elections.parties")
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
@@ -55,14 +67,39 @@ public class PartiesChild extends SubCommand {
             Messages.send(sender.audience(),true, "errors", "console");
             return;
         }
+        Player player = (Player)sender.player();
 
-        if (args.length == 2 && args[1].equalsIgnoreCase("create")) {
-            ConversationUtil.createConversation(plugin, new CreatePartyConversation((Player) sender.player(), plugin));
+        if (args.length < 2) {
+            plugin.getManager()
+                .getParties()
+                .thenAccept((parties) -> new PartiesMenu((Player) sender.player(), parties, plugin).setup());
             return;
         }
 
-        plugin.getManager()
-                .getParties()
-                .thenAccept((parties) -> new PartiesMenu((Player) sender.player(), parties, plugin).setup());
+        if (args[1].equalsIgnoreCase("create")) {
+            CreatePartyConversation conversation = new CreatePartyConversation(player, plugin);
+            String partyName = array2string(args, 2);
+
+            if(partyName == "") {
+                ConversationUtil.createConversation(plugin, conversation);
+            } else {
+                conversation.handle(partyName);
+            }
+            return;
+        }
+        
+        if (args[1].equalsIgnoreCase("delete")) {
+            String partyName = array2string(args, 2);
+            if (partyName == "") {
+                player.sendMessage(Messages.componentString(true, "errors", "party-name-required"));
+                return;
+            }
+
+            this.plugin.getManager().deleteParty(partyName);
+            player.sendMessage(Messages.componentString(true, "parties", "deleted"));
+            return;
+        }
+
+        player.sendMessage(Messages.componentString(true, "errors", "command-not-found"));
     }
 }

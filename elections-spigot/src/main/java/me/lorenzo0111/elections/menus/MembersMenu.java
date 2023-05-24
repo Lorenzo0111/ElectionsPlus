@@ -66,7 +66,7 @@ public class MembersMenu extends PaginatedGui {
         this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
         this.setItem(3,5, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem())).name(Messages.component(false, "guis", "add-member")).asGuiItem(e -> {
             e.getWhoClicked().closeInventory();
-            ConversationUtil.createConversation(plugin,new AddMemberConversation(party,owner,plugin));
+            ConversationUtil.createConversation(plugin, new AddMemberConversation(party, owner, plugin));
         }));
         this.getFiller().fillBottom(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
 
@@ -80,7 +80,7 @@ public class MembersMenu extends PaginatedGui {
 
             SkullBuilder item = ItemBuilder.skull()
                     .name(Component.text("§9" + player.getName()))
-                    .lore(Messages.component(false, "guis", "kick-member"),Messages.component(false, "guis", "set-owner"))
+                    .lore(Messages.component(false, "guis", "kick-member"), Messages.component(false, "guis", "set-owner"))
                     .owner(player);
 
             this.addItem(item.asGuiItem(e -> {

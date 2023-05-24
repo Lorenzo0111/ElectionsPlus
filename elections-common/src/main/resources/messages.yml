@@ -14,6 +14,8 @@ errors:
   election-not-found: "<red>Election <name> not found."
   election-name-missing: "<red>Missing election name."
   election-closed: "<gray>Election closed. Run <yellow>/elections proceed <name> <gray>to declare the winner."
+  user-not-online: "<red>user <yellow><name><red> is not online."
+  party-name-required: "<red>party name is required."
 
 # Placeholder: <name>
 disband:
@@ -111,6 +113,7 @@ parties:
   deleted: "<gray>Party deleted. <i>(Refresh may take a few seconds)."
   duplicate: "<red>A party with that name already exists."
   no-permission-delete: "<red>You can't delete this party."
+  user-added: "<yellow><name><gray> added to party <yellow><party><gray>."
 
 join: "<gray>There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
 
