@@ -18,7 +18,7 @@ errors:
   user-not-online: "<red>user <yellow><name><red> is not online."
   party-name-required: "<red>party name is required."
   member-name-required: "<red>member name is required."
-  party-not-found: "<red>Party <party> not found."
+  party-not-found: "<red>Party <yellow><party><red> not found."
 
 # Placeholder: <name>
 disband:
@@ -88,7 +88,7 @@ guis:
 
 vote:
   already: "You have already voted in this election."
-  success: "You have voted <name>."
+  success: "You have voted <party> in election <election>."
 
 proceed:
   missing-election-name: "<red>Missing election name."
@@ -100,7 +100,7 @@ proceed:
 # Used for the /elections info <name>
 votes:
   election-name: "<red>Insert a valid election name."
-  calculating: "<gray>Calculating Votes..."
+  calculating: "<gray>Calculating votes for election <yellow><election><gray>..."
   title: "<dark_gray><st>=============</st><yellow> Votes <dark_gray><st>============="
   name: "votes"
   status: "<gold><b>•</b> <yellow><party> <gray>» <yellow><nvotes><gray> votes (<yellow><i><percent>%<gray>)"

@@ -67,7 +67,7 @@ public class InfoChild extends SubCommand {
         }
         String electionName = a.get(0);
 
-        user.audience().sendMessage(Messages.component(true, "votes", "calculating"));
+        user.audience().sendMessage(Messages.component(true, Messages.single("election", electionName), "votes", "calculating"));
 
         plugin.getApi()
                 .getVotes()

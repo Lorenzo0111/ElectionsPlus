@@ -70,7 +70,7 @@ public class VoteMenu extends PaginatedGui {
                                 .vote(e.getWhoClicked().getUniqueId(), party, election)
                                 .thenAccept((b) -> {
                                    if (b) {
-                                       Messages.send(e.getWhoClicked(),true, Messages.single("name", party.getName()),"vote", "success");
+                                       Messages.send(e.getWhoClicked(),true, Messages.multiple("party", party.getName(), "election", election.getName()), "vote", "success");
                                        return;
                                    }
 

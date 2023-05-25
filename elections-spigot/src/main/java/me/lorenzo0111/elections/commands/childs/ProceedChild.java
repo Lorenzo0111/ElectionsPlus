@@ -39,9 +39,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProceedChild extends SubCommand {
+    private final ElectionsPlus plugin;
 
-    public ProceedChild(ICommand<?> command) {
+    public ProceedChild(ICommand<?> command, ElectionsPlus plugin) {
         super(command);
+        this.plugin = plugin;
     }
 
     @Override
@@ -52,10 +54,19 @@ public class ProceedChild extends SubCommand {
     @Permission("elections.proceed")
     @Override
     public void handleSubcommand(User<?> user, String[] args) {
-        if (args.length != 2) {
-            user.audience().sendMessage(Messages.component(true,"proceed", "missing-election-name"));
+        if (args.length < 2) {
+            user.audience().sendMessage(Messages.component(true, "proceed", "missing-election-name"));
             return;
         }
+
+        ArrayList<String> a = plugin.unquote(args, 1);
+
+        if (a.size() != 1) {
+            user.audience().sendMessage(Messages.component(true, "errors", "bad-args"));
+            return;
+        }
+
+        String electionName = a.get(0);
 
         ElectionsPlus plugin = ElectionsPlus.getInstance();
         plugin.getManager()
@@ -63,7 +74,7 @@ public class ProceedChild extends SubCommand {
                 .thenAccept((tmpVotes) -> {
                     List<Vote> votes = tmpVotes
                             .stream()
-                            .filter((vote) -> vote.getElection().equalsIgnoreCase(args[1]))
+                            .filter((vote) -> vote.getElection().equalsIgnoreCase(electionName))
                             .collect(Collectors.toList());
 
                     Map<String,Integer> counts = new HashMap<>();
@@ -72,12 +83,12 @@ public class ProceedChild extends SubCommand {
 
                     for (Vote vote : votes) {
                         if (!counts.containsKey(vote.getParty())) {
-                            counts.put(vote.getParty(),1);
+                            counts.put(vote.getParty(), 1);
                             continue;
                         }
 
                         Integer count = counts.get(vote.getParty());
-                        counts.replace(vote.getParty(),count,count+1);
+                        counts.replace(vote.getParty(), count, count+1);
                     }
 
                     for (Map.Entry<String, Integer> entry : counts.entrySet()) {

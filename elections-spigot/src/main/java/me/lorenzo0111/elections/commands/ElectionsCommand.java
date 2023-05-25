@@ -53,7 +53,7 @@ public class ElectionsCommand extends Command implements TabExecutor {
         this.addSubcommand(new ReloadChild(this));
         this.addSubcommand(new InfoChild(this));
         this.addSubcommand(new CloseChild(this));
-        this.addSubcommand(new ProceedChild(this));
+        this.addSubcommand(new ProceedChild(this, plugin));
         Objects.requireNonNull(plugin.getCommand(command)).setTabCompleter(this);
     }
 
