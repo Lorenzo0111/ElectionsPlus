@@ -24,6 +24,8 @@
 
 package me.lorenzo0111.elections.commands.childs;
 
+import java.util.ArrayList;
+
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
@@ -32,9 +34,12 @@ import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
 
 public class DisbandChild extends SubCommand {
+    private final ElectionsPlus plugin;
 
-    public DisbandChild(Command command) {
+    public DisbandChild(Command command, ElectionsPlus plugin) {
         super(command);
+
+        this.plugin = plugin;
     }
 
     @Override
@@ -45,15 +50,24 @@ public class DisbandChild extends SubCommand {
     @Permission("elections.disband")
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
-        if(args.length != 2) {
+        if(args.length < 2) {
+            Messages.send(sender.audience(), true, "errors", "bad-args");
             return;
         }
+
+        ArrayList<String> a = plugin.unquote(args, 1);
+        if (a.size() != 1) {
+            Messages.send(sender.audience(), true, Messages.component(true, "errors", "bad-args"));
+            return;
+        }
+
+        String electionName = a.get(0);
 
         ElectionsPlus
                 .getInstance()
                 .getManager()
-                .deleteParty(args[1]);
+                .deleteParty(electionName);
 
-        Messages.send(sender.audience(), true, Messages.single("name", args[1]), "disband", "deleted");
+        Messages.send(sender.audience(), true, Messages.single("name", electionName), "disband", "deleted");
     }
 }

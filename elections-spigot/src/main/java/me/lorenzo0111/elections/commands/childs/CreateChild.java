@@ -69,7 +69,6 @@ public class CreateChild extends SubCommand {
         }
 
         ArrayList<String> a = plugin.unquote(args, 1);
-
         if (a.size() != 1) {
             Messages.send(sender.audience(), true, "errors", "bad-args");
             return;

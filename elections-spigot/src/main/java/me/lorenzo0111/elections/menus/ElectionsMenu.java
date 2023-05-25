@@ -47,7 +47,7 @@ public class ElectionsMenu extends PaginatedGui {
     private final ElectionsPlus plugin;
 
     public ElectionsMenu(Player owner, List<Election> elections, ElectionsPlus plugin) {
-        super(3, 17, Messages.componentString(false,"guis","elections"), EnumSet.noneOf(InteractionModifier.class));
+        super(3, 17, Messages.componentString(false, "guis", "elections"), EnumSet.noneOf(InteractionModifier.class));
 
         this.owner = owner;
         this.elections = elections;
@@ -57,8 +57,8 @@ public class ElectionsMenu extends PaginatedGui {
     public void setup() {
         Bukkit.getScheduler().runTask(plugin, () -> {
             this.setDefaultClickAction(e -> e.setCancelled(true));
-            this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-            this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
+            this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false, "guis", "back")).asGuiItem(e -> this.previous()));
+            this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false, "guis", "next")).asGuiItem(e -> this.next()));
             this.getFiller().fillBorder(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
 
             for (Election election : elections) {
@@ -83,7 +83,7 @@ public class ElectionsMenu extends PaginatedGui {
                             if (!election.isOpen())
                                 return;
 
-                            new VoteMenu(owner,election).setup();
+                            new VoteMenu(owner, election).setup();
                         }));
             }
 

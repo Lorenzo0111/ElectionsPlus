@@ -45,7 +45,7 @@ public class VoteMenu extends PaginatedGui {
     private final Election election;
 
     public VoteMenu(Player owner, Election election) {
-        super(3, 0, Messages.componentString(false, Messages.single("name",election.getName()),"guis", "vote-title"), new HashSet<InteractionModifier>());
+        super(3, 0, Messages.componentString(false, Messages.single("name", election.getName()), "vote", "title"), new HashSet<InteractionModifier>());
 
         this.owner = owner;
         this.election = election;
@@ -54,8 +54,8 @@ public class VoteMenu extends PaginatedGui {
     public void setup() {
         this.setDefaultClickAction(e -> e.setCancelled(true));
         this.getFiller().fillBorder(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
-        this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-        this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
+        this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false, "guis", "back")).asGuiItem(e -> this.previous()));
+        this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false, "guis", "next")).asGuiItem(e -> this.next()));
 
         for (Party party : election.getParties()) {
             this.addItem(ItemBuilder.skull()

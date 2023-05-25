@@ -55,12 +55,11 @@ public class ProceedChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> user, String[] args) {
         if (args.length < 2) {
-            user.audience().sendMessage(Messages.component(true, "proceed", "missing-election-name"));
+            user.audience().sendMessage(Messages.component(true, "errors", "bad-args"));
             return;
         }
 
         ArrayList<String> a = plugin.unquote(args, 1);
-
         if (a.size() != 1) {
             user.audience().sendMessage(Messages.component(true, "errors", "bad-args"));
             return;
@@ -113,7 +112,7 @@ public class ProceedChild extends SubCommand {
                                 .getParty(winners.get(0))
                                 .thenAccept((winner) -> plugin.win(winner.getOwner()));
 
-                        user.audience().sendMessage(Messages.component(true, Messages.multiple("party", winners.get(0), "election", args[1]), "proceed", "winner"));
+                        user.audience().sendMessage(Messages.component(true, Messages.multiple("party", winners.get(0), "election", electionName), "proceed", "winner"));
                         return;
                     }
 
@@ -133,11 +132,11 @@ public class ProceedChild extends SubCommand {
                                     .thenAccept((winner) -> plugin.win(winner.getOwner()));
                         }
 
-                        user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties, "election", args[1]), "proceed", "multiple-winners"));
+                        user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties, "election", electionName), "proceed", "multiple-winners"));
                         return;
                     }
 
-                    user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties, "election", args[1]), "proceed", "tie"));
+                    user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties, "election", electionName), "proceed", "tie"));
                 });
     }
 }

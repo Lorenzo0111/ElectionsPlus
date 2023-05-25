@@ -3,6 +3,10 @@
 
 prompt: "<gray><prompt>"
 prefix: "<dark_gray>[<yellow>Elections<blue>+<dark_gray>] <reset>"
+open: "<green>Open"
+close: "<red>Close"
+loading: "Loading..."
+join: "<gray>There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
 
 errors:
   bad-args: "<red>Incorrect arguments. <gray>Run <yellow>/elections help<gray> for command help."
@@ -23,9 +27,6 @@ errors:
 # Placeholder: <name>
 disband:
   deleted: "<gray>Party <yellow><name><gray> deleted."
-
-open: "<green>Open"
-close: "<red>Close"
 
 conversations:
   name: "Write the name of the election in chat."
@@ -83,16 +84,15 @@ guis:
   create-party-lore: "<gray>Click to create a new party."
   edit-party: "<gray>Click to edit"
   no-edit-party: "<red>You can't edit this party"
-  # Vote
-  vote-title: "<blue><bold>» <gray><name> <blue><bold>» <gray>Vote"
 
 vote:
-  already: "You have already voted in this election."
-  success: "You have voted <party> in election <election>."
+  title: "<gray>Vote <blue>» <yellow><name>"
+  already: "You already voted in this election."
+  success: "You voted <party> in election <election>."
 
 proceed:
   missing-election-name: "<red>Missing election name."
-  no-winner: "<red>Can't find a winner..."
+  no-winner: "<red>No winner yet!"
   winner: "<gray>The winner is <yellow><b><party></b><gray>. Run <yellow>/elections info <election><gray> to view the votes."
   multiple-winners: "<gray>The winners are: <yellow><parties><gray>. Run <yellow>/elections info <election><gray> to view the votes."
   tie: "<red>Tie with no winners between <yellow><parties><gray>. Run <yellow>/elections info <election><gray> to view the votes."
@@ -100,12 +100,10 @@ proceed:
 # Used for the /elections info <name>
 votes:
   election-name: "<red>Insert a valid election name."
-  calculating: "<gray>Calculating votes for election <yellow><election><gray>..."
+  calculating: "<gray>Calculating votes for <yellow><election><gray>..."
   title: "<dark_gray><st>=============</st><yellow> Votes <dark_gray><st>============="
   name: "votes"
   status: "<gold><b>•</b> <yellow><party> <gray>» <yellow><nvotes><gray> votes (<yellow><i><percent>%<gray>)"
-
-loading: "Loading..."
 
 election:
   deleted: "<gray>Election <yellow><name><gray> deleted."
@@ -121,8 +119,6 @@ parties:
   user-added: "<yellow><name><gray> added to party <yellow><party><gray>."
   add-member-debug: "<gray>Party: <party> Member: <member>"
 
-join: "<gray>There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
-
 help:
   header:    "<gray>Available commands:"
   create:    "<blue>elections create <name> <gray>» Create an election"
@@ -130,7 +126,7 @@ help:
   parties:   "<blue>elections parties [create|delete <party>] [add-member <party> <name>] <gray>» View / edit the list of parties"
   list:      "<blue>elections list <gray>» View the list of elections"
   disband:   "<blue>elections disband <name> <gray>» Disband a party"
-  vote:      "<blue>elections vote [name] <gray>» Vote on an election"
+  vote:      "<blue>elections vote <gray>» Vote on an election"
   reload:    "<blue>elections reload <gray>» Reload configuration"
   info:      "<blue>elections info <name> <gray>» Get votes of an election"
   close:     "<blue>elections close <name> <gray>» Close an election"

@@ -60,7 +60,6 @@ public class InfoChild extends SubCommand {
         }
 
         ArrayList<String> a = plugin.unquote(args, 1);
-
         if (a.size() != 1) {
             user.audience().sendMessage(Messages.component(true, "errors", "bad-args"));
             return;
