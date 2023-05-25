@@ -132,7 +132,7 @@ help:
   close:     "<blue>elections close <name> <gray>» Close an election"
   proceed:   "<blue>elections proceed <name> <gray>» Calculate the election winner"
   list:      "<blue>elections list <gray>» View the list of elections"
-  parties:   "<blue>elections parties [create <party>] [delete <party>] [add-member <party> <name>] <gray>» View / edit the list of parties"
+  parties:   "<blue>elections parties [create|delete <party>] [add-member <party> <name>] <gray>» View / edit the list of parties"
   vote:      "<blue>elections vote [name] <gray>» Vote on an election"
 
 plugin:
