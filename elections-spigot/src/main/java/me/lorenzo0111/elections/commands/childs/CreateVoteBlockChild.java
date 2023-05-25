@@ -1,7 +1,7 @@
 /*
  * This file is part of ElectionsPlus, licensed under the MIT License.
  *
- * Copyright (c) Lorenzo0111
+ * Copyright (c) tadhunt
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,26 +28,39 @@ import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.elections.menus.ElectionsMenu;
 import me.lorenzo0111.pluginslib.audience.User;
-
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
 
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
-public class VoteChild extends SubCommand {
-    public VoteChild(Command command, ElectionsPlus plugin) {
+public class CreateVoteBlockChild extends SubCommand implements Listener {
+    private final ElectionsPlus plugin;
+    private Block block;
+    
+    public CreateVoteBlockChild(Command command, ElectionsPlus plugin) {
         super(command);
+        this.plugin = plugin;
+        this.block = null;
+
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        // database lookup to see if any block(s) have been registered
     }
 
     @Override
     public String getName() {
-        return "vote";
+        return "create-vote-block";
     }
 
-    @Permission("elections.vote")
+    @Permission("elections.create")
     @Override
-    public void handleSubcommand(User<?> sender, String[] args) {        
+    public void handleSubcommand(User<?> sender, String[] args) {
         if (!(sender.player() instanceof Player)) {
             Messages.send(sender.audience(), true, "errors", "console");
             return;
@@ -55,9 +68,38 @@ public class VoteChild extends SubCommand {
 
         Player player = (Player)sender.player();
 
-        ElectionsPlus.getInstance()
-                .getManager()
-                .getElections()
-                .thenAccept((elections) -> new ElectionsMenu(player, elections, ElectionsPlus.getInstance()).setup());
+        Block block = player.getTargetBlock(null, 50);
+
+        if (block == null) {
+            Messages.send(sender.audience(), true, "errors", "bad-args");
+        }
+        if (block.isEmpty()) {
+            Messages.send(sender.audience(), true, "errors", "no-block");
+        }
+
+        this.block = block;
+    }
+
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        Player player = event.getPlayer();
+        EquipmentSlot hand = event.getHand();
+        Action action = event.getAction();
+        Block block = event.getClickedBlock();
+
+        if(this.block == null || hand != EquipmentSlot.HAND) {
+            return;
+        }
+
+        if(!this.block.equals(block)) {
+            return;
+        }
+
+        player.sendMessage("clicked: action: " + action.toString());
+
+        plugin
+            .getManager()
+            .getElections()
+            .thenAccept((elections) -> new ElectionsMenu(player, elections, ElectionsPlus.getInstance()).setup());
     }
 }

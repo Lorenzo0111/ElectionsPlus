@@ -23,6 +23,7 @@ errors:
   party-name-required: "<red>party name is required."
   member-name-required: "<red>member name is required."
   party-not-found: "<red>Party <yellow><party><red> not found."
+  no-block: "<red>No block where your crosshairs are pointing."
 
 # Placeholder: <name>
 disband:
