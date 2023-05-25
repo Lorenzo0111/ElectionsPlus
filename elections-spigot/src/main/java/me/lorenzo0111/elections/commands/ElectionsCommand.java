@@ -44,6 +44,7 @@ public class ElectionsCommand extends Command implements TabExecutor {
         super(plugin, command, customization);
 
         this.addSubcommand(new CreateChild(this, plugin));
+        this.addSubcommand(new AddPartyToElectionChild(this, plugin));
         this.addSubcommand(new PartiesChild(this, plugin));
         this.addSubcommand(new ListChild(this));
         this.addSubcommand(new DisbandChild(this));
@@ -66,7 +67,7 @@ public class ElectionsCommand extends Command implements TabExecutor {
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("create"))
-            list.add("<name>");
+            list.add("[name]");
 
         return list;
     }

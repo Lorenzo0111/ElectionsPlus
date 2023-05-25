@@ -12,7 +12,7 @@ errors:
   election-exists: "<red>Election already exists."
   election-not-found: "<red>Election <yellow><name><red> does not exist."
   invalid-election-name: "<red>Invalid election name."
-  election-not-found: "<red>Election <name> not found."
+  election-not-found: "<red>Election <yellow><name><red> not found."
   election-name-missing: "<red>Missing election name."
   election-closed: "<gray>Election closed. Run <yellow>/elections proceed <name> <gray>to declare the winner."
   user-not-online: "<red>user <yellow><name><red> is not online."
@@ -108,8 +108,10 @@ votes:
 loading: "Loading..."
 
 election:
-  deleted: "<gray>Election <name> deleted."
-  created: "Election <name> created."
+  deleted: "<gray>Election <yellow><name><gray> deleted."
+  created: "<gray>Election <yellow><name><gray> created."
+  party-added: "<gray>Party <yellow><party><gray> added to election <yellow><election><gray>."
+  nochange: "<gray>Election <yellow><election><gray>: no change to apply"
 
 parties:
   created: "<gray>Party <yellow><party><gray> created."
@@ -122,15 +124,16 @@ parties:
 join: "<gray>There is currently an election open. <click:run_command:/elections list>Click here to vote</click>"
 
 help:
-  header:  "<gray>Available commands:"
-  create:  "<blue>elections create <name> <gray>» Create an election"
-  disband: "<blue>elections disband <name> <gray>» Disband a party"
-  info:    "<blue>elections info <name> <gray>» Get votes of an election"
-  close:   "<blue>elections close <name> <gray>» Close an election"
-  proceed: "<blue>elections proceed <name> <gray>» Calculate the election winner"
-  list:    "<blue>elections list <gray>» View the list of elections"
-  parties: "<blue>elections parties <gray>» View / edit the list of parties"
-  vote:    "<blue>elections vote [name] <gray>» Vote on an election"
+  header:    "<gray>Available commands:"
+  add-party: "<blue>elections add-party <election> <party> <gray>» Add a party to an election"
+  create:    "<blue>elections create <name> <gray>» Create an election"
+  disband:   "<blue>elections disband <name> <gray>» Disband a party"
+  info:      "<blue>elections info <name> <gray>» Get votes of an election"
+  close:     "<blue>elections close <name> <gray>» Close an election"
+  proceed:   "<blue>elections proceed <name> <gray>» Calculate the election winner"
+  list:      "<blue>elections list <gray>» View the list of elections"
+  parties:   "<blue>elections parties [create <party>] [delete <party>] [add-member <party> <name>] <gray>» View / edit the list of parties"
+  vote:      "<blue>elections vote [name] <gray>» Vote on an election"
 
 plugin:
   reload: "<gray>Plugin reloaded in <yellow><elapsed>ms<gray> with <yellow><errors><gray> error(s)."

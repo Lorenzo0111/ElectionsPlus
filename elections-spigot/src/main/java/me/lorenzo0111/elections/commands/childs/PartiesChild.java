@@ -54,63 +54,6 @@ public class PartiesChild extends SubCommand {
         return "parties";
     }
 
-    private static String array2string(String[] args, int start) {
-        String result = "";
-        for (int i = start; i < args.length; i++) {
-            if (i > 2) {
-                result = result + " ";
-            }
-            result = result + args[i];
-        }
-
-        return result;
-    }
-
-    private static ArrayList<String> unquote(String[] args, int start) {
-        String s = array2string(args, start);
-        ArrayList<String> results = new ArrayList<String>();
-        Boolean inQuote = false;
-
-        String element = "";
-        Character quote = Character.valueOf('"');
-        Character space = Character.valueOf(' ');
-        Character last = Character.valueOf('x');
-        
-        for (int i = 0; i < s.length(); i++) {
-            Character c = s.charAt(i);
-
-            if (inQuote) {
-                if (c.equals(quote)) {
-                    inQuote = false;
-                    results.add(element);
-                    element = "";
-                } else {
-                    element += c;
-                }
-            } else {
-                if (c.equals(quote)) {
-                    inQuote = true;
-                } else if (c.equals(space)) {
-                    if (last.equals(quote)) {
-                        // strip it
-                    } else {
-                        results.add(element);
-                        element = "";
-                    }
-                } else {
-                    element += c;
-                }
-            }
-            last = c;
-        }
-
-        if (element.length() > 0) {
-            results.add(element);
-        }
-
-        return results;
-    }
-
     @Permission(value = "elections.parties")
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
@@ -129,7 +72,7 @@ public class PartiesChild extends SubCommand {
 
         if (args[1].equalsIgnoreCase("create")) {
             CreatePartyConversation conversation = new CreatePartyConversation(player, plugin);
-            String partyName = array2string(args, 2);
+            String partyName = plugin.array2string(args, 2);
 
             if(partyName == "") {
                 ConversationUtil.createConversation(plugin, conversation);
@@ -140,7 +83,7 @@ public class PartiesChild extends SubCommand {
         }
         
         if (args[1].equalsIgnoreCase("delete")) {
-            String partyName = array2string(args, 2);
+            String partyName = plugin.array2string(args, 2);
             if (partyName == "") {
                 player.sendMessage(Messages.componentString(true, "errors", "party-name-required"));
                 return;
@@ -152,10 +95,8 @@ public class PartiesChild extends SubCommand {
         }
 
         if (args[1].equalsIgnoreCase("add-member")) {
-            ArrayList<String> a = unquote(args, 2);
-            for (String x : a) {
-                player.sendMessage("ARG: " + x);
-            }
+            ArrayList<String> a = plugin.unquote(args, 2);
+
             if (a.size() != 2) {
                 player.sendMessage(Messages.componentString(true, "errors", "bad-args"));
                 return;

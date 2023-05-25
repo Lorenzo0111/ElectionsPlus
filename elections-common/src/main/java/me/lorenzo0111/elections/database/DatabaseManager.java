@@ -148,26 +148,23 @@ public class DatabaseManager implements IDatabaseManager {
     public CompletableFuture<Election> createElection(String name, List<Party> parties) {
         CompletableFuture<Election> future = new CompletableFuture<>();
 
-        Election election = new Election(name,parties,true);
+        Election election = new Election(name, parties, true);
 
         this.getElectionsTable()
-                .find("name",name)
+                .find("name", name)
                 .thenAccept((result) -> {
-
                     try {
-
                         if (result.next()) {
                             future.complete(null);
                             return;
                         }
 
                         this.getElectionsTable().add(election);
-                        cache.getElections().add(election.getName(),election);
+                        cache.getElections().add(election.getName(), election);
                         future.complete(election);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
-
                 });
 
 
@@ -299,8 +296,8 @@ public class DatabaseManager implements IDatabaseManager {
     @Override
     public void updateElection(Election election) {
         cache.getElections().remove(election.getName());
-        cache.getElections().add(election.getName(),election);
-        electionsTable.removeWhere("name",election)
+        cache.getElections().add(election.getName(), election);
+        electionsTable.removeWhere("name", election)
                 .thenRun(() -> electionsTable.add(election));
     }
 

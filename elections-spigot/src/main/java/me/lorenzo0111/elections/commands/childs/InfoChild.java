@@ -32,6 +32,7 @@ import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,10 +54,18 @@ public class InfoChild extends SubCommand {
     public void handleSubcommand(User<?> user, String[] args) {
         ElectionsPlus plugin = (ElectionsPlus) getCommand().getPlugin();
 
-        if (args.length != 2) {
+        if (args.length < 2) {
             user.audience().sendMessage(Messages.component(true, "errors", "election-name-missing"));
             return;
         }
+
+        ArrayList<String> a = plugin.unquote(args, 1);
+
+        if (a.size() != 1) {
+            user.audience().sendMessage(Messages.component(true, "errors", "bad-args"));
+            return;
+        }
+        String electionName = a.get(0);
 
         user.audience().sendMessage(Messages.component(true, "votes", "calculating"));
 
@@ -64,7 +73,7 @@ public class InfoChild extends SubCommand {
                 .getVotes()
                 .thenAccept((votes) -> {
                     List<Vote> collect = votes.stream()
-                            .filter(vote -> vote.getElection().equalsIgnoreCase(args[1]))
+                            .filter(vote -> vote.getElection().equalsIgnoreCase(electionName))
                             .collect(Collectors.toList());
 
                     int total = 0;

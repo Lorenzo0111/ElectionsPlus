@@ -38,9 +38,7 @@ public class AddMemberConversation extends Conversation {
     public AddMemberConversation(Party party, Player author, ElectionsPlus plugin) {
         super(Messages.get("conversations", "add"), author, plugin);
 
-        author.sendMessage("I am the author");
         this.party = party;
-        this.getPlugin().getLogger().info("created AddMemberConversation");
     }
 
     @Override
