@@ -125,15 +125,16 @@ join: "<gray>There is currently an election open. <click:run_command:/elections 
 
 help:
   header:    "<gray>Available commands:"
-  add-party: "<blue>elections add-party <election> <party> <gray>» Add a party to an election"
   create:    "<blue>elections create <name> <gray>» Create an election"
+  add-party: "<blue>elections add-party <election> <party> <gray>» Add a party to an election"
+  parties:   "<blue>elections parties [create|delete <party>] [add-member <party> <name>] <gray>» View / edit the list of parties"
+  list:      "<blue>elections list <gray>» View the list of elections"
   disband:   "<blue>elections disband <name> <gray>» Disband a party"
+  vote:      "<blue>elections vote [name] <gray>» Vote on an election"
+  reload:    "<blue>elections reload <gray>» Reload configuration"
   info:      "<blue>elections info <name> <gray>» Get votes of an election"
   close:     "<blue>elections close <name> <gray>» Close an election"
   proceed:   "<blue>elections proceed <name> <gray>» Calculate the election winner"
-  list:      "<blue>elections list <gray>» View the list of elections"
-  parties:   "<blue>elections parties [create|delete <party>] [add-member <party> <name>] <gray>» View / edit the list of parties"
-  vote:      "<blue>elections vote [name] <gray>» Vote on an election"
 
 plugin:
   reload: "<gray>Plugin reloaded in <yellow><elapsed>ms<gray> with <yellow><errors><gray> error(s)."
