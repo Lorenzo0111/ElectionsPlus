@@ -25,7 +25,10 @@
 package me.lorenzo0111.elections.conversation;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import org.bukkit.ChatColor;
+import me.lorenzo0111.elections.handlers.Messages;
+
+import java.util.Map;
+
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -47,7 +50,9 @@ public abstract class Conversation extends StringPrompt {
     @NotNull
     @Override
     public String getPromptText(@NotNull ConversationContext context) {
-        return ChatColor.translateAlternateColorCodes('&', "&7" + reason);
+        Map<String,String> placeholders = Messages.single("prompt", reason);
+
+        return Messages.componentString(false, placeholders, "prompt");
     }
 
     public abstract void handle(@Nullable String input);

@@ -29,8 +29,8 @@ import me.lorenzo0111.elections.api.objects.Cache;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MapCache<String,V> implements Cache<String,V> {
-    private final Map<String,V> map = new HashMap<>();
+public class MapCache<K,V> implements Cache<K,V> {
+    private final Map<K,V> map = new HashMap<>();
 
     @Override
     public int size() {
@@ -43,28 +43,27 @@ public class MapCache<String,V> implements Cache<String,V> {
     }
 
     @Override
-    public void add(String key, V value) {
+    public void add(K key, V value) {
         map.put(key,value);
     }
 
     @Override
-    public boolean remove(String key, V value) {
+    public boolean remove(K key, V value) {
         return map.remove(key,value);
     }
 
     @Override
-    public V remove(String key) {
+    public V remove(K key) {
         return map.remove(key);
     }
 
     @Override
-    public V get(String key) {
+    public V get(K key) {
         return map.get(key);
     }
 
     @Override
-    public Map<String, V> map() {
+    public Map<K, V> map() {
         return map;
     }
-
 }

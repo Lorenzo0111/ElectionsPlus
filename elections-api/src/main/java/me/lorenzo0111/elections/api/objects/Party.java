@@ -106,8 +106,9 @@ public class Party implements DatabaseSerializable {
         Type type = new TypeToken<ArrayList<UUID>>() {}.getType();
         List<UUID> members = new Gson().fromJson((String) keys.get("members"),type);
 
-        Party party = new Party(name,owner,members);
+        Party party = new Party(name, owner, members);
         party.setIconWithoutUpdate(icon);
+        
         return party;
     }
 

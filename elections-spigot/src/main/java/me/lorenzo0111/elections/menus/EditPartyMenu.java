@@ -49,7 +49,7 @@ public class EditPartyMenu extends BaseGui {
     private final ElectionsPlus plugin;
 
     public EditPartyMenu(Player owner, Party party, SkullBuilder item, ElectionsPlus plugin) {
-        super(5, Messages.componentString(false, Messages.single("name",party.getName()), "guis", "edit-party-title"), EnumSet.noneOf(InteractionModifier.class));
+        super(5, Messages.componentString(false, Messages.single("name", party.getName()), "guis", "edit-party-title"), EnumSet.noneOf(InteractionModifier.class));
 
         this.owner = owner;
         this.party = party;
@@ -66,11 +66,11 @@ public class EditPartyMenu extends BaseGui {
             if (party.getOwner().equals(owner.getUniqueId())) {
                 plugin.getManager()
                         .deleteParty(party);
-                Messages.send(e.getWhoClicked(),true,"party-deleted");
+                Messages.send(e.getWhoClicked(),true, "parties", "deleted");
                 return;
             }
 
-            Messages.send(e.getWhoClicked(),true,"no-permission-delete");
+            Messages.send(e.getWhoClicked(),true, "parties", "no-permission-delete");
         }));
         this.setItem(4,5, ItemBuilder
                 .from(Objects.requireNonNull(XMaterial.OAK_SIGN.parseItem()))

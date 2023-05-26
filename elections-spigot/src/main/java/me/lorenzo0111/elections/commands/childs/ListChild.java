@@ -57,6 +57,6 @@ public class ListChild extends SubCommand {
         ElectionsPlus.getInstance()
                 .getManager()
                 .getElections()
-                .thenAccept((elections) -> new ElectionsMenu((Player) sender.player(),elections,ElectionsPlus.getInstance()).setup());
+                .thenAccept((elections) -> new ElectionsMenu((Player) sender.player(), elections, ElectionsPlus.getInstance()).setup());
     }
 }

@@ -23,5 +23,5 @@
  */
 
 rootProject.name = 'elections+'
-include('elections-expansion','elections-api','elections-sponge','elections-common','elections-spigot')
+include('elections-expansion','elections-api','elections-common','elections-spigot')
 

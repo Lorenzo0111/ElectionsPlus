@@ -27,16 +27,16 @@ package me.lorenzo0111.elections.commands.childs;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.elections.menus.ElectionsMenu;
-import me.lorenzo0111.elections.menus.VoteMenu;
 import me.lorenzo0111.pluginslib.audience.User;
+
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+
 import org.bukkit.entity.Player;
 
 public class VoteChild extends SubCommand {
-
-    public VoteChild(Command command) {
+    public VoteChild(Command command, ElectionsPlus plugin) {
         super(command);
     }
 
@@ -47,30 +47,17 @@ public class VoteChild extends SubCommand {
 
     @Permission("elections.vote")
     @Override
-    public void handleSubcommand(User<?> sender, String[] args) {
+    public void handleSubcommand(User<?> sender, String[] args) {        
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(),true,"errors", "console");
+            Messages.send(sender.audience(), true, "errors", "console");
             return;
         }
 
-        if (args.length != 2) {
-            ElectionsPlus.getInstance()
-                    .getManager()
-                    .getElections()
-                    .thenAccept((elections) -> new ElectionsMenu((Player) sender.player(),elections,ElectionsPlus.getInstance()).setup());
-            return;
-        }
+        Player player = (Player)sender.player();
 
         ElectionsPlus.getInstance()
-                .getApi()
-                .getElection(args[1])
-                .thenAccept((election) -> {
-                    if (election == null) {
-                        Messages.send(sender.audience(),true, Messages.single("name", args[1]), "errors", "not-found");
-                        return;
-                    }
-
-                    new VoteMenu((Player) sender.player(),election).setup();
-                });
+                .getManager()
+                .getElections()
+                .thenAccept((elections) -> new ElectionsMenu(player, elections, ElectionsPlus.getInstance()).setup());
     }
 }

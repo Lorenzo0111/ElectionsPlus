@@ -25,6 +25,7 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.NameConversation;
 import me.lorenzo0111.elections.handlers.Messages;
@@ -33,6 +34,9 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+
+import java.util.ArrayList;
+
 import org.bukkit.entity.Player;
 
 public class CreateChild extends SubCommand {
@@ -52,20 +56,34 @@ public class CreateChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(),true, "errors", "console");
+            Messages.send(sender.audience(), true, "errors", "console");
             return;
         }
 
-        CreateElectionMenu menu = new CreateElectionMenu(plugin,"None",(Player) sender.player());
+        Player player = (Player)sender.player();
 
-        if (args.length != 2) {
-            ConversationUtil.createConversation(plugin,new NameConversation((Player) sender.player(),plugin,menu));
+        if (args.length == 1) {
+            CreateElectionMenu menu = new CreateElectionMenu(plugin, "None", player);
+            ConversationUtil.createConversation(plugin, new NameConversation(player, plugin, menu));
             return;
         }
 
-        String name = args[1];
+        ArrayList<String> a = plugin.unquote(args, 1);
+        if (a.size() != 1) {
+            Messages.send(sender.audience(), true, "errors", "bad-args");
+            return;
+        }
 
-        menu.setName(name);
-        menu.setup();
+        String electionName = a.get(0);
+        plugin.getManager()
+        .createElection(electionName, new ArrayList<Party>())
+        .thenAccept(election -> {
+            if (election == null) {
+                Messages.send(player, true, "errors", "election-exists");
+                return;
+            }
+
+            Messages.send(player, true, Messages.single("name", electionName), "election", "created");
+        });
     }
 }
