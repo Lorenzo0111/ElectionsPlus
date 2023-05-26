@@ -26,6 +26,7 @@ package me.lorenzo0111.elections.listeners;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.commands.childs.CreateVoteBlockChild;
 import me.lorenzo0111.elections.handlers.Messages;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,13 +34,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JoinListener implements Listener {
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event) {
-        if (!ElectionsPlus.getInstance().getConfig().getBoolean("join-notification"))
-            return;
+        ElectionsPlus plugin = ElectionsPlus.getInstance();
+        CreateVoteBlockChild c = plugin.getCreateVoteBlockChild();
+        if (c != null) {
+            c.setup();
+        }
 
-        if (event.getPlayer().hasPermission("elections.update") && ElectionsPlus.getInstance().getConfig().getBoolean("update.check")) {
+        if (!plugin.getConfig().getBoolean("join-notification")) {
+            return;
+        }
+
+        if (event.getPlayer().hasPermission("elections.update") && plugin.getConfig().getBoolean("update.check")) {
             ElectionsPlus.getInstance()
                     .getUpdater()
                     .sendUpdateCheck(Messages.audience(event.getPlayer()));

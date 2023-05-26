@@ -28,6 +28,7 @@ import me.lorenzo0111.elections.api.IElectionsPlusAPI;
 import me.lorenzo0111.elections.api.implementations.ElectionsPlusAPI;
 import me.lorenzo0111.elections.cache.CacheManager;
 import me.lorenzo0111.elections.commands.ElectionsCommand;
+import me.lorenzo0111.elections.commands.childs.CreateVoteBlockChild;
 import me.lorenzo0111.elections.constants.Getters;
 import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
@@ -67,6 +68,8 @@ public final class ElectionsPlus extends JavaPlugin {
     private ConfigurationNode messages;
 
     private Permission permissions;
+
+    private CreateVoteBlockChild createVoteBlockChild = null;
 
     @Override
     public void onEnable() {
@@ -121,8 +124,6 @@ public final class ElectionsPlus extends JavaPlugin {
         Bukkit.getServicesManager().register(IElectionsPlusAPI.class, api, this, ServicePriority.Normal);
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
         switch (getConfig().getString("database.type", "NULL").toUpperCase()) {
-            case "REDIS":
-                this.getLogger().warning("The redis feature is not implemented yet. Using SQLITE..");
             case "SQLITE":
                 try {
                     this.manager = new DatabaseManager(new BukkitScheduler(this), cache, config(), new SQLiteConnection(getDataFolder().toPath()));
@@ -133,7 +134,7 @@ public final class ElectionsPlus extends JavaPlugin {
                 break;
             case "MYSQL":
                 try {
-                    this.manager = new DatabaseManager(config,cache, getDataFolder().toPath(), new BukkitScheduler(this));
+                    this.manager = new DatabaseManager(config, cache, getDataFolder().toPath(), new BukkitScheduler(this));
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -148,7 +149,14 @@ public final class ElectionsPlus extends JavaPlugin {
                                             Messages.componentString(true, "errors", "help")
                                         );
 
-        new ElectionsCommand(this, "elections", customization);
+
+        ElectionsCommand cmd = new ElectionsCommand(this, "elections", customization);
+
+        createVoteBlockChild = cmd.getVoteBlockChild();
+    }
+
+    public CreateVoteBlockChild getCreateVoteBlockChild() {
+        return createVoteBlockChild;
     }
 
     private void load() {

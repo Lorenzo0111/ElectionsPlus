@@ -29,6 +29,7 @@ import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.api.objects.ElectionBlock;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.api.objects.Vote;
 import me.lorenzo0111.elections.cache.CacheManager;
@@ -49,7 +50,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -58,13 +61,15 @@ public class DatabaseManager implements IDatabaseManager {
     private Table votesTable;
     private Table partiesTable;
     private Table electionsTable;
+    private Table blocksTable;
+
     private final IConnectionHandler connectionHandler;
     private final CacheManager cache;
 
     public DatabaseManager(IAdvancedScheduler scheduler, CacheManager cache, ConfigurationNode config, IConnectionHandler handler) {
         this.connectionHandler = handler;
 
-        this.tables(scheduler,cache,config);
+        this.tables(scheduler, cache, config);
         this.cache = cache;
     }
 
@@ -99,7 +104,7 @@ public class DatabaseManager implements IDatabaseManager {
 
         this.connectionHandler = handler;
 
-        this.tables(scheduler,cache,configuration);
+        this.tables(scheduler, cache, configuration);
         this.cache = cache;
     }
 
@@ -109,7 +114,7 @@ public class DatabaseManager implements IDatabaseManager {
         votesColumns.add(new Column("uuid", "TEXT"));
         votesColumns.add(new Column("party", "TEXT"));
         votesColumns.add(new Column("election", "TEXT"));
-        this.votesTable = new Table(scheduler,connectionHandler,"votes",votesColumns);
+        this.votesTable = new Table(scheduler, connectionHandler, "votes", votesColumns);
         this.votesTable.create();
 
         // Parties
@@ -118,7 +123,7 @@ public class DatabaseManager implements IDatabaseManager {
         partiesColumns.add(new Column("name", "TEXT"));
         partiesColumns.add(new Column("members", "TEXT"));
         partiesColumns.add(new Column("icon", "TEXT nullable"));
-        this.partiesTable = new Table(scheduler,connectionHandler,"parties",partiesColumns);
+        this.partiesTable = new Table(scheduler, connectionHandler, "parties", partiesColumns);
         this.partiesTable.create();
 
         // Elections
@@ -126,10 +131,18 @@ public class DatabaseManager implements IDatabaseManager {
         electionsColumns.add(new Column("name", "TEXT"));
         electionsColumns.add(new Column("parties", "TEXT"));
         electionsColumns.add(new Column("open", "INTEGER"));
-        this.electionsTable = new Table(scheduler,connectionHandler,"elections",electionsColumns);
+        this.electionsTable = new Table(scheduler, connectionHandler, "elections", electionsColumns);
         this.electionsTable.create();
 
-        scheduler.repeating(new CacheTask(this,cache),60 * 20L, config.node("cache-duration").getInt(5),TimeUnit.MINUTES);
+        // Blocks
+        List<Column> blocksColumns = new ArrayList<>();
+        blocksColumns.add(new Column("world", "TEXT"));
+        blocksColumns.add(new Column("location", "TEXT"));
+        blocksColumns.add(new Column("blockdata", "TEXT"));
+        this.blocksTable = new Table(scheduler, connectionHandler, "blocks", blocksColumns);
+        this.blocksTable.create();
+
+        scheduler.repeating(new CacheTask(this, cache), 60 * 20L, config.node("cache-duration").getInt(5), TimeUnit.MINUTES);
     }
 
     public Table getPartiesTable() {
@@ -142,6 +155,10 @@ public class DatabaseManager implements IDatabaseManager {
 
     public Table getElectionsTable() {
         return electionsTable;
+    }
+
+    public Table getBlocksTable() {
+        return blocksTable;
     }
 
     @Override
@@ -227,11 +244,9 @@ public class DatabaseManager implements IDatabaseManager {
                 List<Party> parties = new ArrayList<>();
                 Gson gson = new Gson();
                 while (resultSet.next()) {
-
                     Type type = new TypeToken<ArrayList<UUID>>() {}.getType();
                     List<UUID> members = new ArrayList<>(gson.fromJson(resultSet.getString("members"), type));
-
-                    Party party = new Party(resultSet.getString("name"),UUID.fromString(resultSet.getString("owner")),members);
+                    Party party = new Party(resultSet.getString("name"), UUID.fromString(resultSet.getString("owner")), members);
 
                     if (resultSet.getString("icon") != null)
                         party.setIcon(resultSet.getString("icon"));
@@ -359,5 +374,64 @@ public class DatabaseManager implements IDatabaseManager {
                 });
 
         return future;
+    }
+
+    @Override
+    public CompletableFuture<List<ElectionBlock>> getElectionBlocks() {
+        CompletableFuture<List<ElectionBlock>> future = new CompletableFuture<>();
+
+        getBlocksTable().run(() -> {
+            try {
+                Statement statement = connectionHandler.getConnection().createStatement();
+                String query = String.format("SELECT * FROM %s;", getBlocksTable().getName());
+                ResultSet resultSet = statement.executeQuery(query);
+
+                List<ElectionBlock> electionBlocks = new ArrayList<>();
+                Gson gson = new Gson();
+                while (resultSet.next()) {
+                    Type type = new TypeToken<Map<String, Object>>() {}.getType();
+                    Map<String, Object> location = new HashMap<String, Object>(gson.fromJson(resultSet.getString("location"), type));
+                    UUID world = UUID.fromString(resultSet.getString("world"));
+                    String blockData = resultSet.getString("blockdata");
+
+                    ElectionBlock electionBlock = new ElectionBlock(world, location, blockData);
+
+                    electionBlocks.add(electionBlock);
+                }
+
+                future.complete(electionBlocks);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                future.complete(null);
+            }
+        });
+
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<ElectionBlock> createElectionBlock(UUID world, Map<String, Object> location, String blockData) {
+        CompletableFuture<ElectionBlock> electionBlockFuture = new CompletableFuture<>();
+
+        blocksTable.find("location", location)
+                .thenAccept((resultSet) -> {
+                    try {
+                        while (resultSet.next()) {
+                            UUID w = UUID.fromString(resultSet.getString("world"));
+                            if (w.equals(world)) {
+                                electionBlockFuture.complete(null);
+                                return;
+                            }
+                        }
+
+                        ElectionBlock electionBlock = new ElectionBlock(world, location, blockData);
+                        blocksTable.add(electionBlock);
+                        electionBlockFuture.complete(electionBlock);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+        return electionBlockFuture;
     }
 }

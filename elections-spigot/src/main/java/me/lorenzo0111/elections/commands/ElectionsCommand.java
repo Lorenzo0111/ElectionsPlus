@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ElectionsCommand extends Command implements TabExecutor {
+    private CreateVoteBlockChild voteBlockChild;
 
     public ElectionsCommand(ElectionsPlus plugin, String command, @Nullable Customization customization) {
         super(plugin, command, customization);
@@ -54,9 +55,15 @@ public class ElectionsCommand extends Command implements TabExecutor {
         this.addSubcommand(new InfoChild(this));
         this.addSubcommand(new CloseChild(this, plugin));
         this.addSubcommand(new ProceedChild(this, plugin));
-        this.addSubcommand(new CreateVoteBlockChild(this, plugin));
+
+        voteBlockChild = new CreateVoteBlockChild(this, plugin);
+        this.addSubcommand(voteBlockChild);
 
         Objects.requireNonNull(plugin.getCommand(command)).setTabCompleter(this);
+    }
+
+    public CreateVoteBlockChild getVoteBlockChild() {
+        return voteBlockChild;
     }
 
     @Nullable

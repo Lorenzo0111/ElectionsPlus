@@ -91,7 +91,6 @@ public class ElectionsMenu extends PaginatedGui {
         });
     }
 
-
     public Component getRightLore(Election election) {
         if (!owner.hasPermission("elections.edit"))
             return Component.empty();
