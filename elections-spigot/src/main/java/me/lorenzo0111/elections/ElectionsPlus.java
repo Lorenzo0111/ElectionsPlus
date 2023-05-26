@@ -28,7 +28,6 @@ import me.lorenzo0111.elections.api.IElectionsPlusAPI;
 import me.lorenzo0111.elections.api.implementations.ElectionsPlusAPI;
 import me.lorenzo0111.elections.cache.CacheManager;
 import me.lorenzo0111.elections.commands.ElectionsCommand;
-import me.lorenzo0111.elections.commands.childs.CreateVoteBlockChild;
 import me.lorenzo0111.elections.constants.Getters;
 import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
@@ -68,8 +67,6 @@ public final class ElectionsPlus extends JavaPlugin {
     private ConfigurationNode messages;
 
     private Permission permissions;
-
-    private CreateVoteBlockChild createVoteBlockChild = null;
 
     @Override
     public void onEnable() {
@@ -150,13 +147,7 @@ public final class ElectionsPlus extends JavaPlugin {
                                         );
 
 
-        ElectionsCommand cmd = new ElectionsCommand(this, "elections", customization);
-
-        createVoteBlockChild = cmd.getVoteBlockChild();
-    }
-
-    public CreateVoteBlockChild getCreateVoteBlockChild() {
-        return createVoteBlockChild;
+        new ElectionsCommand(this, "elections", customization);
     }
 
     private void load() {

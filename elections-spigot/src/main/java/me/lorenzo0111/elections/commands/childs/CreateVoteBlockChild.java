@@ -52,7 +52,6 @@ import org.bukkit.inventory.EquipmentSlot;
 public class CreateVoteBlockChild extends SubCommand implements Listener {
     private final ElectionsPlus plugin;
     private List<Block> blocks;
-    private Boolean already = false;
     
     public CreateVoteBlockChild(Command command, ElectionsPlus plugin) {
         super(command);
@@ -60,22 +59,14 @@ public class CreateVoteBlockChild extends SubCommand implements Listener {
         this.blocks = new ArrayList<Block>();
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        setup();
     }
 
-    public void setup() {
-        if (already) {
-            plugin.getLogger().info("already setup");
-            return;
-        }
-        
-        already = true;
-        plugin.getLogger().info("running setup");
-
+    private void setup() {
         plugin.getManager()
         .getElectionBlocks()
         .thenAccept(electionBlocks -> {
             if (electionBlocks == null) {
-                    plugin.getLogger().info("No election blocks");
                     return;
             }
 

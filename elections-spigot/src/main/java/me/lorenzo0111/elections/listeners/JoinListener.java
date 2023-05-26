@@ -26,7 +26,6 @@ package me.lorenzo0111.elections.listeners;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
-import me.lorenzo0111.elections.commands.childs.CreateVoteBlockChild;
 import me.lorenzo0111.elections.handlers.Messages;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -37,10 +36,6 @@ public class JoinListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoin(PlayerJoinEvent event) {
         ElectionsPlus plugin = ElectionsPlus.getInstance();
-        CreateVoteBlockChild c = plugin.getCreateVoteBlockChild();
-        if (c != null) {
-            c.setup();
-        }
 
         if (!plugin.getConfig().getBoolean("join-notification")) {
             return;

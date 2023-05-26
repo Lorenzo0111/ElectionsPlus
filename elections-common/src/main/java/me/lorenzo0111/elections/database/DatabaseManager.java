@@ -39,7 +39,6 @@ import me.lorenzo0111.pluginslib.database.connection.HikariConnection;
 import me.lorenzo0111.pluginslib.database.connection.IConnectionHandler;
 import me.lorenzo0111.pluginslib.database.connection.SQLiteConnection;
 import me.lorenzo0111.pluginslib.database.objects.Column;
-import me.lorenzo0111.pluginslib.database.objects.Table;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.io.IOException;
@@ -58,10 +57,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class DatabaseManager implements IDatabaseManager {
-    private Table votesTable;
-    private Table partiesTable;
-    private Table electionsTable;
-    private Table blocksTable;
+    private ETable votesTable;
+    private ETable partiesTable;
+    private ETable electionsTable;
+    private ETable blocksTable;
 
     private final IConnectionHandler connectionHandler;
     private final CacheManager cache;
@@ -114,7 +113,7 @@ public class DatabaseManager implements IDatabaseManager {
         votesColumns.add(new Column("uuid", "TEXT"));
         votesColumns.add(new Column("party", "TEXT"));
         votesColumns.add(new Column("election", "TEXT"));
-        this.votesTable = new Table(scheduler, connectionHandler, "votes", votesColumns);
+        this.votesTable = new ETable(scheduler, connectionHandler, "votes", votesColumns);
         this.votesTable.create();
 
         // Parties
@@ -123,7 +122,7 @@ public class DatabaseManager implements IDatabaseManager {
         partiesColumns.add(new Column("name", "TEXT"));
         partiesColumns.add(new Column("members", "TEXT"));
         partiesColumns.add(new Column("icon", "TEXT nullable"));
-        this.partiesTable = new Table(scheduler, connectionHandler, "parties", partiesColumns);
+        this.partiesTable = new ETable(scheduler, connectionHandler, "parties", partiesColumns);
         this.partiesTable.create();
 
         // Elections
@@ -131,7 +130,7 @@ public class DatabaseManager implements IDatabaseManager {
         electionsColumns.add(new Column("name", "TEXT"));
         electionsColumns.add(new Column("parties", "TEXT"));
         electionsColumns.add(new Column("open", "INTEGER"));
-        this.electionsTable = new Table(scheduler, connectionHandler, "elections", electionsColumns);
+        this.electionsTable = new ETable(scheduler, connectionHandler, "elections", electionsColumns);
         this.electionsTable.create();
 
         // Blocks
@@ -139,25 +138,25 @@ public class DatabaseManager implements IDatabaseManager {
         blocksColumns.add(new Column("world", "TEXT"));
         blocksColumns.add(new Column("location", "TEXT"));
         blocksColumns.add(new Column("blockdata", "TEXT"));
-        this.blocksTable = new Table(scheduler, connectionHandler, "blocks", blocksColumns);
+        this.blocksTable = new ETable(scheduler, connectionHandler, "blocks", blocksColumns);
         this.blocksTable.create();
 
         scheduler.repeating(new CacheTask(this, cache), 60 * 20L, config.node("cache-duration").getInt(5), TimeUnit.MINUTES);
     }
 
-    public Table getPartiesTable() {
+    public ETable getPartiesTable() {
         return partiesTable;
     }
 
-    public Table getVotesTable() {
+    public ETable getVotesTable() {
         return votesTable;
     }
 
-    public Table getElectionsTable() {
+    public ETable getElectionsTable() {
         return electionsTable;
     }
 
-    public Table getBlocksTable() {
+    public ETable getBlocksTable() {
         return blocksTable;
     }
 
