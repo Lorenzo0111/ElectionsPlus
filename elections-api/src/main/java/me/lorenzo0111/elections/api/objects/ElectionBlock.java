@@ -1,7 +1,7 @@
 /*
  * This file is part of ElectionsPlus, licensed under the MIT License.
  *
- * Copyright (©) tadhunt
+ * Copyright (c) Lorenzo0111
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
  
- public class ElectionBlock implements DatabaseSerializable {
+public class ElectionBlock implements DatabaseSerializable {
     private final UUID world;
     private final Map<String, Object> location;
     private final String blockData;
@@ -55,9 +55,11 @@ import java.util.UUID;
     @Override
     public @NotNull Map<String, Object> serialize() {
         Map<String,Object> map = new HashMap<>();
+
         map.put("world", world);
         map.put("location", location);
         map.put("blockdata", blockData);
+
         return map;
     }
 
@@ -99,5 +101,5 @@ import java.util.UUID;
 
         return true;
     }
- }
- 
+}
+

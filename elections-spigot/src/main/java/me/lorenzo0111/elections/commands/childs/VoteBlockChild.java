@@ -1,7 +1,7 @@
 /*
  * This file is part of ElectionsPlus, licensed under the MIT License.
  *
- * Copyright (©) tadhunt
+ * Copyright (c) Lorenzo0111
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -191,3 +191,4 @@ public class VoteBlockChild extends SubCommand implements Listener {
         }
     }
 }
+
