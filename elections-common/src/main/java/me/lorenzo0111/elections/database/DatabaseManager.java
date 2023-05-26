@@ -433,4 +433,10 @@ public class DatabaseManager implements IDatabaseManager {
 
         return electionBlockFuture;
     }
+
+    @Override
+    public void deleteElectionBlock(ElectionBlock electionBlock) {
+        // TODO(tadhunt): correctly handle different worlds
+        blocksTable.removeWhere("location", electionBlock.getLocation());
+    }
 }

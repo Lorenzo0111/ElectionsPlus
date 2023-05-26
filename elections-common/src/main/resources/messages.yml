@@ -24,6 +24,8 @@ errors:
   member-name-required: "<red>member name is required."
   party-not-found: "<red>Party <yellow><party><red> not found."
   no-block: "<red>No block where your crosshairs are pointing."
+  block-already-exists: "<red>The block at that location is already added."
+
 
 # Placeholder: <name>
 disband:
@@ -121,17 +123,23 @@ parties:
   add-member-debug: "<gray>Party: <party> Member: <member>"
 
 help:
-  header:    "<gray>Available commands:"
-  create:    "<blue>elections create <name> <gray>» Create an election"
-  add-party: "<blue>elections add-party <election> <party> <gray>» Add a party to an election"
-  parties:   "<blue>elections parties [create|delete <party>] [add-member <party> <name>] <gray>» View / edit the list of parties"
-  list:      "<blue>elections list <gray>» View the list of elections"
-  disband:   "<blue>elections disband <name> <gray>» Disband a party"
-  vote:      "<blue>elections vote <gray>» Vote on an election"
-  reload:    "<blue>elections reload <gray>» Reload configuration"
-  info:      "<blue>elections info <name> <gray>» Get votes of an election"
-  close:     "<blue>elections close <name> <gray>» Close an election"
-  proceed:   "<blue>elections proceed <name> <gray>» Calculate the election winner"
+  header:     "<gray>Available commands:"
+  create:     "<blue>elections create <name> <gray>» Create an election"
+  add-party:  "<blue>elections add-party <election> <party> <gray>» Add a party to an election"
+  parties:    "<blue>elections parties [create|delete <party>] [add-member <party> <name>] <gray>» View / edit the list of parties"
+  list:       "<blue>elections list <gray>» View the list of elections"
+  disband:    "<blue>elections disband <name> <gray>» Disband a party"
+  vote:       "<blue>elections vote <gray>» Vote on an election"
+  reload:     "<blue>elections reload <gray>» Reload configuration"
+  info:       "<blue>elections info <name> <gray>» Get votes of an election"
+  close:      "<blue>elections close <name> <gray>» Close an election"
+  proceed:    "<blue>elections proceed <name> <gray>» Calculate the election winner"
+  vote-block: "<blue>elections vote-block create|delete <gray>» Toggles the block at crosshairs opening the voting menu"
+
 
 plugin:
   reload: "<gray>Plugin reloaded in <yellow><elapsed>ms<gray> with <yellow><errors><gray> error(s)."
+
+vote-block:
+  created: "<gray>Vote block created."
+  deleted: "<gray>Vote block deleted."

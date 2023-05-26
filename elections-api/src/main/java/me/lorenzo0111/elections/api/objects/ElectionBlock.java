@@ -72,5 +72,32 @@ import java.util.UUID;
     public String getBlockData() {
         return blockData;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof ElectionBlock)) {
+            return false;
+        }
+
+        ElectionBlock b = (ElectionBlock)o;
+
+        if (!this.world.equals(b.world)) {
+            return false;
+        }
+
+        if (!this.location.equals(b.location)) {
+            return false;
+        }
+
+        if (!this.blockData.equals(b.blockData)) {
+            return false;
+        }
+
+        return true;
+    }
  }
  

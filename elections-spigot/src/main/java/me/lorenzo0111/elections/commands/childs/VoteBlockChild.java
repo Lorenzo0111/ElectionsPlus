@@ -49,11 +49,11 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
-public class CreateVoteBlockChild extends SubCommand implements Listener {
+public class VoteBlockChild extends SubCommand implements Listener {
     private final ElectionsPlus plugin;
     private List<Block> blocks;
     
-    public CreateVoteBlockChild(Command command, ElectionsPlus plugin) {
+    public VoteBlockChild(Command command, ElectionsPlus plugin) {
         super(command);
         this.plugin = plugin;
         this.blocks = new ArrayList<Block>();
@@ -88,29 +88,47 @@ public class CreateVoteBlockChild extends SubCommand implements Listener {
 
     @Override
     public String getName() {
-        return "create-vote-block";
+        return "vote-block";
     }
 
     @Permission("elections.create")
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
+        if (args.length != 2) {
+            Messages.send(sender.audience(), true, "errors", "bad-args");
+            return;
+        }
         if (!(sender.player() instanceof Player)) {
             Messages.send(sender.audience(), true, "errors", "console");
             return;
         }
 
         Player player = (Player)sender.player();
-
         Block block = player.getTargetBlock(null, 50);
 
         if (block == null) {
             Messages.send(sender.audience(), true, "errors", "bad-args");
+            return;
         }
         if (block.isEmpty()) {
             Messages.send(sender.audience(), true, "errors", "no-block");
+            return;
         }
 
-        this.blocks.add(block);
+        if (args[1].equalsIgnoreCase("create")) {
+            this.create(sender, block);
+            return;
+        }
+
+        if (args[1].equalsIgnoreCase("delete")) {
+            this.delete(sender, block);
+            return;
+        }
+
+        Messages.send(sender.audience(), true, "errors", "bad-args");
+    }
+
+    private void create(User<?>sender, Block block) {
 
         UUID world = block.getWorld().getUID();
         Map<String, Object> location = block.getLocation().serialize();
@@ -120,13 +138,27 @@ public class CreateVoteBlockChild extends SubCommand implements Listener {
             .createElectionBlock(world, location, blockData)
             .thenAccept(electionBlock -> {
                 if (electionBlock == null) {
-                        player.sendMessage("block at that location already exists");
+                        Messages.send(sender.audience(), true, "errors", "block-already-exists");
                         return;
                 }
 
-                player.sendMessage("block added");
-                player.sendMessage(electionBlock.toString());
+                Messages.send(sender.audience(), true, "vote-block", "created");
+                this.blocks.add(block);
             });
+    }
+
+    private void delete(User<?>sender, Block block) {
+        UUID world = block.getWorld().getUID();
+        Map<String, Object> location = block.getLocation().serialize();
+        String blockData = block.getBlockData().getAsString();
+
+        ElectionBlock electionBlock = new ElectionBlock(world, location, blockData);
+        plugin.getManager()
+            .deleteElectionBlock(electionBlock);
+
+        this.blocks.remove(block);
+
+        Messages.send(sender.audience(), true, "vote-block", "deleted");
     }
 
     @EventHandler

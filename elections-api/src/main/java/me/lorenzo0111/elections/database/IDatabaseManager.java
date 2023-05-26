@@ -52,4 +52,5 @@ public interface IDatabaseManager {
 
     CompletableFuture<List<ElectionBlock>> getElectionBlocks();
     CompletableFuture<ElectionBlock> createElectionBlock(UUID world, Map <String, Object> location, String blockData);
+    void deleteElectionBlock(ElectionBlock electionBlock);
 }
