@@ -59,20 +59,13 @@ public class InfoChild extends SubCommand {
             return;
         }
 
-        ArrayList<String> a = plugin.unquote(args, 1);
-        if (a.size() != 1) {
-            user.audience().sendMessage(Messages.component(true, "errors", "bad-args"));
-            return;
-        }
-        String electionName = a.get(0);
-
-        user.audience().sendMessage(Messages.component(true, Messages.single("election", electionName), "votes", "calculating"));
+        user.audience().sendMessage(Messages.component(true, Messages.single("election", args[1]), "votes", "calculating"));
 
         plugin.getApi()
                 .getVotes()
                 .thenAccept((votes) -> {
                     List<Vote> collect = votes.stream()
-                            .filter(vote -> vote.getElection().equalsIgnoreCase(electionName))
+                            .filter(vote -> vote.getElection().equalsIgnoreCase(args[1]))
                             .collect(Collectors.toList());
 
                     int total = 0;
@@ -92,13 +85,13 @@ public class InfoChild extends SubCommand {
 
                     user.audience().sendMessage(Messages.component(true, "votes", "title"));
                     for (String party : voteMap.keySet()) {
-                        Integer nvotes = voteMap.get(party);
-                        Integer percent = nvotes * 100 / total;
+                        int nvotes = voteMap.get(party);
+                        int percent = nvotes * 100 / total;
 
-                        HashMap<String, String> placeholders = new HashMap<String, String>();
+                        HashMap<String, String> placeholders = new HashMap<>();
                         placeholders.put("party", party);
-                        placeholders.put("nvotes", nvotes.toString());
-                        placeholders.put("percent", percent.toString());
+                        placeholders.put("nvotes", String.valueOf(nvotes));
+                        placeholders.put("percent", String.valueOf(percent));
 
                         user.audience().sendMessage(Messages.component(true, placeholders, "votes", "status"));
                     }

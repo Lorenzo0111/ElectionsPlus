@@ -48,7 +48,6 @@ public class HelpChild extends SubCommand {
         this.formatHelp(sender, "elections.parties", "help", "parties");
         this.formatHelp(sender, "elections.list", "help", "list");
         this.formatHelp(sender, "elections.disband", "help", "disband");
-        // "elections help"
         this.formatHelp(sender, "elections.vote", "help", "vote");
         this.formatHelp(sender, "elections.reload", "help", "reload");
         this.formatHelp(sender, "elections.info", "help", "info");

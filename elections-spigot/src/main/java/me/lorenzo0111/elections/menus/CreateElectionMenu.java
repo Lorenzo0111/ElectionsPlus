@@ -54,8 +54,6 @@ public class CreateElectionMenu extends BaseGui {
         this.name = name;
         this.player = player;
         this.plugin = plugin;
-
-        this.setup();
     }
 
     public void setup() {

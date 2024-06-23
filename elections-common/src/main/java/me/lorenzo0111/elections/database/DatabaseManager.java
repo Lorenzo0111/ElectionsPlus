@@ -199,7 +199,8 @@ public class DatabaseManager implements IDatabaseManager {
         getParties()
                 .thenAccept((parties) -> getElectionsTable().run(() -> {
                     try {
-                        Statement statement = connectionHandler.getConnection().createStatement();
+                        Statement statement = connectionHandler.getConnection()
+                                .createStatement();
                         ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s;", getElectionsTable().getName()));
 
                         List<Election> elections = new ArrayList<>();

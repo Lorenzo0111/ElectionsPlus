@@ -123,7 +123,7 @@ public class Messages {
         String p = prefix ? prefix() : "";
 
         Builder b = TagResolver.builder();
-        Boolean empty = true;
+        boolean empty = true;
         String pathDebug = "";
         ArrayList<String> newPath = new ArrayList<String>();
 

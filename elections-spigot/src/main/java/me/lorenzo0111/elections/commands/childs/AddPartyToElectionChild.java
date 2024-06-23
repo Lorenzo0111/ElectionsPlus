@@ -32,15 +32,14 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.entity.Player;
+
+import java.util.List;
+import java.util.Optional;
 
 public class AddPartyToElectionChild extends SubCommand {
     private final ElectionsPlus plugin;
-    
+
     public AddPartyToElectionChild(Command command, ElectionsPlus plugin) {
         super(command);
         this.plugin = plugin;
@@ -50,7 +49,7 @@ public class AddPartyToElectionChild extends SubCommand {
     public String getName() {
         return "add-party";
     }
-    
+
     private static Party findParty(List<Party> parties, String name) {
         for (Party party : parties) {
             if (party.getName().equals(name)) {
@@ -68,60 +67,53 @@ public class AddPartyToElectionChild extends SubCommand {
             return;
         }
 
-        ArrayList<String> a = plugin.unquote(args, 1);
-
-        if (a.size() < 2) {
-           Messages.send(sender.audience(), true, "errors", "bad-args");
-           return;
+        if (args.length < 3) {
+            Messages.send(sender.audience(), true, "errors", "bad-args");
+            return;
         }
 
         plugin.getManager()
-           .getElections()
-           .thenAccept((elections) -> handleElections(sender, a, elections));
+                .getElections()
+                .thenAccept((elections) -> handleElections(sender, args[1], args[2], elections));
+    }
+
+    private void handleElections(User<?> sender, String electionName, String party, List<Election> elections) {
+        Optional<Election> e = elections.stream()
+                .filter(election -> election.getName().equals(electionName))
+                .findFirst();
+
+        if (e.isPresent()) {
+            addPartyToElection(e.get(), sender, party);
+            return;
         }
-        
-        private void handleElections(User<?> sender, ArrayList<String> args, List<Election> elections) {
-            String electionName = args.remove(0);
-            
-            for(Election election : elections) {
-                if (election.getName().equals(electionName)) {
-                    electionAddParties(election, sender, args);
-                    return;
-                }
-            }
-            
-            Messages.send(sender.audience(), true, Messages.single("name", electionName), "errors", "election-not-found");
-        }
-        
-    private void electionAddParties(Election election, User<?> sender, ArrayList<String> args) {
+
+        Messages.send(sender.audience(),
+                true,
+                Messages.single("name", electionName),
+                "errors", "election-not-found");
+    }
+
+    private void addPartyToElection(Election election, User<?> sender, String partyName) {
         plugin.getManager()
-            .getParties()
-            .thenAccept((parties) -> {
-                Boolean dirty = false;
-                List<Party> electionParties = election.getParties();
-                
-                for (String partyName : args) {
+                .getParties()
+                .thenAccept((parties) -> {
+                    List<Party> electionParties = election.getParties();
+
                     Party party = findParty(parties, partyName);
                     if (party == null) {
                         Messages.send(sender.audience(), true, Messages.single("party", partyName), "errors", "party-not-found");
                         return;
                     }
-                    
+
                     if (electionParties.contains(party)) {
-                        continue;
+                        return;
                     }
-                    
+
                     electionParties.add(party);
-                    dirty = true;
                     Messages.send(sender.audience(), true, Messages.multiple("party", partyName, "election", election.getName()), "election", "party-added");
-                }
-                
-                if (dirty) {
+
                     Election newElection = new Election(election.getName(), electionParties, election.isOpen());
                     plugin.getManager().updateElection(newElection);
-                } else {
-                    Messages.send(sender.audience(), true, Messages.single("election", election.getName()), "election", "nochange");
-                }
-            });
+                });
     }
 }

@@ -55,19 +55,11 @@ public class DisbandChild extends SubCommand {
             return;
         }
 
-        ArrayList<String> a = plugin.unquote(args, 1);
-        if (a.size() != 1) {
-            Messages.send(sender.audience(), true, Messages.component(true, "errors", "bad-args"));
-            return;
-        }
-
-        String electionName = a.get(0);
-
         ElectionsPlus
                 .getInstance()
                 .getManager()
-                .deleteParty(electionName);
+                .deleteParty(args[1]);
 
-        Messages.send(sender.audience(), true, Messages.single("name", electionName), "disband", "deleted");
+        Messages.send(sender.audience(), true, Messages.single("name", args[1]), "disband", "deleted");
     }
 }

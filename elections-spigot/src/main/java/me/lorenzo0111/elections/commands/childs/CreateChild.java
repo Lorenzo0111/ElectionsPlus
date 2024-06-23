@@ -34,10 +34,9 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
-
-import org.bukkit.entity.Player;
 
 public class CreateChild extends SubCommand {
     private final ElectionsPlus plugin;
@@ -60,7 +59,7 @@ public class CreateChild extends SubCommand {
             return;
         }
 
-        Player player = (Player)sender.player();
+        Player player = (Player) sender.player();
 
         if (args.length == 1) {
             CreateElectionMenu menu = new CreateElectionMenu(plugin, "None", player);
@@ -68,22 +67,15 @@ public class CreateChild extends SubCommand {
             return;
         }
 
-        ArrayList<String> a = plugin.unquote(args, 1);
-        if (a.size() != 1) {
-            Messages.send(sender.audience(), true, "errors", "bad-args");
-            return;
-        }
-
-        String electionName = a.get(0);
         plugin.getManager()
-        .createElection(electionName, new ArrayList<Party>())
-        .thenAccept(election -> {
-            if (election == null) {
-                Messages.send(player, true, "errors", "election-exists");
-                return;
-            }
+                .createElection(args[1], new ArrayList<Party>())
+                .thenAccept(election -> {
+                    if (election == null) {
+                        Messages.send(player, true, "errors", "election-exists");
+                        return;
+                    }
 
-            Messages.send(player, true, Messages.single("name", electionName), "election", "created");
-        });
+                    Messages.send(player, true, Messages.single("name", args[1]), "election", "created");
+                });
     }
 }

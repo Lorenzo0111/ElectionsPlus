@@ -53,7 +53,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.UUID;
 
 public final class ElectionsPlus extends JavaPlugin {
@@ -77,7 +76,7 @@ public final class ElectionsPlus extends JavaPlugin {
 
         this.load();
         
-        Boolean checkForUpdates = config.node("update", "check").getBoolean(false);
+        boolean checkForUpdates = config.node("update", "check").getBoolean(false);
         if (checkForUpdates) {
             Getters.updater(new UpdateChecker(new BukkitScheduler(this), this.getDescription().getVersion(), this.getName(), 93463, "https://www.spigotmc.org/resources/93463/", null, null));
         }
@@ -214,62 +213,5 @@ public final class ElectionsPlus extends JavaPlugin {
 
     public CacheManager getCache() {
         return cache;
-    }
-
-    public String array2string(String[] args, int start) {
-        String result = "";
-        for (int i = start; i < args.length; i++) {
-            if (i > start) {
-                result = result + " ";
-            }
-            result = result + args[i];
-        }
-
-        return result;
-    }
-
-    public ArrayList<String> unquote(String[] args, int start) {
-        String s = array2string(args, start);
-        ArrayList<String> results = new ArrayList<String>();
-        Boolean inQuote = false;
-
-        String element = "";
-        Character quote = Character.valueOf('"');
-        Character space = Character.valueOf(' ');
-        Character last = Character.valueOf('x');
-        
-        for (int i = 0; i < s.length(); i++) {
-            Character c = s.charAt(i);
-
-            if (inQuote) {
-                if (c.equals(quote)) {
-                    inQuote = false;
-                    results.add(element);
-                    element = "";
-                } else {
-                    element += c;
-                }
-            } else {
-                if (c.equals(quote)) {
-                    inQuote = true;
-                } else if (c.equals(space)) {
-                    if(last.equals(quote)) {
-                        // strip it
-                    } else {
-                        results.add(element);
-                        element = "";
-                    }
-                } else {
-                    element += c;
-                }
-            }
-            last = c;
-        }
-
-        if (element.length() > 0) {
-            results.add(element);
-        }
-
-        return results;
     }
 }

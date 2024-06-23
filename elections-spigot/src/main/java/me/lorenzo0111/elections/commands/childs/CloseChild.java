@@ -24,8 +24,6 @@
 
 package me.lorenzo0111.elections.commands.childs;
 
-import java.util.ArrayList;
-
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
@@ -55,16 +53,8 @@ public class CloseChild extends SubCommand {
             return;
         }
 
-        ArrayList<String> a = plugin.unquote(args, 1);
-        if (a.size() != 1) {
-            Messages.send(user.audience(), true, Messages.component(true, "errors", "bad-args"));
-            return;
-        }
-
-        String electionName = a.get(0);
-
         plugin.getApi()
-                .getElection(electionName)
+                .getElection(args[1])
                 .thenAccept((election) -> {
                     if (election != null) {
                         election.close();
@@ -74,7 +64,7 @@ public class CloseChild extends SubCommand {
                         return;
                     }
 
-                    Messages.send(user.audience(), true, Messages.single("name", electionName), "errors", "election-not-found");
+                    Messages.send(user.audience(), true, Messages.single("name", args[1]), "errors", "election-not-found");
                 });
     }
 }

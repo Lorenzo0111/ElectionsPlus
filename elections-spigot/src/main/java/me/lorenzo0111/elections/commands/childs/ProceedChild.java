@@ -27,10 +27,12 @@ package me.lorenzo0111.elections.commands.childs;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Vote;
 import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.utils.ElectionUtils;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,48 +61,16 @@ public class ProceedChild extends SubCommand {
             return;
         }
 
-        ArrayList<String> a = plugin.unquote(args, 1);
-        if (a.size() != 1) {
-            user.audience().sendMessage(Messages.component(true, "errors", "bad-args"));
-            return;
-        }
-
-        String electionName = a.get(0);
-
         ElectionsPlus plugin = ElectionsPlus.getInstance();
         plugin.getManager()
                 .getVotes()
                 .thenAccept((tmpVotes) -> {
                     List<Vote> votes = tmpVotes
                             .stream()
-                            .filter((vote) -> vote.getElection().equalsIgnoreCase(electionName))
+                            .filter((vote) -> vote.getElection().equalsIgnoreCase(args[1]))
                             .collect(Collectors.toList());
 
-                    Map<String,Integer> counts = new HashMap<>();
-                    List<String> winners = new ArrayList<>();
-                    int winnerVotes = -1;
-
-                    for (Vote vote : votes) {
-                        if (!counts.containsKey(vote.getParty())) {
-                            counts.put(vote.getParty(), 1);
-                            continue;
-                        }
-
-                        Integer count = counts.get(vote.getParty());
-                        counts.replace(vote.getParty(), count, count+1);
-                    }
-
-                    for (Map.Entry<String, Integer> entry : counts.entrySet()) {
-                        if (winnerVotes < entry.getValue()) {
-                            winners.clear();
-                            winners.add(entry.getKey());
-                            winnerVotes = entry.getValue();
-                        }
-
-                        else if (winnerVotes == entry.getValue()) {
-                            winners.add(entry.getKey());
-                        }
-                    }
+                    List<String> winners = ElectionUtils.getWinners(votes);
 
                     if (winners.isEmpty()) {
                         user.audience().sendMessage(Messages.component(true, "proceed", "no-winner"));
@@ -112,18 +82,16 @@ public class ProceedChild extends SubCommand {
                                 .getParty(winners.get(0))
                                 .thenAccept((winner) -> plugin.win(winner.getOwner()));
 
-                        user.audience().sendMessage(Messages.component(true, Messages.multiple("party", winners.get(0), "election", electionName), "proceed", "winner"));
+                        user.audience().sendMessage(Messages.component(true, Messages.multiple("party", winners.get(0), "election", args[1]), "proceed", "winner"));
                         return;
                     }
 
-                    String parties = "";
+                    StringBuilder parties = new StringBuilder();
                     for (String name : winners) {
-                        if (parties == "") {
-                            parties = name;
-                        } else {
-                            parties = parties + ", " + name;
-                        }
+                        parties.append(name).append(", ");
                     }
+
+                    parties.deleteCharAt(parties.length() - 1);
 
                     if ((plugin.config("rank", "strategy").equalsIgnoreCase("both"))) {
                         for (String name : winners) {
@@ -132,11 +100,13 @@ public class ProceedChild extends SubCommand {
                                     .thenAccept((winner) -> plugin.win(winner.getOwner()));
                         }
 
-                        user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties, "election", electionName), "proceed", "multiple-winners"));
+                        user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties.toString(), "election", args[1]), "proceed", "multiple-winners"));
                         return;
                     }
 
-                    user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties, "election", electionName), "proceed", "tie"));
+                    user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties.toString(), "election", args[1]), "proceed", "tie"));
                 });
     }
+
+
 }
