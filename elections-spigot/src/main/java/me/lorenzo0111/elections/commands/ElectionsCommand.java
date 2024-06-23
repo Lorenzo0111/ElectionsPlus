@@ -39,20 +39,22 @@ import java.util.List;
 import java.util.Objects;
 
 public class ElectionsCommand extends Command implements TabExecutor {
-
     public ElectionsCommand(ElectionsPlus plugin, String command, @Nullable Customization customization) {
         super(plugin, command, customization);
 
         this.addSubcommand(new CreateChild(this, plugin));
+        this.addSubcommand(new AddPartyToElectionChild(this, plugin));
         this.addSubcommand(new PartiesChild(this, plugin));
         this.addSubcommand(new ListChild(this));
-        this.addSubcommand(new DisbandChild(this));
+        this.addSubcommand(new DisbandChild(this, plugin));
         this.addSubcommand(new HelpChild(this));
-        this.addSubcommand(new VoteChild(this));
+        this.addSubcommand(new VoteChild(this, plugin));
         this.addSubcommand(new ReloadChild(this));
         this.addSubcommand(new InfoChild(this));
-        this.addSubcommand(new CloseChild(this));
-        this.addSubcommand(new ProceedChild(this));
+        this.addSubcommand(new CloseChild(this, plugin));
+        this.addSubcommand(new ProceedChild(this, plugin));
+        this.addSubcommand(new VoteBlockChild(this, plugin));
+
         Objects.requireNonNull(plugin.getCommand(command)).setTabCompleter(this);
     }
 
@@ -66,7 +68,7 @@ public class ElectionsCommand extends Command implements TabExecutor {
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("create"))
-            list.add("<name>");
+            list.add("[name]");
 
         return list;
     }

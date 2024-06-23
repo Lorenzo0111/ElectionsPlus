@@ -25,6 +25,7 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.CreatePartyConversation;
 import me.lorenzo0111.elections.handlers.Messages;
@@ -33,6 +34,11 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class PartiesChild extends SubCommand {
@@ -52,17 +58,104 @@ public class PartiesChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(),true,"errors", "console");
+            Messages.send(sender.audience(),true, "errors", "console");
             return;
         }
 
-        if (args.length == 2 && args[1].equalsIgnoreCase("create")) {
-            ConversationUtil.createConversation(plugin,new CreatePartyConversation((Player) sender,plugin));
-            return;
-        }
+        Player player = (Player)sender.player();
 
-        plugin.getManager()
+        if (args.length < 2) {
+            plugin.getManager()
                 .getParties()
-                .thenAccept((parties) -> new PartiesMenu((Player) sender.player(),parties,plugin).setup());
+                .thenAccept((parties) -> new PartiesMenu(player, parties, plugin).setup());
+            return;
+        }
+
+        ArrayList<String> a = plugin.unquote(args, 1);
+        String command = a.remove(0);
+
+        if (command.equalsIgnoreCase("create")) {
+            CreatePartyConversation conversation = new CreatePartyConversation(player, plugin);
+            switch (a.size()) {
+            default:
+                player.sendMessage(Messages.componentString(true, "errors", "bad-args"));
+                break;
+            case 0:
+                ConversationUtil.createConversation(plugin, conversation);
+                break;
+            case 1:
+                String partyName = a.get(0);
+                conversation.handle(partyName);
+                break;
+            }
+            return;
+        }
+        
+        if (command.equalsIgnoreCase("delete")) {
+            switch (a.size()) {
+            default:
+                player.sendMessage(Messages.componentString(true, "errors", "bad-args"));
+                break;
+            case 1:
+                String partyName = a.get(0);
+                if (partyName == "") {
+                    player.sendMessage(Messages.componentString(true, "errors", "party-name-required"));
+                    return;
+                }
+
+                this.plugin.getManager().deleteParty(partyName);
+                player.sendMessage(Messages.componentString(true, "parties", "deleted"));
+                break;
+            }
+            return;
+        }
+
+        if (command.equalsIgnoreCase("add-member")) {
+            switch (a.size()) {
+            default:
+                player.sendMessage(Messages.componentString(true, "errors", "bad-args"));
+                break;
+            case 2:
+                String partyName = a.get(0);
+                if (partyName.equals("")) {
+                    player.sendMessage(Messages.componentString(true, "errors", "party-name-required"));
+                    return;
+                }
+                String memberName = a.get(1);
+
+                if (memberName.equals("")) {
+                    player.sendMessage(Messages.componentString(true, "errors", "member-name-required"));
+                    return;
+                }
+
+                plugin.getManager()
+                    .getParties()
+                    .thenAccept((parties) -> addMember(player, parties, partyName, memberName));
+
+                break;
+            }
+
+            return;
+        }
+
+        player.sendMessage(Messages.componentString(true, "errors", "command-not-found"));
+    }
+
+    private void addMember(Player player, List<Party> parties, String partyName, String memberName) {
+        Player member = Bukkit.getPlayer(memberName);
+        if (member == null) {
+            player.sendMessage(Messages.componentString(true, Messages.single("name", memberName), "errors", "user-not-online"));
+            return;
+        }
+
+        for (Party party : parties) {
+            if (party.getName().equals(partyName)) {
+                party.addMember(member.getUniqueId());
+                player.sendMessage(Messages.componentString(true, Messages.multiple("name", member.getName(), "party", party.getName()), "parties", "user-added"));        
+                return;
+            }
+        }
+        
+        player.sendMessage(Messages.componentString(true, Messages.single("party", partyName), "errors", "party-not-found"));
     }
 }

@@ -26,14 +26,11 @@ package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Vote;
-import me.lorenzo0111.elections.handlers.ChatColor;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,9 +39,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProceedChild extends SubCommand {
+    private final ElectionsPlus plugin;
 
-    public ProceedChild(ICommand<?> command) {
+    public ProceedChild(ICommand<?> command, ElectionsPlus plugin) {
         super(command);
+        this.plugin = plugin;
     }
 
     @Override
@@ -55,10 +54,18 @@ public class ProceedChild extends SubCommand {
     @Permission("elections.proceed")
     @Override
     public void handleSubcommand(User<?> user, String[] args) {
-        if (args.length != 2) {
-            user.audience().sendMessage(Messages.component(true,"conversations","name"));
+        if (args.length < 2) {
+            user.audience().sendMessage(Messages.component(true, "errors", "bad-args"));
             return;
         }
+
+        ArrayList<String> a = plugin.unquote(args, 1);
+        if (a.size() != 1) {
+            user.audience().sendMessage(Messages.component(true, "errors", "bad-args"));
+            return;
+        }
+
+        String electionName = a.get(0);
 
         ElectionsPlus plugin = ElectionsPlus.getInstance();
         plugin.getManager()
@@ -66,7 +73,7 @@ public class ProceedChild extends SubCommand {
                 .thenAccept((tmpVotes) -> {
                     List<Vote> votes = tmpVotes
                             .stream()
-                            .filter((vote) -> vote.getElection().equalsIgnoreCase(args[1]))
+                            .filter((vote) -> vote.getElection().equalsIgnoreCase(electionName))
                             .collect(Collectors.toList());
 
                     Map<String,Integer> counts = new HashMap<>();
@@ -75,12 +82,12 @@ public class ProceedChild extends SubCommand {
 
                     for (Vote vote : votes) {
                         if (!counts.containsKey(vote.getParty())) {
-                            counts.put(vote.getParty(),1);
+                            counts.put(vote.getParty(), 1);
                             continue;
                         }
 
                         Integer count = counts.get(vote.getParty());
-                        counts.replace(vote.getParty(),count,count+1);
+                        counts.replace(vote.getParty(), count, count+1);
                     }
 
                     for (Map.Entry<String, Integer> entry : counts.entrySet()) {
@@ -96,7 +103,7 @@ public class ProceedChild extends SubCommand {
                     }
 
                     if (winners.isEmpty()) {
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&cCan't find a winner...")));
+                        user.audience().sendMessage(Messages.component(true, "proceed", "no-winner"));
                         return;
                     }
 
@@ -104,8 +111,18 @@ public class ProceedChild extends SubCommand {
                         plugin.getApi()
                                 .getParty(winners.get(0))
                                 .thenAccept((winner) -> plugin.win(winner.getOwner()));
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&7The winner is.. &e&n" + winners.get(0) + "&7. Run &e&n/elections info " + args[1] + "&7 to view the votes.")));
+
+                        user.audience().sendMessage(Messages.component(true, Messages.multiple("party", winners.get(0), "election", electionName), "proceed", "winner"));
                         return;
+                    }
+
+                    String parties = "";
+                    for (String name : winners) {
+                        if (parties == "") {
+                            parties = name;
+                        } else {
+                            parties = parties + ", " + name;
+                        }
                     }
 
                     if ((plugin.config("rank", "strategy").equalsIgnoreCase("both"))) {
@@ -115,12 +132,11 @@ public class ProceedChild extends SubCommand {
                                     .thenAccept((winner) -> plugin.win(winner.getOwner()));
                         }
 
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&7Both duplicate strategy has been used. Winners are: &e&n" + winners + "&7. Run &e&n/elections info " + args[1] + "&7 to view the votes.")));
+                        user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties, "election", electionName), "proceed", "multiple-winners"));
                         return;
                     }
 
-                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&cNo duplicate strategy has been set, there is more than one winner: &7" + winners)));
-
+                    user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties, "election", electionName), "proceed", "tie"));
                 });
     }
 }

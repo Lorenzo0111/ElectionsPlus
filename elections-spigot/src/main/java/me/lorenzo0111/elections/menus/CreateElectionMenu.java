@@ -62,7 +62,7 @@ public class CreateElectionMenu extends BaseGui {
         this.setDefaultClickAction((e) -> e.setCancelled(true));
 
         GuiItem nameItem = ItemBuilder.from(Material.BOOK)
-                .name(Messages.component(false,Messages.single("name",name),"guis","current-name"))
+                .name(Messages.component(false,Messages.single("name", name), "guis", "current-name"))
                 .lore(Messages.component(false,"guis", "edit-name"))
                 .asGuiItem(e -> {
                     e.getWhoClicked().closeInventory();
@@ -79,14 +79,14 @@ public class CreateElectionMenu extends BaseGui {
                 .asGuiItem(e -> {
                     e.getWhoClicked().closeInventory();
                     plugin.getManager()
-                            .createElection(name,parties)
+                            .createElection(name, parties)
                             .thenAccept(election -> {
                                 if (election == null) {
                                     Messages.send(player, true, "errors", "election-exists");
                                     return;
                                 }
 
-                                Messages.send(player,true,"election-created");
+                                Messages.send(player, true, Messages.single("name", name), "election", "created");
                             });
                 });
 
@@ -103,7 +103,7 @@ public class CreateElectionMenu extends BaseGui {
                     Messages.send(e.getWhoClicked(), true, "loading");
                     plugin.getManager()
                             .getParties()
-                            .thenAccept((parties1) -> new AddPartyMenu(plugin,this,parties1,(Player) e.getWhoClicked(),parties).setup());
+                            .thenAccept((parties1) -> new AddPartyMenu(plugin, this, parties1, (Player)e.getWhoClicked(), parties).setup());
                 }));
 
         this.getFiller().fill(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());

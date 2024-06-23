@@ -29,7 +29,6 @@ import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.Conversation;
 import me.lorenzo0111.elections.handlers.Messages;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,16 +43,22 @@ public class AddMemberConversation extends Conversation {
 
     @Override
     public void handle(@Nullable String input) {
+        /* XXX(tadhunt) - when handle() is called during conversation processing, no sendMessage() calls work...
+        this.getPlugin().getLogger().info("handling AddMemberConversation input: " + input);
+        this.getPlugin().getLogger().info("author is: " + this.getAuthor().getUniqueId().toString());
+        this.getAuthor().sendMessage("what's going on already?");
+        */
+
         if (input == null)
             return;
 
         Player player = Bukkit.getPlayer(input);
         if (player == null) {
-            this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "&7This user is not online."));
+            this.getAuthor().sendMessage(Messages.componentString(true, Messages.single("name", input), "errors", "user-not-online"));
             return;
         }
 
         party.addMember(player.getUniqueId());
-        this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "&7Member added to the party."));
+        this.getAuthor().sendMessage(Messages.componentString(true, Messages.multiple("name", player.getName(), "party", party.getName()), "parties", "user-added"));
     }
 }

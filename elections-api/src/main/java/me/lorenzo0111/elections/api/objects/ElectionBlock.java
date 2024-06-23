@@ -24,43 +24,22 @@
 
 package me.lorenzo0111.elections.api.objects;
 
-import com.google.gson.Gson;
-import me.lorenzo0111.elections.constants.Getters;
 import me.lorenzo0111.pluginslib.database.DatabaseSerializable;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+ 
+public class ElectionBlock implements DatabaseSerializable {
+    private final UUID world;
+    private final Map<String, Object> location;
+    private final String blockData;
 
-public class Election implements DatabaseSerializable {
-    private final String name;
-    private final List<Party> parties;
-    private boolean open;
-
-    public Election(String name, List<Party> parties, boolean open) {
-        this.name = name;
-        this.parties = parties;
-        this.open = open;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<Party> getParties() {
-        return parties;
-    }
-
-    public void close() {
-        this.open = false;
-        Getters.database()
-                .updateElection(this);
-    }
-
-    public boolean isOpen() {
-        return open;
+    public ElectionBlock(UUID world, Map<String, Object> location, String blockData) {
+        this.world = world;
+        this.location = location;
+        this.blockData = blockData;
     }
 
     @Override
@@ -70,17 +49,57 @@ public class Election implements DatabaseSerializable {
 
     @Override
     public @NotNull String tableName() {
-        return "elections";
+        return "blocks";
     }
 
     @Override
     public @NotNull Map<String, Object> serialize() {
         Map<String,Object> map = new HashMap<>();
-        map.put("name", name);
-        List<String> parties = new ArrayList<>();
-        this.getParties().forEach(p -> parties.add(p.getName()));
-        map.put("parties",new Gson().toJson(parties));
-        map.put("open", isOpen() ? 1 : 0);
+
+        map.put("world", world);
+        map.put("location", location);
+        map.put("blockdata", blockData);
+
         return map;
     }
+
+    public UUID getWorld() {
+        return this.world;
+    }
+
+    public Map<String, Object> getLocation() {
+        return location;
+    }
+
+    public String getBlockData() {
+        return blockData;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof ElectionBlock)) {
+            return false;
+        }
+
+        ElectionBlock b = (ElectionBlock)o;
+
+        if (!this.world.equals(b.world)) {
+            return false;
+        }
+
+        if (!this.location.equals(b.location)) {
+            return false;
+        }
+
+        if (!this.blockData.equals(b.blockData)) {
+            return false;
+        }
+
+        return true;
+    }
 }
+

@@ -26,6 +26,7 @@ package me.lorenzo0111.elections.menus;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.components.InteractionModifier;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
@@ -36,6 +37,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
 import java.util.Objects;
 
 public class VoteMenu extends PaginatedGui {
@@ -43,7 +45,7 @@ public class VoteMenu extends PaginatedGui {
     private final Election election;
 
     public VoteMenu(Player owner, Election election) {
-        super(3, Messages.componentString(false, Messages.single("name",election.getName()),"guis", "vote-title"));
+        super(3, 0, Messages.componentString(false, Messages.single("name", election.getName()), "vote", "title"), new HashSet<InteractionModifier>());
 
         this.owner = owner;
         this.election = election;
@@ -52,8 +54,8 @@ public class VoteMenu extends PaginatedGui {
     public void setup() {
         this.setDefaultClickAction(e -> e.setCancelled(true));
         this.getFiller().fillBorder(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
-        this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-        this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
+        this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false, "guis", "back")).asGuiItem(e -> this.previous()));
+        this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false, "guis", "next")).asGuiItem(e -> this.next()));
 
         for (Party party : election.getParties()) {
             this.addItem(ItemBuilder.skull()
@@ -68,7 +70,7 @@ public class VoteMenu extends PaginatedGui {
                                 .vote(e.getWhoClicked().getUniqueId(), party, election)
                                 .thenAccept((b) -> {
                                    if (b) {
-                                       Messages.send(e.getWhoClicked(),true, Messages.single("name", party.getName()),"vote", "success");
+                                       Messages.send(e.getWhoClicked(),true, Messages.multiple("party", party.getName(), "election", election.getName()), "vote", "success");
                                        return;
                                    }
 

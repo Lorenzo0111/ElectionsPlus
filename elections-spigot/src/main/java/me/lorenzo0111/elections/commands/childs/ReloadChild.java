@@ -25,12 +25,14 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+
+import java.util.Map;
+
 import org.spongepowered.configurate.ConfigurateException;
 
 public class ReloadChild extends SubCommand {
@@ -47,7 +49,7 @@ public class ReloadChild extends SubCommand {
     @Permission("elections.reload")
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
-        long now = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         int errors = 0;
 
         try {
@@ -58,6 +60,9 @@ public class ReloadChild extends SubCommand {
             errors++;
         }
 
-        sender.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', ElectionsPlus.getInstance().config("prefix") + "&7Plugin reloaded in &e&n" + (System.currentTimeMillis() - now) + "ms&7 with &e&n" + errors + "&7 error(s).")));
+        long elapsedMs = System.currentTimeMillis() - start;
+        Map<String, String> placeholders = Messages.multiple("elapsed", String.valueOf(elapsedMs), "errors", String.valueOf(errors));
+        
+        Messages.send(sender.audience(), true, placeholders, "plugin", "reload");
     }
 }
