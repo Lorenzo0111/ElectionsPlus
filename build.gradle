@@ -23,19 +23,9 @@
  */
 import org.apache.tools.ant.filters.ReplaceTokens
 
-buildscript {
-    repositories {
-        gradlePluginPortal()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath "io.github.slimjar:gradle-plugin:1.3.0"
-    }
-}
-
 plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id "io.github.slimjar" version "1.3.0"
     id 'java'
 }
 
@@ -43,16 +33,16 @@ ext {
     libsBase = 'me.lorenzo0111.elections.libs'
 }
 
-sourceCompatibility = '1.17'
-targetCompatibility = '1.17'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: "io.github.slimjar"
 
-    sourceCompatibility = '1.17'
-    targetCompatibility = '1.17'
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
     compileJava.options.encoding = "UTF-8"
     compileTestJava.options.encoding = "UTF-8"
 
@@ -66,20 +56,19 @@ subprojects {
             url = 'https://oss.sonatype.org/content/groups/public/'
         }
         maven { url 'https://jitpack.io' }
-        maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public'}
         maven { url 'https://dl.lorenzo0111.me/releases' }
     }
 
     dependencies {
         implementation('org.quartz-scheduler:quartz:2.3.2')
         implementation('org.spongepowered:configurate-yaml:4.1.2')
-        implementation("net.kyori:adventure-text-minimessage:4.13.1")
-        implementation('net.kyori:adventure-api:4.13.1')
-        implementation('net.kyori:adventure-text-serializer-legacy:4.13.1')
-        slim('org.slf4j:slf4j-simple:2.0.7')
-        slim('mysql:mysql-connector-java:8.0.33')
-        slim('org.xerial:sqlite-jdbc:3.42.0.0')
-        slim('com.zaxxer:HikariCP:5.0.1')
+        implementation("net.kyori:adventure-text-minimessage:4.17.0")
+        implementation('net.kyori:adventure-api:4.17.0')
+        implementation('net.kyori:adventure-text-serializer-legacy:4.17.0')
+        slim('org.slf4j:slf4j-simple:2.0.13')
+        slim("com.mysql:mysql-connector-j:8.4.0")
+        slim('org.xerial:sqlite-jdbc:3.46.0.0')
+        slim('com.zaxxer:HikariCP:4.0.3')
     }
 
     shadowJar {
@@ -94,7 +83,6 @@ subprojects {
     slimJar {
         relocate('com.google.common', "${libsBase}.google.common")
         relocate('com.google.errorprone', "${libsBase}.google.errorprone")
-        relocate('com.google.gson', "${libsBase}.gson")
         relocate('com.google.j2objc', "${libsBase}.j2obc")
         relocate('com.google.thirdparty', "${libsBase}.thirdparty")
         relocate('com.mchange', "${libsBase}.mchange")
@@ -117,4 +105,6 @@ subprojects {
             filter ReplaceTokens, tokens: [version: version]
         }
     }
+
+    tasks.build.dependsOn tasks.shadowJar
 }

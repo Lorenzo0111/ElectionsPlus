@@ -35,13 +35,15 @@ repositories {
     maven {
         url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
     }
-    maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public/' }
 }
 
 dependencies {
-    compileOnly('org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT')
-    compileOnly('me.clip:placeholderapi:2.11.3')
-    compileOnly('org.jetbrains:annotations:24.0.1')
+    compileOnly('org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT')
+    compileOnly('me.clip:placeholderapi:2.11.6')
     compileOnly project(':elections-api')
-    implementation('space.rocketplugins.pluginslib:common:2.0.3.2')
+    implementation('me.lorenzo0111.pluginslib:common:2.0.4')
+}
+
+shadowJar {
+    minimize()
 }
