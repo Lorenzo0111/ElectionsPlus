@@ -133,11 +133,21 @@ public class Party implements DatabaseSerializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Party party = (Party) o;
-        return Objects.equals(name, party.name);
+        return Objects.equals(name, party.name) && Objects.equals(icon, party.icon) && Objects.equals(owner, party.owner) && Objects.equals(members, party.members);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name);
+        return Objects.hash(name, icon, owner, members);
+    }
+
+    @Override
+    public String toString() {
+        return "Party{" +
+                "name='" + name + '\'' +
+                ", icon='" + icon + '\'' +
+                ", owner=" + owner +
+                ", members=" + members +
+                '}';
     }
 }

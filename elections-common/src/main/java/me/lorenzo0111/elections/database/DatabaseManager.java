@@ -44,10 +44,7 @@ import org.spongepowered.configurate.ConfigurationNode;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +77,7 @@ public class DatabaseManager implements IDatabaseManager {
         config.setMaxLifetime(1800000);
         config.setConnectionTimeout(5000);
 
-        config.setPoolName("MultiLang MySQL Connection Pool");
+        config.setPoolName("Elections MySQL Connection Pool");
         config.setDataSourceClassName("com.mysql.cj.jdbc.Driver");
         config.addDataSourceProperty("serverName", configuration.node("database","ip").getString());
         config.addDataSourceProperty("port", configuration.node("database","port").getString());
@@ -119,7 +116,7 @@ public class DatabaseManager implements IDatabaseManager {
         // Parties
         List<Column> partiesColumns = new ArrayList<>();
         partiesColumns.add(new Column("owner", "TEXT"));
-        partiesColumns.add(new Column("name", "TEXT"));
+        partiesColumns.add(new Column("name", "TEXT unique"));
         partiesColumns.add(new Column("members", "TEXT"));
         partiesColumns.add(new Column("icon", "TEXT nullable"));
         this.partiesTable = new ETable(scheduler, connectionHandler, "parties", partiesColumns);
@@ -144,30 +141,13 @@ public class DatabaseManager implements IDatabaseManager {
         scheduler.repeating(new CacheTask(this, cache), 60 * 20L, config.node("cache-duration").getInt(5), TimeUnit.MINUTES);
     }
 
-    public ETable getPartiesTable() {
-        return partiesTable;
-    }
-
-    public ETable getVotesTable() {
-        return votesTable;
-    }
-
-    public ETable getElectionsTable() {
-        return electionsTable;
-    }
-
-    public ETable getBlocksTable() {
-        return blocksTable;
-    }
-
     @Override
     public CompletableFuture<Election> createElection(String name, List<Party> parties) {
         CompletableFuture<Election> future = new CompletableFuture<>();
 
         Election election = new Election(name, parties, true);
 
-        this.getElectionsTable()
-                .find("name", name)
+        electionsTable.find("name", name)
                 .thenAccept((result) -> {
                     try {
                         if (result.next()) {
@@ -175,7 +155,7 @@ public class DatabaseManager implements IDatabaseManager {
                             return;
                         }
 
-                        this.getElectionsTable().add(election);
+                        electionsTable.add(election);
                         cache.getElections().add(election.getName(), election);
                         future.complete(election);
                     } catch (SQLException e) {
@@ -196,12 +176,11 @@ public class DatabaseManager implements IDatabaseManager {
     public CompletableFuture<List<Election>> getElections() {
         CompletableFuture<List<Election>> future = new CompletableFuture<>();
 
-        getParties()
-                .thenAccept((parties) -> getElectionsTable().run(() -> {
+        getParties().thenAccept((parties) -> electionsTable.run(() -> {
                     try {
-                        Statement statement = connectionHandler.getConnection()
-                                .createStatement();
-                        ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s;", getElectionsTable().getName()));
+                        Connection connection = connectionHandler.getConnection();
+                        Statement statement = connection.createStatement();
+                        ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s;", electionsTable.getName()));
 
                         List<Election> elections = new ArrayList<>();
                         Gson gson = new Gson();
@@ -221,6 +200,10 @@ public class DatabaseManager implements IDatabaseManager {
                         }
 
                         future.complete(elections);
+
+                        resultSet.close();
+                        statement.close();
+                        closeConnection(connection);
                     } catch (SQLException e) {
                         e.printStackTrace();
                         future.complete(null);
@@ -236,10 +219,11 @@ public class DatabaseManager implements IDatabaseManager {
     public CompletableFuture<List<Party>> getParties() {
         CompletableFuture<List<Party>> future = new CompletableFuture<>();
 
-        getPartiesTable().run(() -> {
+        partiesTable.run(() -> {
             try {
-                Statement statement = connectionHandler.getConnection().createStatement();
-                ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s;", getPartiesTable().getName()));
+                Connection connection = connectionHandler.getConnection();
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(String.format("SELECT * FROM %s;", partiesTable.getName()));
 
                 List<Party> parties = new ArrayList<>();
                 Gson gson = new Gson();
@@ -249,12 +233,16 @@ public class DatabaseManager implements IDatabaseManager {
                     Party party = new Party(resultSet.getString("name"), UUID.fromString(resultSet.getString("owner")), members);
 
                     if (resultSet.getString("icon") != null)
-                        party.setIcon(resultSet.getString("icon"));
+                        party.setIconWithoutUpdate(resultSet.getString("icon"));
 
                     parties.add(party);
                 }
 
                 future.complete(parties);
+
+                resultSet.close();
+                statement.close();
+                closeConnection(connection);
             } catch (SQLException e) {
                 e.printStackTrace();
                 future.complete(null);
@@ -326,15 +314,20 @@ public class DatabaseManager implements IDatabaseManager {
     public CompletableFuture<List<Vote>> getVotes() {
         CompletableFuture<List<Vote>> future = new CompletableFuture<>();
 
-        this.getVotesTable().run(() -> {
+        votesTable.run(() -> {
                 try {
-                    PreparedStatement statement = votesTable.getConnection().prepareStatement(String.format("SELECT * FROM %s;", votesTable.getName()));
+                    Connection connection = votesTable.getConnection();
+                    PreparedStatement statement = connection.prepareStatement(String.format("SELECT * FROM %s;", votesTable.getName()));
                     ResultSet set = statement.executeQuery();
                     List<Vote> votes = new ArrayList<>();
                     while (set.next()) {
                         votes.add(new Vote(UUID.fromString(set.getString("uuid")),set.getString("party"),set.getString("election")));
                     }
+
                     future.complete(votes);
+                    set.close();
+                    statement.close();
+                    closeConnection(connection);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
@@ -353,8 +346,7 @@ public class DatabaseManager implements IDatabaseManager {
     public CompletableFuture<Boolean> vote(Vote vote) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
 
-        this.getVotesTable()
-                .find("uuid",vote.getPlayer())
+        votesTable.find("uuid",vote.getPlayer())
                 .thenAccept((set) -> {
                     try {
                         while (set.next()) {
@@ -364,7 +356,7 @@ public class DatabaseManager implements IDatabaseManager {
                             }
                         }
 
-                        this.getVotesTable().add(vote);
+                        votesTable.add(vote);
                         cache.getVotes()
                                 .add(vote.getElection()+"||"+vote.getPlayer(), vote);
                         future.complete(true);
@@ -380,10 +372,11 @@ public class DatabaseManager implements IDatabaseManager {
     public CompletableFuture<List<ElectionBlock>> getElectionBlocks() {
         CompletableFuture<List<ElectionBlock>> future = new CompletableFuture<>();
 
-        getBlocksTable().run(() -> {
+        blocksTable.run(() -> {
             try {
-                Statement statement = connectionHandler.getConnection().createStatement();
-                String query = String.format("SELECT * FROM %s;", getBlocksTable().getName());
+                Connection connection = connectionHandler.getConnection();
+                Statement statement = connection.createStatement();
+                String query = String.format("SELECT * FROM %s;", blocksTable.getName());
                 ResultSet resultSet = statement.executeQuery(query);
 
                 List<ElectionBlock> electionBlocks = new ArrayList<>();
@@ -400,6 +393,10 @@ public class DatabaseManager implements IDatabaseManager {
                 }
 
                 future.complete(electionBlocks);
+
+                resultSet.close();
+                statement.close();
+                closeConnection(connection);
             } catch (SQLException e) {
                 e.printStackTrace();
                 future.complete(null);
@@ -440,4 +437,13 @@ public class DatabaseManager implements IDatabaseManager {
         // TODO(tadhunt): correctly handle different worlds
         blocksTable.removeWhere("location", electionBlock.getLocation());
     }
+
+    public void closeConnection(Connection connection) {
+        if (connectionHandler instanceof HikariConnection) {
+            try {
+                connection.close();
+            } catch (SQLException ignored) {}
+        }
+    }
+
 }

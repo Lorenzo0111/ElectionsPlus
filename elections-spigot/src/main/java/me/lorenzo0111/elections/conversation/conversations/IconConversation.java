@@ -28,7 +28,6 @@ import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.conversation.Conversation;
 import me.lorenzo0111.elections.handlers.Messages;
-import me.lorenzo0111.elections.menus.EditPartyMenu;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +45,8 @@ public class IconConversation extends Conversation {
             return;
 
         party.setIcon(input);
-
+        this.getAuthor().sendMessage(Messages.componentString(true,
+                Messages.multiple("party", party.getName()),
+                "parties", "icon-edit"));
     }
 }

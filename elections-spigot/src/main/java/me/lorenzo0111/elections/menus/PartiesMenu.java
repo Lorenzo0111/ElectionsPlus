@@ -85,7 +85,6 @@ public class PartiesMenu extends PaginatedGui {
                     item.texture(party.getIcon());
 
                 this.addItem(item.asGuiItem(e -> new EditPartyMenu(owner,party,item,plugin).setup()));
-
             }
 
             this.open(owner);

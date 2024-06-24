@@ -26,8 +26,8 @@
 
 import me.lorenzo0111.pluginslib.StringUtils;
 import me.lorenzo0111.pluginslib.database.DatabaseSerializable;
+import me.lorenzo0111.pluginslib.database.connection.HikariConnection;
 import me.lorenzo0111.pluginslib.database.connection.IConnectionHandler;
-import me.lorenzo0111.pluginslib.database.connection.JavaConnection;
 import me.lorenzo0111.pluginslib.database.objects.Column;
 import me.lorenzo0111.pluginslib.database.query.Queries;
 import me.lorenzo0111.pluginslib.scheduler.IScheduler;
@@ -65,9 +65,13 @@ public class ETable {
         columns.forEach(column -> query.append(String.format("`%s` %s,",column.getName(),column.getType())));
 
         try {
-            Statement statement = connection.getConnection().createStatement();
+            Connection con = connection.getConnection();
+
+            Statement statement = con.createStatement();
             statement.executeUpdate(StringUtils.removeLastChar(query.toString()) + ");");
             statement.close();
+
+            closeConnection(con);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
@@ -117,12 +121,19 @@ public class ETable {
 
         this.run(() -> {
             try {
-                PreparedStatement statement = connection.getConnection()
-                        .prepareStatement(String.format(Queries.builder().query(Queries.ALL).table(name).build(), getName()));
+                Connection con = connection.getConnection();
+                PreparedStatement statement = con
+                        .prepareStatement(String.format(Queries.builder()
+                                .query(Queries.ALL)
+                                .table(name)
+                                .build(), getName()));
 
                 ResultSet resultSet = statement.executeQuery();
                 future.complete(resultSet);
+
+                resultSet.close();
                 statement.close();
+                closeConnection(con);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -160,7 +171,8 @@ public class ETable {
 
                 builder.append(");");
 
-                final PreparedStatement statement = connection.getConnection().prepareStatement(builder.toString());
+                Connection con = connection.getConnection();
+                final PreparedStatement statement = con.prepareStatement(builder.toString());
 
                 int i = 1;
                 for (Object obj : map.values()) {
@@ -170,6 +182,7 @@ public class ETable {
 
                 statement.executeUpdate();
                 statement.close();
+                closeConnection(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -182,9 +195,11 @@ public class ETable {
     public void clear() {
         this.run(() -> {
             try {
-                Statement statement = connection.getConnection().createStatement();
+                Connection con = connection.getConnection();
+                Statement statement = con.createStatement();
                 statement.executeUpdate(Queries.builder().query(Queries.CLEAR).table(name).build());
                 statement.close();
+                closeConnection(con);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
@@ -202,11 +217,21 @@ public class ETable {
 
         this.run(() -> {
             try {
-                final PreparedStatement statement = getConnection().prepareStatement(Queries.builder().query(Queries.DELETE_WHERE).table(name).keys(key).build());
-                statement.setObject(1, value);
+                Connection con = getConnection();
+                final PreparedStatement statement = con.prepareStatement(
+                        Queries.builder()
+                                .query(Queries.DELETE_WHERE)
+                                .table(name)
+                                .keys(key)
+                                .build());
+
+                if (value instanceof String)
+                    statement.setString(1, (String) value);
+                else statement.setObject(1, value);
 
                 completableFuture.complete(statement.executeUpdate());
                 statement.close();
+                closeConnection(con);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -236,11 +261,20 @@ public class ETable {
 
         this.run(() -> {
             try {
-                final PreparedStatement statement = getConnection().prepareStatement(Queries.builder().query(Queries.FIND).table(name).keys(key).build());
+                Connection con = getConnection();
+                final PreparedStatement statement = con.prepareStatement(Queries.builder()
+                        .query(Queries.FIND)
+                        .table(name)
+                        .keys(key)
+                        .build());
                 statement.setObject(1, value);
 
-                completableFuture.complete(statement.executeQuery());
+                ResultSet set = statement.executeQuery();
+                completableFuture.complete(set);
+
+                set.close();
                 statement.closeOnCompletion();
+                closeConnection(con);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -270,6 +304,14 @@ public class ETable {
      */
     public Connection getConnection() throws SQLException {
         return connection.getConnection();
+    }
+
+    public void closeConnection(Connection connection) {
+        if (this.connection instanceof HikariConnection) {
+            try {
+                connection.close();
+            } catch (SQLException ignored) {}
+        }
     }
 
     /**

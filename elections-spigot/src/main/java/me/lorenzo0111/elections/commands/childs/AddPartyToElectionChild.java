@@ -90,9 +90,8 @@ public class AddPartyToElectionChild extends SubCommand {
                 .thenAccept((parties) -> {
                     List<Party> electionParties = election.getParties();
 
-
                     Party party = parties.stream()
-                            .filter(p -> p.getName().equals(partyName))
+                            .filter(p -> p.getName().equalsIgnoreCase(partyName))
                             .findFirst()
                             .orElse(null);
 
