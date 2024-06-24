@@ -25,18 +25,16 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.menus.ElectionsMenu;
 import me.lorenzo0111.pluginslib.audience.User;
-
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-
 import org.bukkit.entity.Player;
 
 public class VoteChild extends SubCommand {
-    public VoteChild(Command command, ElectionsPlus plugin) {
+    public VoteChild(Command command) {
         super(command);
     }
 

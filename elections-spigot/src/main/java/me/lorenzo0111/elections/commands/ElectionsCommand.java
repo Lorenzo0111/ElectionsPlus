@@ -28,7 +28,6 @@ import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.commands.childs.*;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.Customization;
-import me.lorenzo0111.pluginslib.command.SubCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;
@@ -46,13 +45,13 @@ public class ElectionsCommand extends Command implements TabExecutor {
         this.addSubcommand(new AddPartyToElectionChild(this, plugin));
         this.addSubcommand(new PartiesChild(this, plugin));
         this.addSubcommand(new ListChild(this));
-        this.addSubcommand(new DisbandChild(this, plugin));
+        this.addSubcommand(new DisbandChild(this));
         this.addSubcommand(new HelpChild(this));
-        this.addSubcommand(new VoteChild(this, plugin));
+        this.addSubcommand(new VoteChild(this));
         this.addSubcommand(new ReloadChild(this));
         this.addSubcommand(new InfoChild(this));
         this.addSubcommand(new CloseChild(this, plugin));
-        this.addSubcommand(new ProceedChild(this, plugin));
+        this.addSubcommand(new ProceedChild(this));
         this.addSubcommand(new VoteBlockChild(this, plugin));
 
         Objects.requireNonNull(plugin.getCommand(command)).setTabCompleter(this);
@@ -71,9 +70,5 @@ public class ElectionsCommand extends Command implements TabExecutor {
             list.add("[name]");
 
         return list;
-    }
-
-    public List<SubCommand> getSubCommands() {
-        return subcommands;
     }
 }

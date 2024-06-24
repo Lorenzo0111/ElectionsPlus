@@ -26,7 +26,8 @@ package me.lorenzo0111.elections.listeners;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.config.Messages;
+import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -42,10 +43,11 @@ public class JoinListener implements Listener {
             return;
         }
 
-        if (event.getPlayer().hasPermission("elections.update") && plugin.getConfig().getBoolean("update.check")) {
+        if (event.getPlayer().hasPermission("elections.update") &&
+                plugin.getConfig().getBoolean("update.check")) {
             ElectionsPlus.getInstance()
                     .getUpdater()
-                    .sendUpdateCheck(Messages.audience(event.getPlayer()));
+                    .sendUpdateCheck(BukkitAudienceManager.audience(event.getPlayer()));
         }
 
         ElectionsPlus.getInstance()
@@ -54,7 +56,8 @@ public class JoinListener implements Listener {
                 .thenAccept((elections) -> elections.stream()
                         .filter(Election::isOpen)
                         .findFirst()
-                        .ifPresent((e) -> Messages.send(event.getPlayer(), true, "join")));
+                        .ifPresent((e) -> BukkitAudienceManager.audience(event.getPlayer())
+                                .sendMessage(Messages.component(true, "join"))));
     }
 
 }

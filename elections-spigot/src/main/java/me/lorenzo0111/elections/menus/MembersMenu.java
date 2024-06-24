@@ -28,23 +28,19 @@ import com.cryptomorin.xseries.XMaterial;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.builder.item.SkullBuilder;
 import dev.triumphteam.gui.guis.PaginatedGui;
-import dev.triumphteam.gui.components.InteractionModifier;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.AddMemberConversation;
-import me.lorenzo0111.elections.handlers.Messages;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class MembersMenu extends PaginatedGui {
     private final Party party;
@@ -53,7 +49,7 @@ public class MembersMenu extends PaginatedGui {
     private final List<OfflinePlayer> added = new ArrayList<>();
 
     public MembersMenu(ElectionsPlus plugin, Party party, Player owner) {
-        super(3, 0, Messages.componentString(false, Messages.single("name", party.getName()), "guis", "members-title"), new HashSet<InteractionModifier>());
+        super(3, 0, Messages.string(false, "guis.members-title", Placeholder.unparsed("name", party.getName())), new HashSet<>());
 
         this.party = party;
         this.owner = owner;
@@ -62,12 +58,18 @@ public class MembersMenu extends PaginatedGui {
 
     public void setup() {
         this.setDefaultClickAction(e -> e.setCancelled(true));
-        this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-        this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
-        this.setItem(3,5, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem())).name(Messages.component(false, "guis", "add-member")).asGuiItem(e -> {
-            e.getWhoClicked().closeInventory();
-            ConversationUtil.createConversation(plugin, new AddMemberConversation(party, owner, plugin));
-        }));
+        this.setItem(3, 3, ItemBuilder.from(Material.ARROW)
+                .name(Messages.component(false, "guis.back"))
+                .asGuiItem(e -> this.previous()));
+        this.setItem(3, 7, ItemBuilder.from(Material.ARROW)
+                .name(Messages.component(false, "guis.next"))
+                .asGuiItem(e -> this.next()));
+        this.setItem(3, 5, ItemBuilder.from(Objects.requireNonNull(XMaterial.STONE_BUTTON.parseItem()))
+                .name(Messages.component(false, "guis.add-member"))
+                .asGuiItem(e -> {
+                    e.getWhoClicked().closeInventory();
+                    ConversationUtil.createConversation(plugin, new AddMemberConversation(party, owner, plugin));
+                }));
         this.getFiller().fillBottom(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
 
         for (UUID uuid : party.getMembers()) {
@@ -80,7 +82,8 @@ public class MembersMenu extends PaginatedGui {
 
             SkullBuilder item = ItemBuilder.skull()
                     .name(Component.text("§9" + player.getName()))
-                    .lore(Messages.component(false, "guis", "kick-member"), Messages.component(false, "guis", "set-owner"))
+                    .lore(Messages.component(false, "guis.kick-member"),
+                            Messages.component(false, "guis.set-owner"))
                     .owner(player);
 
             this.addItem(item.asGuiItem(e -> {

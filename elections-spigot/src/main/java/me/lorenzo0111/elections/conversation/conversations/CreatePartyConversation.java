@@ -25,8 +25,8 @@
 package me.lorenzo0111.elections.conversation.conversations;
 
 import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.conversation.Conversation;
-import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;

@@ -28,10 +28,10 @@ import me.lorenzo0111.elections.api.IElectionsPlusAPI;
 import me.lorenzo0111.elections.api.implementations.ElectionsPlusAPI;
 import me.lorenzo0111.elections.cache.CacheManager;
 import me.lorenzo0111.elections.commands.ElectionsCommand;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.constants.Getters;
 import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
-import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.elections.listeners.BlockListener;
 import me.lorenzo0111.elections.listeners.JoinListener;
 import me.lorenzo0111.elections.scheduler.BukkitScheduler;
@@ -55,6 +55,7 @@ import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public final class ElectionsPlus extends JavaPlugin {
     private final CacheManager cache = new CacheManager();
@@ -64,7 +65,6 @@ public final class ElectionsPlus extends JavaPlugin {
     private ElectionsPlusAPI api;
 
     private ConfigurationNode config;
-    private ConfigurationNode messages;
 
     private Permission permissions;
 
@@ -76,7 +76,7 @@ public final class ElectionsPlus extends JavaPlugin {
         new Metrics(this, 11735);
 
         this.load();
-        
+
         boolean checkForUpdates = config.node("update", "check").getBoolean(false);
         if (checkForUpdates) {
             Getters.updater(new UpdateChecker(new BukkitScheduler(this), this.getDescription().getVersion(), this.getName(), 93463, "https://www.spigotmc.org/resources/93463/", null, null));
@@ -92,15 +92,16 @@ public final class ElectionsPlus extends JavaPlugin {
             return;
         }
 
-         try {
-             this.getManager().closeConnection();
-         } catch (SQLException e) {
-             e.printStackTrace();
-         }
+        try {
+            this.getManager().closeConnection();
+        } catch (SQLException e) {
+            this.getLogger().log(Level.SEVERE, "An error occurred while closing the connection", e);
+        }
 
-         Bukkit.getScheduler().cancelTasks(this);
+        Bukkit.getScheduler().cancelTasks(this);
 
-         Messages.close();
+        if (BukkitAudienceManager.initialized())
+            BukkitAudienceManager.shutdown();
     }
 
     public void start() throws ConfigurateException {
@@ -127,14 +128,14 @@ public final class ElectionsPlus extends JavaPlugin {
                     this.manager = new DatabaseManager(new BukkitScheduler(this), cache, config(), new SQLiteConnection(getDataFolder().toPath()));
                     Getters.database(manager);
                 } catch (SQLException | IOException e) {
-                    e.printStackTrace();
+                    this.getLogger().log(Level.SEVERE, "An error occurred while initializing the database", e);
                 }
                 break;
             case "MYSQL":
                 try {
                     this.manager = new DatabaseManager(config, cache, getDataFolder().toPath(), new BukkitScheduler(this));
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    this.getLogger().log(Level.SEVERE, "An error occurred while initializing the database", e);
                 }
                 break;
             default:
@@ -156,23 +157,27 @@ public final class ElectionsPlus extends JavaPlugin {
             this.getLogger().info("Loading libraries..");
             this.getLogger().info("Note: This might take a few minutes on first run.");
 
-            DependencyManager manager = new DependencyManager(getName(),getDataFolder().toPath());
+            DependencyManager manager = new DependencyManager(getName(), getDataFolder().toPath());
             long time = manager.build();
             this.getLogger().info("Loaded all libraries in " + time + "ms");
             this.start();
         } catch (ReflectiveOperationException | URISyntaxException | NoSuchAlgorithmException | IOException e) {
-            e.printStackTrace();
+            this.getLogger().log(Level.SEVERE, "An error occurred while loading the plugin", e);
         }
     }
 
     public void reload() throws ConfigurateException {
-        ConfigExtractor messagesExtractor = new ConfigExtractor(this.getClass(),this.getDataFolder(),"messages.yml");
+        ConfigExtractor messagesExtractor = new ConfigExtractor(this.getClass(), this.getDataFolder(), "messages.yml");
         messagesExtractor.extract();
-        this.messages = messagesExtractor.toConfigurate();
 
-        ConfigExtractor configExtractor = new ConfigExtractor(this.getClass(),this.getDataFolder(),"config.yml");
+        ConfigurationNode messages = messagesExtractor.toConfigurate();
+
+        ConfigExtractor configExtractor = new ConfigExtractor(this.getClass(), this.getDataFolder(), "config.yml");
         configExtractor.extract();
+
         this.config = configExtractor.toConfigurate();
+
+        assert messages != null;
         Messages.init(messages);
     }
 
@@ -186,7 +191,7 @@ public final class ElectionsPlus extends JavaPlugin {
         if (permissions == null)
             return;
 
-        permissions.playerAddGroup(Bukkit.getWorlds().get(0).getName(), Bukkit.getOfflinePlayer(uuid), config.node("rank","name").getString());
+        permissions.playerAddGroup(Bukkit.getWorlds().get(0).getName(), Bukkit.getOfflinePlayer(uuid), config.node("rank", "name").getString());
     }
 
     public ConfigurationNode config() {

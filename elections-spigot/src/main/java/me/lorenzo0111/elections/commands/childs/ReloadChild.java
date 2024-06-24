@@ -25,13 +25,15 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
 import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import org.spongepowered.configurate.ConfigurateException;
+
+import java.util.logging.Level;
 
 public class ReloadChild extends SubCommand {
 
@@ -54,7 +56,9 @@ public class ReloadChild extends SubCommand {
             ElectionsPlus.getInstance()
                     .reload();
         } catch (ConfigurateException e) {
-            e.printStackTrace();
+            ElectionsPlus.getInstance()
+                    .getLogger()
+                    .log(Level.SEVERE, "An error occurred while reloading the plugin", e);
             errors++;
         }
 

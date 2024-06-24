@@ -28,12 +28,12 @@ import com.cryptomorin.xseries.XMaterial;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
 import dev.triumphteam.gui.builder.item.SkullBuilder;
 import dev.triumphteam.gui.components.GuiAction;
-import dev.triumphteam.gui.components.InteractionModifier;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.config.Messages;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -52,7 +52,9 @@ public class AddPartyMenu extends PaginatedGui {
     private final List<Party> added = new ArrayList<>();
 
     public AddPartyMenu(ElectionsPlus plugin, CreateElectionMenu menu, List<Party> party, Player owner) {
-        super(3, 0, Messages.componentString(false, Messages.single("name", menu.getName()), "guis", "add-party"), new HashSet<InteractionModifier>());
+        super(3, 0, Messages.string(false, "guis.add-party",
+                        Placeholder.unparsed("name", menu.getName())),
+                new HashSet<>());
 
         this.menu = menu;
         this.parties = party;
@@ -67,11 +69,17 @@ public class AddPartyMenu extends PaginatedGui {
     }
 
     public void setup() {
-        Bukkit.getScheduler().runTask(plugin,() -> {
+        Bukkit.getScheduler().runTask(plugin, () -> {
             this.setDefaultClickAction(e -> e.setCancelled(true));
-            this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-            this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
-            this.setItem(3,5, ItemBuilder.from(Objects.requireNonNull(XMaterial.EMERALD_BLOCK.parseItem())).name(Messages.component(false, "guis", "save")).asGuiItem(e -> {
+            this.setItem(3, 3, ItemBuilder.from(Material.ARROW)
+                    .name(Messages.component(false, "guis.back"))
+                    .asGuiItem(e -> this.previous()));
+            this.setItem(3, 7, ItemBuilder.from(Material.ARROW)
+                    .name(Messages.component(false, "guis.next"))
+                    .asGuiItem(e -> this.next()));
+            this.setItem(3, 5, ItemBuilder.from(Objects.requireNonNull(XMaterial.EMERALD_BLOCK.parseItem()))
+                    .name(Messages.component(false, "guis.save"))
+                    .asGuiItem(e -> {
                 e.getWhoClicked().closeInventory();
                 menu.getParties().addAll(added);
                 menu.setup();
@@ -82,13 +90,14 @@ public class AddPartyMenu extends PaginatedGui {
                 SkullBuilder item = ItemBuilder.skull()
                         .owner(Bukkit.getOfflinePlayer(party.getOwner()))
                         .name(Component.text("§9" + party.getName()))
-                        .lore(Messages.component(false, "guis", "add"), Messages.component(false, "guis", "remove"));
+                        .lore(Messages.component(false, "guis.add"),
+                                Messages.component(false, "guis.remove"));
 
                 if (party.getIcon() != null) {
                     item.texture(party.getIcon());
                 }
 
-                this.addItem(item.asGuiItem(this.createAddAction(party,item)));
+                this.addItem(item.asGuiItem(this.createAddAction(party, item)));
             }
 
             this.open(owner);
@@ -101,13 +110,13 @@ public class AddPartyMenu extends PaginatedGui {
                 case LEFT:
                     if (!added.contains(party))
                         added.add(party);
-                    item.name(Messages.component(false, Messages.single("name", party.getName()), "guis","party-added"));
-                    this.updatePageItem(e.getSlot(),item.asGuiItem(createAddAction(party,item)));
+                    item.name(Messages.component(false, "guis.party-added", Placeholder.unparsed("name", party.getName())));
+                    this.updatePageItem(e.getSlot(), item.asGuiItem(createAddAction(party, item)));
                     break;
                 case RIGHT:
                     added.remove(party);
                     item.name(Component.text("§9" + party.getName()));
-                    this.updatePageItem(e.getSlot(),item.asGuiItem(createAddAction(party,item)));
+                    this.updatePageItem(e.getSlot(), item.asGuiItem(createAddAction(party, item)));
                     break;
                 default:
                     break;

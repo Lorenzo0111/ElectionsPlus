@@ -25,10 +25,8 @@
 package me.lorenzo0111.elections.conversation;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import me.lorenzo0111.elections.handlers.Messages;
-
-import java.util.Map;
-
+import me.lorenzo0111.elections.config.Messages;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -50,9 +48,7 @@ public abstract class Conversation extends StringPrompt {
     @NotNull
     @Override
     public String getPromptText(@NotNull ConversationContext context) {
-        Map<String,String> placeholders = Messages.single("prompt", reason);
-
-        return Messages.componentString(false, placeholders, "prompt");
+        return Messages.string(false, "prompt", Placeholder.unparsed("prompt", reason));
     }
 
     public abstract void handle(@Nullable String input);

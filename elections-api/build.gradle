@@ -23,7 +23,8 @@
  */
 
 plugins {
-    id 'java'
+    id "java"
+    id "maven-publish"
 }
 
 repositories {
@@ -35,4 +36,32 @@ dependencies {
     implementation('com.google.code.gson:gson:2.11.0')
     implementation('me.lorenzo0111.pluginslib:common:2.0.4')
     compileOnly('org.jetbrains:annotations:24.1.0')
+}
+
+tasks.withType(Jar).configureEach {
+    from sourceSets.main.allSource
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+        }
+    }
+
+    repositories {
+        maven {
+            url = "https://dl.lorenzo0111.me/releases/"
+
+            def mavenUsername = System.getenv("ORG_GRADLE_PROJECT_repoUsername") ? System.getenv("ORG_GRADLE_PROJECT_repoUsername") : project.property("repoUsername")
+            def mavenPassword = System.getenv("ORG_GRADLE_PROJECT_repoPassword") ? System.getenv("ORG_GRADLE_PROJECT_repoPassword") : project.property("repoPassword")
+
+            if(mavenUsername != null && mavenPassword != null) {
+                credentials {
+                    username = mavenUsername
+                    password = mavenPassword
+                }
+            }
+        }
+    }
 }

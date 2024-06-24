@@ -26,7 +26,7 @@ package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Vote;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.utils.ElectionUtils;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class ProceedChild extends SubCommand {
-    public ProceedChild(ICommand<?> command, ElectionsPlus plugin) {
+    public ProceedChild(ICommand<?> command) {
         super(command);
     }
 

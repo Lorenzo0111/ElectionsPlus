@@ -26,8 +26,8 @@ package me.lorenzo0111.elections.conversation.conversations;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.conversation.Conversation;
-import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
@@ -37,7 +37,7 @@ public class IconConversation extends Conversation {
     private final Party party;
 
     public IconConversation(Party party, Player author, ElectionsPlus plugin) {
-        super(Messages.string(true, "conversations.icon"), author, plugin);
+        super(Messages.string(false, "conversations.icon"), author, plugin);
         this.party = party;
     }
 

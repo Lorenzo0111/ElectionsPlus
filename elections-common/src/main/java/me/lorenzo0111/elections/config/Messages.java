@@ -22,18 +22,20 @@
  * SOFTWARE.
  */
 
-package me.lorenzo0111.elections.handlers;
+package me.lorenzo0111.elections.config;
 
-import dev.triumphteam.gui.components.util.Legacy;
-import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.spongepowered.configurate.ConfigurationNode;
 
 public class Messages {
     private static final String NOT_FOUND = "<red>String not found in messages.yml";
+    private static final LegacyComponentSerializer SERIALIZER = LegacyComponentSerializer.builder()
+            .hexColors()
+            .useUnusualXRepeatedCharacterHexFormat()
+            .build();
     private static MiniMessage miniMessage;
     private static ConfigurationNode config;
     private static String prefix;
@@ -42,11 +44,6 @@ public class Messages {
         Messages.config = config;
         Messages.miniMessage = MiniMessage.miniMessage();
         Messages.prefix = config.node("prefix").getString("");
-    }
-
-    public static void close() {
-        if (BukkitAudienceManager.initialized())
-            BukkitAudienceManager.shutdown();
     }
 
     public static Component component(boolean prefix, String path, TagResolver... placeholders) {
@@ -64,6 +61,6 @@ public class Messages {
     }
 
     public static String string(boolean prefix, String path, TagResolver... placeholders) {
-        return Legacy.SERIALIZER.serialize(component(prefix, path, placeholders));
+        return SERIALIZER.serialize(component(prefix, path, placeholders));
     }
 }
