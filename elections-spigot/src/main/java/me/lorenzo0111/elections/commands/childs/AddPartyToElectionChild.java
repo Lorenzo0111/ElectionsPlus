@@ -101,6 +101,7 @@ public class AddPartyToElectionChild extends SubCommand {
                     }
 
                     if (electionParties.contains(party)) {
+                        Messages.send(sender.audience(), true, Messages.multiple("party", partyName, "election", election.getName()), "election", "party-already-added");
                         return;
                     }
 

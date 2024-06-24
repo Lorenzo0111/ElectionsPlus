@@ -25,36 +25,49 @@
 package me.lorenzo0111.elections.listeners;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import me.lorenzo0111.elections.api.objects.Election;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.api.objects.ElectionBlock;
+import me.lorenzo0111.elections.menus.ElectionsMenu;
+import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
-public class JoinListener implements Listener {
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onJoin(PlayerJoinEvent event) {
-        ElectionsPlus plugin = ElectionsPlus.getInstance();
+public class BlockListener implements Listener {
+    private final ElectionsPlus plugin = ElectionsPlus.getInstance();
 
-        if (!plugin.getConfig().getBoolean("join-notification")) {
-            return;
-        }
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
 
-        if (event.getPlayer().hasPermission("elections.update") && plugin.getConfig().getBoolean("update.check")) {
-            ElectionsPlus.getInstance()
-                    .getUpdater()
-                    .sendUpdateCheck(Messages.audience(event.getPlayer()));
-        }
+        Player player = event.getPlayer();
+        Block block = event.getClickedBlock();
 
-        ElectionsPlus.getInstance()
-                .getManager()
+        if (block == null) return;
+
+        ElectionBlock electionBlock = plugin.getCache().getBlocks()
+                .get(block.getLocation().serialize());
+        if (electionBlock == null) return;
+
+        plugin.getManager()
                 .getElections()
-                .thenAccept((elections) -> elections.stream()
-                        .filter(Election::isOpen)
-                        .findFirst()
-                        .ifPresent((e) -> Messages.send(event.getPlayer(), true, "join")));
+                .thenAccept((elections) ->
+                        new ElectionsMenu(player, elections, ElectionsPlus.getInstance())
+                                .setup());
+    }
+
+    @EventHandler
+    public void onBreak(BlockBreakEvent e) {
+        Block block = e.getBlock();
+
+        ElectionBlock electionBlock = plugin.getCache().getBlocks()
+                .get(block.getLocation().serialize());
+        if (electionBlock == null) return;
+
+        e.setCancelled(true);
     }
 
 }

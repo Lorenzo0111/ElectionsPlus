@@ -55,6 +55,12 @@ public class CacheTask implements Runnable {
                     cache.getVotes().reset();
                     votes.forEach(vote -> cache.getVotes().add(vote.getElection()+"||"+vote.getPlayer(),vote));
                 });
+
+        database.getElectionBlocks()
+                .thenAccept((blocks) -> {
+                    cache.getBlocks().reset();
+                    blocks.forEach(block -> cache.getBlocks().add(block.getLocation(),block));
+                });
     }
 
 }

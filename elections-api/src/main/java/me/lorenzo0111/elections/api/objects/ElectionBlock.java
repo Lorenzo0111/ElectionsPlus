@@ -29,17 +29,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
  
 public class ElectionBlock implements DatabaseSerializable {
-    private final UUID world;
     private final Map<String, Object> location;
-    private final String blockData;
 
-    public ElectionBlock(UUID world, Map<String, Object> location, String blockData) {
-        this.world = world;
+    public ElectionBlock(Map<String, Object> location) {
         this.location = location;
-        this.blockData = blockData;
     }
 
     @Override
@@ -56,50 +53,26 @@ public class ElectionBlock implements DatabaseSerializable {
     public @NotNull Map<String, Object> serialize() {
         Map<String,Object> map = new HashMap<>();
 
-        map.put("world", world);
         map.put("location", location);
-        map.put("blockdata", blockData);
 
         return map;
-    }
-
-    public UUID getWorld() {
-        return this.world;
     }
 
     public Map<String, Object> getLocation() {
         return location;
     }
 
-    public String getBlockData() {
-        return blockData;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ElectionBlock that = (ElectionBlock) o;
+        return Objects.equals(location, that.location);
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == this) {
-            return true;
-        }
-
-        if (!(o instanceof ElectionBlock)) {
-            return false;
-        }
-
-        ElectionBlock b = (ElectionBlock)o;
-
-        if (!this.world.equals(b.world)) {
-            return false;
-        }
-
-        if (!this.location.equals(b.location)) {
-            return false;
-        }
-
-        if (!this.blockData.equals(b.blockData)) {
-            return false;
-        }
-
-        return true;
+    public int hashCode() {
+        return Objects.hashCode(location);
     }
 }
 

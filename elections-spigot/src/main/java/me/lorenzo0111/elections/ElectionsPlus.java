@@ -32,6 +32,7 @@ import me.lorenzo0111.elections.constants.Getters;
 import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
 import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.listeners.BlockListener;
 import me.lorenzo0111.elections.listeners.JoinListener;
 import me.lorenzo0111.elections.scheduler.BukkitScheduler;
 import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
@@ -119,6 +120,7 @@ public final class ElectionsPlus extends JavaPlugin {
         this.api = new ElectionsPlusAPI(this);
         Bukkit.getServicesManager().register(IElectionsPlusAPI.class, api, this, ServicePriority.Normal);
         Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
+        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         switch (getConfig().getString("database.type", "NULL").toUpperCase()) {
             case "SQLITE":
                 try {

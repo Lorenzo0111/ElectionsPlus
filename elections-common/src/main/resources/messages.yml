@@ -111,6 +111,7 @@ election:
   deleted: "<gray>Election <yellow><name><gray> deleted."
   created: "<gray>Election <yellow><name><gray> created."
   party-added: "<gray>Party <yellow><party><gray> added to election <yellow><election><gray>."
+  party-already-added: "<gray>Party <yellow><party><gray> already added to election <yellow><election><gray>."
   nochange: "<gray>Election <yellow><election><gray>: no change to apply"
 
 parties:
