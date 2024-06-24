@@ -26,6 +26,7 @@ package me.lorenzo0111.elections.menus;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.SkullBuilder;
 import dev.triumphteam.gui.components.InteractionModifier;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.lorenzo0111.elections.ElectionsPlus;
@@ -58,12 +59,16 @@ public class VoteMenu extends PaginatedGui {
         this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false, "guis", "next")).asGuiItem(e -> this.next()));
 
         for (Party party : election.getParties()) {
-            this.addItem(ItemBuilder.skull()
+            SkullBuilder builder = ItemBuilder.skull()
                     .name(Component.text("§9" + party.getName()))
-                    .lore(Messages.component(false, "guis","vote"))
-                    .texture(party.getIcon())
-                    .owner(Bukkit.getOfflinePlayer(party.getOwner()))
-                    .asGuiItem(e -> {
+                    .lore(Messages.component(false, "guis", "vote"))
+                    .owner(Bukkit.getOfflinePlayer(party.getOwner()));
+
+            if (party.getIcon() != null) {
+                builder.texture(party.getIcon());
+            }
+
+            this.addItem(builder.asGuiItem(e -> {
                         this.close(e.getWhoClicked());
                         ElectionsPlus.getInstance()
                                 .getManager()

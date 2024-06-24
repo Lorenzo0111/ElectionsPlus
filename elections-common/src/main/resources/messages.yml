@@ -16,7 +16,6 @@ errors:
   election-exists: "<red>Election already exists."
   election-not-found: "<red>Election <yellow><name><red> does not exist."
   invalid-election-name: "<red>Invalid election name."
-  election-not-found: "<red>Election <yellow><name><red> not found."
   election-name-missing: "<red>Missing election name."
   election-closed: "<gray>Election closed. Run <yellow>/elections proceed <name> <gray>to declare the winner."
   user-not-online: "<red>user <yellow><name><red> is not online."
@@ -121,6 +120,7 @@ parties:
   no-permission-delete: "<red>You can't delete this party."
   user-added: "<yellow><name><gray> added to party <yellow><party><gray>."
   add-member-debug: "<gray>Party: <party> Member: <member>"
+  icon-edit: "<gray>Icon edited."
 
 help:
   header:     "<gray>Available commands:"

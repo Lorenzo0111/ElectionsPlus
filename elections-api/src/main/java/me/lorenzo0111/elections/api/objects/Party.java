@@ -127,4 +127,17 @@ public class Party implements DatabaseSerializable {
             map.put("icon", icon);
         return map;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Party party = (Party) o;
+        return Objects.equals(name, party.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
+    }
 }

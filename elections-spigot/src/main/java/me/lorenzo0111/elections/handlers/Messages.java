@@ -125,12 +125,12 @@ public class Messages {
         Builder b = TagResolver.builder();
         boolean empty = true;
         String pathDebug = "";
-        ArrayList<String> newPath = new ArrayList<String>();
+        ArrayList<String> newPath = new ArrayList<>();
 
         for(Object o : path) {
             if (o instanceof String) {
                 newPath.add((String)o);
-                pathDebug = pathDebug + (String)o + ".";
+                pathDebug = pathDebug + o + ".";
             } else if (o instanceof Map) {
                 try {
                     Map<String, String> m = obj2strmap(o);

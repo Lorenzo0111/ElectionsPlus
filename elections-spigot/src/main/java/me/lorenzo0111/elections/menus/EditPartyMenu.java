@@ -86,7 +86,7 @@ public class EditPartyMenu extends BaseGui {
                     .lore(Messages.component(false, "guis", "icon-lore"), Messages.component(false, "guis", "icon-lore2"))
                     .asGuiItem(e -> {
                     e.getWhoClicked().closeInventory();
-                    ConversationUtil.createConversation(plugin,new IconConversation(this,party,owner,plugin));
+                    ConversationUtil.createConversation(plugin,new IconConversation(party,owner,plugin));
                 });
         } else {
             item = ItemBuilder.from(Material.BARRIER)

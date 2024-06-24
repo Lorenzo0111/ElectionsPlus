@@ -43,12 +43,6 @@ public class AddMemberConversation extends Conversation {
 
     @Override
     public void handle(@Nullable String input) {
-        /* XXX(tadhunt) - when handle() is called during conversation processing, no sendMessage() calls work...
-        this.getPlugin().getLogger().info("handling AddMemberConversation input: " + input);
-        this.getPlugin().getLogger().info("author is: " + this.getAuthor().getUniqueId().toString());
-        this.getAuthor().sendMessage("what's going on already?");
-        */
-
         if (input == null)
             return;
 

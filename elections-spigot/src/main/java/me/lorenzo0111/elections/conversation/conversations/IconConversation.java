@@ -34,12 +34,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class IconConversation extends Conversation {
     private final Party party;
-    //private final EditPartyMenu menu;
 
-    public IconConversation(EditPartyMenu menu, Party party, Player author, ElectionsPlus plugin) {
+    public IconConversation(Party party, Player author, ElectionsPlus plugin) {
         super(Messages.get("conversations", "icon"), author, plugin);
         this.party = party;
-        //this.menu = menu;
     }
 
     @Override
@@ -48,5 +46,6 @@ public class IconConversation extends Conversation {
             return;
 
         party.setIcon(input);
+
     }
 }

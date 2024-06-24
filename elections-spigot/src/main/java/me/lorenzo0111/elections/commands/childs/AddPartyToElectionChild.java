@@ -50,15 +50,6 @@ public class AddPartyToElectionChild extends SubCommand {
         return "add-party";
     }
 
-    private static Party findParty(List<Party> parties, String name) {
-        for (Party party : parties) {
-            if (party.getName().equals(name)) {
-                return party;
-            }
-        }
-        return null;
-    }
-
     @Permission("elections.create")
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
@@ -99,7 +90,12 @@ public class AddPartyToElectionChild extends SubCommand {
                 .thenAccept((parties) -> {
                     List<Party> electionParties = election.getParties();
 
-                    Party party = findParty(parties, partyName);
+
+                    Party party = parties.stream()
+                            .filter(p -> p.getName().equals(partyName))
+                            .findFirst()
+                            .orElse(null);
+
                     if (party == null) {
                         Messages.send(sender.audience(), true, Messages.single("party", partyName), "errors", "party-not-found");
                         return;
