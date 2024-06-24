@@ -26,13 +26,11 @@ package me.lorenzo0111.elections.cache;
 
 import me.lorenzo0111.elections.api.objects.*;
 
-import java.util.Map;
-
 public class CacheManager {
     private final Cache<String, Party> parties;
     private final Cache<String, Election> elections;
     private final Cache<String, Vote> votes;
-    private final Cache<Map<String, Object>, ElectionBlock> blocks;
+    private final Cache<ElectionBlock, ElectionBlock> blocks;
 
     public CacheManager() {
         this.parties = new MapCache<>();
@@ -53,7 +51,7 @@ public class CacheManager {
         return votes;
     }
 
-    public Cache<Map<String, Object>, ElectionBlock> getBlocks() {
+    public Cache<ElectionBlock, ElectionBlock> getBlocks() {
         return blocks;
     }
 }

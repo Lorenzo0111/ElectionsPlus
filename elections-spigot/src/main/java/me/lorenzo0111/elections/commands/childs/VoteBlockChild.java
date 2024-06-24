@@ -31,10 +31,9 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
-import java.util.Map;
 
 public class VoteBlockChild extends SubCommand {
     private final ElectionsPlus plugin;
@@ -83,10 +82,17 @@ public class VoteBlockChild extends SubCommand {
     }
 
     private void create(User<?> sender, Block block) {
-        Map<String, Object> location = block.getLocation().serialize();
+        Location location = block.getLocation();
 
         plugin.getManager()
-                .createElectionBlock(location)
+                .createElectionBlock(
+                        new ElectionBlock(
+                                location.getWorld().getName(),
+                                location.getBlockX(),
+                                location.getBlockY(),
+                                location.getBlockZ()
+                        )
+                )
                 .thenAccept(electionBlock -> {
                     if (electionBlock == null) {
                         Messages.send(sender.audience(), true, "errors", "block-already-exists");
@@ -98,11 +104,13 @@ public class VoteBlockChild extends SubCommand {
     }
 
     private void delete(User<?> sender, Block block) {
-        Map<String, Object> location = block.getLocation().serialize();
-
-        ElectionBlock electionBlock = new ElectionBlock(location);
-        plugin.getManager()
-                .deleteElectionBlock(electionBlock);
+        ElectionBlock electionBlock = new ElectionBlock(
+                block.getWorld().getName(),
+                block.getX(),
+                block.getY(),
+                block.getZ()
+        );
+        plugin.getManager().deleteElectionBlock(electionBlock);
 
         Messages.send(sender.audience(), true, "vote-block", "deleted");
     }

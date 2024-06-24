@@ -51,6 +51,6 @@ public interface IDatabaseManager {
     CompletableFuture<Boolean> vote(Vote vote);
 
     CompletableFuture<List<ElectionBlock>> getElectionBlocks();
-    CompletableFuture<ElectionBlock> createElectionBlock(Map<String, Object> location);
+    CompletableFuture<ElectionBlock> createElectionBlock(ElectionBlock block);
     void deleteElectionBlock(ElectionBlock electionBlock);
 }

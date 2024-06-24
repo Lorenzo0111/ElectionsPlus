@@ -45,7 +45,9 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.sql.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -128,7 +130,10 @@ public class DatabaseManager implements IDatabaseManager {
 
         // Blocks
         List<Column> blocksColumns = new ArrayList<>();
-        blocksColumns.add(new Column("location", "TEXT"));
+        blocksColumns.add(new Column("world", "TEXT"));
+        blocksColumns.add(new Column("x", "INTEGER"));
+        blocksColumns.add(new Column("y", "INTEGER"));
+        blocksColumns.add(new Column("z", "INTEGER"));
         this.blocksTable = new ETable(scheduler, connectionHandler, "blocks", blocksColumns);
         this.blocksTable.create();
 
@@ -375,14 +380,13 @@ public class DatabaseManager implements IDatabaseManager {
                 ResultSet resultSet = statement.executeQuery(query);
 
                 List<ElectionBlock> electionBlocks = new ArrayList<>();
-                Gson gson = new Gson();
                 while (resultSet.next()) {
-                    Type type = new TypeToken<Map<String, Object>>() {}.getType();
-                    Map<String, Object> location = new HashMap<>(
-                            gson.fromJson(resultSet.getString("location"),
-                                    type));
-
-                    ElectionBlock electionBlock = new ElectionBlock(location);
+                    ElectionBlock electionBlock = new ElectionBlock(
+                            resultSet.getString("world"),
+                            resultSet.getInt("x"),
+                            resultSet.getInt("y"),
+                            resultSet.getInt("z")
+                    );
 
                     electionBlocks.add(electionBlock);
                 }
@@ -402,34 +406,64 @@ public class DatabaseManager implements IDatabaseManager {
     }
 
     @Override
-    public CompletableFuture<ElectionBlock> createElectionBlock(Map<String, Object> location) {
+    public CompletableFuture<ElectionBlock> createElectionBlock(ElectionBlock block) {
         CompletableFuture<ElectionBlock> electionBlockFuture = new CompletableFuture<>();
 
-        blocksTable.find("location", location)
-                .thenAccept((resultSet) -> {
-                    try {
-                        if (resultSet.next()) {
-                            electionBlockFuture.complete(null);
-                            return;
-                        }
+        blocksTable.run(() -> {
+            try {
+                Connection connection = connectionHandler.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        String.format("SELECT * FROM %s WHERE world = ? AND x = ? AND y = ? AND z = ?;", blocksTable.getName())
+                );
 
-                        ElectionBlock electionBlock = new ElectionBlock(location);
-                        blocksTable.add(electionBlock);
-                        electionBlockFuture.complete(electionBlock);
+                statement.setString(1, block.getWorld());
+                statement.setInt(2, block.getX());
+                statement.setInt(3, block.getY());
+                statement.setInt(4, block.getZ());
 
-                        cache.getBlocks().add(location, electionBlock);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                });
+                ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    electionBlockFuture.complete(null);
+                    return;
+                }
+
+                resultSet.close();
+
+                blocksTable.add(block);
+                electionBlockFuture.complete(block);
+
+                cache.getBlocks().add(block, block);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
 
         return electionBlockFuture;
     }
 
     @Override
     public void deleteElectionBlock(ElectionBlock electionBlock) {
-        blocksTable.removeWhere("location", electionBlock.getLocation());
-        cache.getBlocks().remove(electionBlock.getLocation());
+        blocksTable.run(() -> {
+            try {
+                Connection connection = connectionHandler.getConnection();
+                PreparedStatement statement = connection.prepareStatement(
+                        String.format("DELETE FROM %s WHERE world = ? AND x = ? AND y = ? AND z = ?;", blocksTable.getName())
+                );
+
+                statement.setString(1, electionBlock.getWorld());
+                statement.setInt(2, electionBlock.getX());
+                statement.setInt(3, electionBlock.getY());
+                statement.setInt(4, electionBlock.getZ());
+
+                statement.execute();
+                statement.close();
+                closeConnection(connection);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+
+        cache.getBlocks().remove(electionBlock);
     }
 
     public void closeConnection(Connection connection) {

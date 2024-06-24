@@ -173,7 +173,7 @@ public final class ElectionsPlus extends JavaPlugin {
         ConfigExtractor configExtractor = new ConfigExtractor(this.getClass(),this.getDataFolder(),"config.yml");
         configExtractor.extract();
         this.config = configExtractor.toConfigurate();
-        Messages.init(messages,config("prefix"),this);
+        Messages.init(messages);
     }
 
     public void win(UUID uuid) {

@@ -30,18 +30,28 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
- 
-public class ElectionBlock implements DatabaseSerializable {
-    private final Map<String, Object> location;
 
-    public ElectionBlock(Map<String, Object> location) {
-        this.location = location;
+public class ElectionBlock implements DatabaseSerializable {
+    private final String world;
+    private final int x;
+    private final int y;
+    private final int z;
+
+    public ElectionBlock(String world, int x, int y, int z) {
+        this.world = world;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     @Override
     public DatabaseSerializable from(Map<String, Object> keys) throws RuntimeException {
-        throw new RuntimeException("You can't deserialize this class. You have to do that manually.");
+        return new ElectionBlock(
+                (String) keys.get("world"),
+                (int) keys.get("x"),
+                (int) keys.get("y"),
+                (int) keys.get("z")
+        );
     }
 
     @Override
@@ -51,15 +61,30 @@ public class ElectionBlock implements DatabaseSerializable {
 
     @Override
     public @NotNull Map<String, Object> serialize() {
-        Map<String,Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
 
-        map.put("location", location);
+        map.put("world", this.world);
+        map.put("x", this.x);
+        map.put("y", this.y);
+        map.put("z", this.z);
 
         return map;
     }
 
-    public Map<String, Object> getLocation() {
-        return location;
+    public String getWorld() {
+        return world;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public int getZ() {
+        return z;
     }
 
     @Override
@@ -67,12 +92,12 @@ public class ElectionBlock implements DatabaseSerializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ElectionBlock that = (ElectionBlock) o;
-        return Objects.equals(location, that.location);
+        return x == that.x && y == that.y && z == that.z && Objects.equals(world, that.world);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(location);
+        return Objects.hash(world, x, y, z);
     }
 }
 

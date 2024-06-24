@@ -73,6 +73,7 @@ subprojects {
 
     shadowJar {
         relocate('org.yaml.snakeyaml',"${libsBase}.yaml")
+        relocate('net.kyori', "${libsBase}.kyori")
         archiveVersion.set('')
         archiveClassifier.set('')
 

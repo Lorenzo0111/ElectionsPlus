@@ -34,7 +34,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver.Builder;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.spongepowered.configurate.ConfigurationNode;
 
 import java.util.ArrayList;
@@ -48,7 +47,7 @@ public class Messages {
     private static String prefix;
     private static final String NOT_FOUND = ": <red>String not found in messages.yml";
 
-    public static void init(ConfigurationNode config, String prefix, JavaPlugin plugin) {
+    public static void init(ConfigurationNode config) {
         Messages.config = config;
 
         Component p = component(false, "prefix");
@@ -86,12 +85,6 @@ public class Messages {
             map.put(key, "");
         }
 
-        return map;
-    }
-
-    public static Map<String,String> keys(String... keys) {
-        Map<String,String> map = new HashMap<>();
-        Arrays.asList(keys).forEach(k -> map.put(k,get(k)));
         return map;
     }
 

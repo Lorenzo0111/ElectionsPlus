@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("unused")
 public interface IElectionsPlusAPI {
     CacheManager getCache();
     CompletableFuture<List<Vote>> getVotes();

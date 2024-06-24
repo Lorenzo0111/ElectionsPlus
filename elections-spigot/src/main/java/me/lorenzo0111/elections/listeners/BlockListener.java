@@ -27,6 +27,7 @@ package me.lorenzo0111.elections.listeners;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.ElectionBlock;
 import me.lorenzo0111.elections.menus.ElectionsMenu;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,8 +49,16 @@ public class BlockListener implements Listener {
 
         if (block == null) return;
 
+        Location location = block.getLocation();
         ElectionBlock electionBlock = plugin.getCache().getBlocks()
-                .get(block.getLocation().serialize());
+                .get(
+                        new ElectionBlock(
+                                location.getWorld().getName(),
+                                location.getBlockX(),
+                                location.getBlockY(),
+                                location.getBlockZ()
+                        )
+                );
         if (electionBlock == null) return;
 
         plugin.getManager()
@@ -64,7 +73,14 @@ public class BlockListener implements Listener {
         Block block = e.getBlock();
 
         ElectionBlock electionBlock = plugin.getCache().getBlocks()
-                .get(block.getLocation().serialize());
+                .get(
+                        new ElectionBlock(
+                                block.getWorld().getName(),
+                                block.getX(),
+                                block.getY(),
+                                block.getZ()
+                        )
+                );
         if (electionBlock == null) return;
 
         e.setCancelled(true);

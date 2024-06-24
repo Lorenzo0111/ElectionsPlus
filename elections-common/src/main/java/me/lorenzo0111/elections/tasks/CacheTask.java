@@ -59,7 +59,7 @@ public class CacheTask implements Runnable {
         database.getElectionBlocks()
                 .thenAccept((blocks) -> {
                     cache.getBlocks().reset();
-                    blocks.forEach(block -> cache.getBlocks().add(block.getLocation(),block));
+                    blocks.forEach(block -> cache.getBlocks().add(block,block));
                 });
     }
 
