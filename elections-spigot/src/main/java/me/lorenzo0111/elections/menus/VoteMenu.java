@@ -26,16 +26,20 @@ package me.lorenzo0111.elections.menus;
 
 import com.cryptomorin.xseries.XMaterial;
 import dev.triumphteam.gui.builder.item.ItemBuilder;
+import dev.triumphteam.gui.builder.item.SkullBuilder;
 import dev.triumphteam.gui.guis.PaginatedGui;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Election;
 import me.lorenzo0111.elections.api.objects.Party;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.config.Messages;
+import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
 import java.util.Objects;
 
 public class VoteMenu extends PaginatedGui {
@@ -43,7 +47,7 @@ public class VoteMenu extends PaginatedGui {
     private final Election election;
 
     public VoteMenu(Player owner, Election election) {
-        super(3, Messages.componentString(false, Messages.single("name",election.getName()),"guis", "vote-title"));
+        super(3, 0, Messages.string(false, "vote.title", Placeholder.unparsed("name", election.getName())), new HashSet<>());
 
         this.owner = owner;
         this.election = election;
@@ -52,29 +56,42 @@ public class VoteMenu extends PaginatedGui {
     public void setup() {
         this.setDefaultClickAction(e -> e.setCancelled(true));
         this.getFiller().fillBorder(ItemBuilder.from(Objects.requireNonNull(XMaterial.BLACK_STAINED_GLASS_PANE.parseItem())).asGuiItem());
-        this.setItem(3,3, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "back")).asGuiItem(e -> this.previous()));
-        this.setItem(3,7, ItemBuilder.from(Material.ARROW).name(Messages.component(false,"guis", "next")).asGuiItem(e -> this.next()));
+        this.setItem(3, 3, ItemBuilder.from(Material.ARROW)
+                .name(Messages.component(false, "guis.back"))
+                .asGuiItem(e -> this.previous()));
+        this.setItem(3, 7, ItemBuilder.from(Material.ARROW)
+                .name(Messages.component(false, "guis.next"))
+                .asGuiItem(e -> this.next()));
 
         for (Party party : election.getParties()) {
-            this.addItem(ItemBuilder.skull()
+            SkullBuilder builder = ItemBuilder.skull()
                     .name(Component.text("§9" + party.getName()))
-                    .lore(Messages.component(false, "guis","vote"))
-                    .texture(party.getIcon())
-                    .owner(Bukkit.getOfflinePlayer(party.getOwner()))
-                    .asGuiItem(e -> {
-                        this.close(e.getWhoClicked());
-                        ElectionsPlus.getInstance()
-                                .getManager()
-                                .vote(e.getWhoClicked().getUniqueId(), party, election)
-                                .thenAccept((b) -> {
-                                   if (b) {
-                                       Messages.send(e.getWhoClicked(),true, Messages.single("name", party.getName()),"vote", "success");
-                                       return;
-                                   }
+                    .lore(Messages.component(false, "guis.vote"))
+                    .owner(Bukkit.getOfflinePlayer(party.getOwner()));
 
-                                    Messages.send(e.getWhoClicked(),true,"vote", "already");
-                                });
-                    }));
+            if (party.getIcon() != null) {
+                builder.texture(party.getIcon());
+            }
+
+            this.addItem(builder.asGuiItem(e -> {
+                this.close(e.getWhoClicked());
+                ElectionsPlus.getInstance()
+                        .getManager()
+                        .vote(e.getWhoClicked().getUniqueId(), party, election)
+                        .thenAccept((b) -> {
+                            if (b) {
+                                BukkitAudienceManager.audience(e.getWhoClicked()).sendMessage(
+                                        Messages.component(true, "vote.success",
+                                                Placeholder.unparsed("party", party.getName()),
+                                                Placeholder.unparsed("election", election.getName()))
+                                );
+                                return;
+                            }
+
+                            BukkitAudienceManager.audience(e.getWhoClicked())
+                                    .sendMessage(Messages.component(true, "vote.already"));
+                        });
+            }));
         }
 
         this.open(owner);

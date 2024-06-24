@@ -106,8 +106,9 @@ public class Party implements DatabaseSerializable {
         Type type = new TypeToken<ArrayList<UUID>>() {}.getType();
         List<UUID> members = new Gson().fromJson((String) keys.get("members"),type);
 
-        Party party = new Party(name,owner,members);
+        Party party = new Party(name, owner, members);
         party.setIconWithoutUpdate(icon);
+        
         return party;
     }
 
@@ -125,5 +126,28 @@ public class Party implements DatabaseSerializable {
         if (icon != null)
             map.put("icon", icon);
         return map;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Party party = (Party) o;
+        return Objects.equals(name, party.name) && Objects.equals(icon, party.icon) && Objects.equals(owner, party.owner) && Objects.equals(members, party.members);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, icon, owner, members);
+    }
+
+    @Override
+    public String toString() {
+        return "Party{" +
+                "name='" + name + '\'' +
+                ", icon='" + icon + '\'' +
+                ", owner=" + owner +
+                ", members=" + members +
+                '}';
     }
 }

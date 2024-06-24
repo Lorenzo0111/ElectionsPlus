@@ -25,7 +25,8 @@
 package me.lorenzo0111.elections.conversation;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import org.bukkit.ChatColor;
+import me.lorenzo0111.elections.config.Messages;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
@@ -47,7 +48,7 @@ public abstract class Conversation extends StringPrompt {
     @NotNull
     @Override
     public String getPromptText(@NotNull ConversationContext context) {
-        return ChatColor.translateAlternateColorCodes('&', "&7" + reason);
+        return Messages.string(false, "prompt", Placeholder.unparsed("prompt", reason));
     }
 
     public abstract void handle(@Nullable String input);

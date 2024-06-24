@@ -25,11 +25,13 @@
 package me.lorenzo0111.elections.database;
 
 import me.lorenzo0111.elections.api.objects.Election;
+import me.lorenzo0111.elections.api.objects.ElectionBlock;
 import me.lorenzo0111.elections.api.objects.Party;
 import me.lorenzo0111.elections.api.objects.Vote;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -47,4 +49,8 @@ public interface IDatabaseManager {
     CompletableFuture<List<Vote>> getVotes();
     CompletableFuture<Boolean> vote(UUID player, Party party, Election election);
     CompletableFuture<Boolean> vote(Vote vote);
+
+    CompletableFuture<List<ElectionBlock>> getElectionBlocks();
+    CompletableFuture<ElectionBlock> createElectionBlock(ElectionBlock block);
+    void deleteElectionBlock(ElectionBlock electionBlock);
 }

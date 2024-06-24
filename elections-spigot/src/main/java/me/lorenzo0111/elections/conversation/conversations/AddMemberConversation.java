@@ -26,10 +26,11 @@ package me.lorenzo0111.elections.conversation.conversations;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.conversation.Conversation;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,7 +38,7 @@ public class AddMemberConversation extends Conversation {
     private final Party party;
 
     public AddMemberConversation(Party party, Player author, ElectionsPlus plugin) {
-        super(Messages.get("conversations", "add"), author, plugin);
+        super(Messages.string(false, "conversations.add"), author, plugin);
 
         this.party = party;
     }
@@ -49,11 +50,23 @@ public class AddMemberConversation extends Conversation {
 
         Player player = Bukkit.getPlayer(input);
         if (player == null) {
-            this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "&7This user is not online."));
+            BukkitAudienceManager.audience(this.getAuthor())
+                    .sendMessage(
+                            Messages.component(true,
+                                    "errors.user-not-online",
+                                    Placeholder.unparsed("name", input))
+                    );
             return;
         }
 
         party.addMember(player.getUniqueId());
-        this.getAuthor().sendMessage(ChatColor.translateAlternateColorCodes('&', getPlugin().config("prefix") + "&7Member added to the party."));
+
+        BukkitAudienceManager.audience(this.getAuthor())
+                .sendMessage(
+                        Messages.component(true,
+                                "parties.user-added",
+                                Placeholder.unparsed("name", player.getName()),
+                                Placeholder.unparsed("party", party.getName()))
+                );
     }
 }

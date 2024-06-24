@@ -1,7 +1,7 @@
 prefix: "&8[&eElections&9+&8] &r"
 
 database:
-  type: "SQLITE" # SQLITE, MYSQL, REDIS
+  type: "SQLITE" # SQLITE, MYSQL
   # MySQL and Redis
   username: "root"
   password: ""
@@ -40,3 +40,6 @@ rank:
   command: "none"
   # Who should win if there are two or more winners?
   strategy: "none" # None, both
+
+update:
+  check: true # set to true to check for updates when the plugin starts

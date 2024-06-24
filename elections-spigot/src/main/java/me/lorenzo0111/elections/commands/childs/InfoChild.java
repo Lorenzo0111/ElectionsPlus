@@ -26,13 +26,13 @@ package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Vote;
-import me.lorenzo0111.elections.handlers.ChatColor;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,12 +55,12 @@ public class InfoChild extends SubCommand {
     public void handleSubcommand(User<?> user, String[] args) {
         ElectionsPlus plugin = (ElectionsPlus) getCommand().getPlugin();
 
-        if (args.length != 2) {
-            user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&cInsert a valid election name.")));
+        if (args.length < 2) {
+            user.audience().sendMessage(Messages.component(true, "errors.election-name-missing"));
             return;
         }
 
-        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&7Calculating votes..")));
+        user.audience().sendMessage(Messages.component(true, "votes.calculating", Placeholder.unparsed("election", args[1])));
 
         plugin.getApi()
                 .getVotes()
@@ -70,23 +70,31 @@ public class InfoChild extends SubCommand {
                             .collect(Collectors.toList());
 
                     int total = 0;
-                    Map<String,Integer> voteMap = new HashMap<>();
+                    Map<String, Integer> voteMap = new HashMap<>();
 
                     for (Vote vote : collect) {
                         total++;
 
                         if (!voteMap.containsKey(vote.getParty())) {
-                            voteMap.put(vote.getParty(),1);
+                            voteMap.put(vote.getParty(), 1);
                             continue;
                         }
 
                         Integer voteCount = voteMap.get(vote.getParty());
-                        voteMap.replace(vote.getParty(),voteCount,voteCount+1);
+                        voteMap.replace(vote.getParty(), voteCount, voteCount + 1);
                     }
 
-                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "&8&m=============&e " + Messages.get("votes","title") + " &8&m=============&e")));
+                    user.audience().sendMessage(Messages.component(true, "votes.title"));
                     for (String party : voteMap.keySet()) {
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', "  &6&l• &7" + party + " &e&l» &e&n" + voteMap.get(party) + "&7 " + Messages.get("votes","name") + " (&e&o" + (voteMap.get(party)*100/total) + "%&7)")));
+                        int voteCount = voteMap.get(party);
+                        int percent = voteCount * 100 / total;
+
+                        user.audience().sendMessage(Messages.component(true,
+                                "votes.status",
+                                Placeholder.unparsed("party", party),
+                                Formatter.number("votes", voteCount),
+                                Formatter.number("percent", percent)
+                        ));
                     }
                 });
     }

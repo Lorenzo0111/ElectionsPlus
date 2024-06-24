@@ -26,20 +26,19 @@ package me.lorenzo0111.elections.conversation.conversations;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.conversation.Conversation;
-import me.lorenzo0111.elections.handlers.Messages;
-import me.lorenzo0111.elections.menus.EditPartyMenu;
+import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class IconConversation extends Conversation {
     private final Party party;
-    private final EditPartyMenu menu;
 
-    public IconConversation(EditPartyMenu menu, Party party, Player author, ElectionsPlus plugin) {
-        super(Messages.get("conversations", "icon"), author, plugin);
+    public IconConversation(Party party, Player author, ElectionsPlus plugin) {
+        super(Messages.string(false, "conversations.icon"), author, plugin);
         this.party = party;
-        this.menu = menu;
     }
 
     @Override
@@ -48,5 +47,12 @@ public class IconConversation extends Conversation {
             return;
 
         party.setIcon(input);
+
+        BukkitAudienceManager.audience(this.getAuthor())
+                .sendMessage(
+                        Messages.component(true,
+                                "parties.icon-edit",
+                                Placeholder.unparsed("party", party.getName()))
+                );
     }
 }

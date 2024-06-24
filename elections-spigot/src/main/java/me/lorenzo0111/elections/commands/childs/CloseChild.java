@@ -25,17 +25,20 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import me.lorenzo0111.elections.handlers.ChatColor;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 public class CloseChild extends SubCommand {
+    private final ElectionsPlus plugin;
 
-    public CloseChild(ICommand<?> command) {
+    public CloseChild(ICommand<?> command, ElectionsPlus plugin) {
         super(command);
+
+        this.plugin = plugin;
     }
 
     @Override
@@ -46,10 +49,8 @@ public class CloseChild extends SubCommand {
     @Permission("elections.close")
     @Override
     public void handleSubcommand(User<?> user, String[] args) {
-        ElectionsPlus plugin = (ElectionsPlus) getCommand().getPlugin();
-
-        if (args.length != 2) {
-            user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&cInsert a valid election name.")));
+        if (args.length < 2) {
+            user.audience().sendMessage(Messages.component(true, "errors.election-name-missing"));
             return;
         }
 
@@ -59,11 +60,11 @@ public class CloseChild extends SubCommand {
                     if (election != null) {
                         election.close();
 
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&7Election closed, if you want to automatically grant the rank to the winner run &e&n/elections proceed " + election.getName())));
+                        user.audience().sendMessage(Messages.component(true, "errors.election-closed", Placeholder.unparsed("name", election.getName())));
                         return;
                     }
 
-                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', plugin.config("prefix") + "&cElection not found")));
+                    user.audience().sendMessage(Messages.component(true, "election-not-found", Placeholder.unparsed("name", args[1])));
                 });
     }
 }

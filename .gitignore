@@ -1,3 +1,9 @@
+.vscode/
+elections-common/bin/
+elections-spigot/bin/
+elections-sponge/bin/
+
+.*.swp
 # User-specific stuff
 .idea/
 

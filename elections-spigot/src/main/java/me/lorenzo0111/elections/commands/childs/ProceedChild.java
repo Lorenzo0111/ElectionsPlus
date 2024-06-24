@@ -26,23 +26,18 @@ package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Vote;
-import me.lorenzo0111.elections.handlers.ChatColor;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.config.Messages;
+import me.lorenzo0111.elections.utils.ElectionUtils;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProceedChild extends SubCommand {
-
     public ProceedChild(ICommand<?> command) {
         super(command);
     }
@@ -55,8 +50,8 @@ public class ProceedChild extends SubCommand {
     @Permission("elections.proceed")
     @Override
     public void handleSubcommand(User<?> user, String[] args) {
-        if (args.length != 2) {
-            user.audience().sendMessage(Messages.component(true,"conversations","name"));
+        if (args.length < 2) {
+            user.audience().sendMessage(Messages.component(true, "errors.bad-args"));
             return;
         }
 
@@ -69,34 +64,10 @@ public class ProceedChild extends SubCommand {
                             .filter((vote) -> vote.getElection().equalsIgnoreCase(args[1]))
                             .collect(Collectors.toList());
 
-                    Map<String,Integer> counts = new HashMap<>();
-                    List<String> winners = new ArrayList<>();
-                    int winnerVotes = -1;
-
-                    for (Vote vote : votes) {
-                        if (!counts.containsKey(vote.getParty())) {
-                            counts.put(vote.getParty(),1);
-                            continue;
-                        }
-
-                        Integer count = counts.get(vote.getParty());
-                        counts.replace(vote.getParty(),count,count+1);
-                    }
-
-                    for (Map.Entry<String, Integer> entry : counts.entrySet()) {
-                        if (winnerVotes < entry.getValue()) {
-                            winners.clear();
-                            winners.add(entry.getKey());
-                            winnerVotes = entry.getValue();
-                        }
-
-                        else if (winnerVotes == entry.getValue()) {
-                            winners.add(entry.getKey());
-                        }
-                    }
+                    List<String> winners = ElectionUtils.getWinners(votes);
 
                     if (winners.isEmpty()) {
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&cCan't find a winner...")));
+                        user.audience().sendMessage(Messages.component(true, "proceed.no-winner"));
                         return;
                     }
 
@@ -104,9 +75,19 @@ public class ProceedChild extends SubCommand {
                         plugin.getApi()
                                 .getParty(winners.get(0))
                                 .thenAccept((winner) -> plugin.win(winner.getOwner()));
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&7The winner is.. &e&n" + winners.get(0) + "&7. Run &e&n/elections info " + args[1] + "&7 to view the votes.")));
+
+                        user.audience().sendMessage(Messages.component(true, "proceed.winner",
+                                Placeholder.unparsed("party", winners.get(0)),
+                                Placeholder.unparsed("election", args[1])));
                         return;
                     }
+
+                    StringBuilder parties = new StringBuilder();
+                    for (String name : winners) {
+                        parties.append(name).append(", ");
+                    }
+
+                    parties.deleteCharAt(parties.length() - 1);
 
                     if ((plugin.config("rank", "strategy").equalsIgnoreCase("both"))) {
                         for (String name : winners) {
@@ -115,12 +96,20 @@ public class ProceedChild extends SubCommand {
                                     .thenAccept((winner) -> plugin.win(winner.getOwner()));
                         }
 
-                        user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&7Both duplicate strategy has been used. Winners are: &e&n" + winners + "&7. Run &e&n/elections info " + args[1] + "&7 to view the votes.")));
+                        user.audience().sendMessage(Messages.component(true,
+                                "proceed.multiple-winners",
+                                Placeholder.unparsed("parties", parties.toString()),
+                                Placeholder.unparsed("election", args[1])
+                                ));
                         return;
                     }
 
-                    user.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', Messages.prefix() + "&cNo duplicate strategy has been set, there is more than one winner: &7" + winners)));
-
+                    user.audience().sendMessage(Messages.component(true, "proceed.tie",
+                            Placeholder.unparsed("parties", parties.toString()),
+                            Placeholder.unparsed("election", args[1])
+                    ));
                 });
     }
+
+
 }

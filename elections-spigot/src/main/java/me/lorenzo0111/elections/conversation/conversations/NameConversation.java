@@ -25,8 +25,8 @@
 package me.lorenzo0111.elections.conversation.conversations;
 
 import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.conversation.Conversation;
-import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.elections.menus.CreateElectionMenu;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -35,7 +35,7 @@ public class NameConversation extends Conversation {
     private final CreateElectionMenu menu;
 
     public NameConversation(Player author, ElectionsPlus plugin, CreateElectionMenu menu) {
-        super(Messages.get("conversations", "name"), author, plugin);
+        super(Messages.string(false,"conversations.name"), author, plugin);
         this.menu = menu;
     }
 

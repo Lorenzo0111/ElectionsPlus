@@ -25,13 +25,15 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import org.spongepowered.configurate.ConfigurateException;
+
+import java.util.logging.Level;
 
 public class ReloadChild extends SubCommand {
 
@@ -47,17 +49,24 @@ public class ReloadChild extends SubCommand {
     @Permission("elections.reload")
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
-        long now = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         int errors = 0;
 
         try {
             ElectionsPlus.getInstance()
                     .reload();
         } catch (ConfigurateException e) {
-            e.printStackTrace();
+            ElectionsPlus.getInstance()
+                    .getLogger()
+                    .log(Level.SEVERE, "An error occurred while reloading the plugin", e);
             errors++;
         }
 
-        sender.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', ElectionsPlus.getInstance().config("prefix") + "&7Plugin reloaded in &e&n" + (System.currentTimeMillis() - now) + "ms&7 with &e&n" + errors + "&7 error(s).")));
+        long elapsedMs = System.currentTimeMillis() - start;
+        sender.audience().sendMessage(
+                Messages.component(true, "plugin.reload",
+                        Formatter.number("elapsed", elapsedMs),
+                        Formatter.number("errors", errors))
+        );
     }
 }

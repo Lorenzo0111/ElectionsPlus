@@ -35,7 +35,7 @@ public class ConversationUtil {
                 .withPrefix(context -> ChatColor.translateAlternateColorCodes('&', plugin.config("prefix")))
                 .withEscapeSequence(plugin.config("escape"))
                 .withTimeout(60)
-                .withModality(true)
+                .withModality(false)
                 .withFirstPrompt(conversation)
                 .withLocalEcho(false);
 

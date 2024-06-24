@@ -25,7 +25,7 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.menus.ElectionsMenu;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
@@ -50,13 +50,13 @@ public class ListChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(),true,"errors", "console");
+            sender.audience().sendMessage(Messages.component(true, "errors.console"));
             return;
         }
 
         ElectionsPlus.getInstance()
                 .getManager()
                 .getElections()
-                .thenAccept((elections) -> new ElectionsMenu((Player) sender.player(),elections,ElectionsPlus.getInstance()).setup());
+                .thenAccept((elections) -> new ElectionsMenu((Player) sender.player(), elections, ElectionsPlus.getInstance()).setup());
     }
 }

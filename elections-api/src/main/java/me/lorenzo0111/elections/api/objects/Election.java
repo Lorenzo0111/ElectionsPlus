@@ -76,7 +76,7 @@ public class Election implements DatabaseSerializable {
     @Override
     public @NotNull Map<String, Object> serialize() {
         Map<String,Object> map = new HashMap<>();
-        map.put("name",name);
+        map.put("name", name);
         List<String> parties = new ArrayList<>();
         this.getParties().forEach(p -> parties.add(p.getName()));
         map.put("parties",new Gson().toJson(parties));

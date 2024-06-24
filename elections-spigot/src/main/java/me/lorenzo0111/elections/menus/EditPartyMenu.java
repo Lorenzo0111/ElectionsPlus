@@ -32,10 +32,12 @@ import dev.triumphteam.gui.guis.BaseGui;
 import dev.triumphteam.gui.guis.GuiItem;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.api.objects.Party;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.IconConversation;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -49,7 +51,7 @@ public class EditPartyMenu extends BaseGui {
     private final ElectionsPlus plugin;
 
     public EditPartyMenu(Player owner, Party party, SkullBuilder item, ElectionsPlus plugin) {
-        super(5, Messages.componentString(false, Messages.single("name",party.getName()), "guis", "edit-party-title"), EnumSet.noneOf(InteractionModifier.class));
+        super(5, Messages.string(false, "guis.edit-party-title", Placeholder.unparsed("name", party.getName())), EnumSet.noneOf(InteractionModifier.class));
 
         this.owner = owner;
         this.party = party;
@@ -61,37 +63,46 @@ public class EditPartyMenu extends BaseGui {
         this.setDefaultClickAction((e) -> e.setCancelled(true));
 
         this.setItem(2, 5, item.lore(Component.empty()).asGuiItem());
-        this.setItem(4,3, ItemBuilder.from(Material.BARRIER).name(Messages.component(false, "guis", "delete")).lore(Messages.component(false, "guis", "delete-party-lore")).asGuiItem(e -> {
-            e.getWhoClicked().closeInventory();
-            if (party.getOwner().equals(owner.getUniqueId())) {
-                plugin.getManager()
-                        .deleteParty(party);
-                Messages.send(e.getWhoClicked(),true,"party-deleted");
-                return;
-            }
+        this.setItem(4, 3, ItemBuilder.from(Material.BARRIER).name(Messages.component(false, "guis.delete"))
+                .lore(Messages.component(false, "guis.delete-party-lore")).asGuiItem(e -> {
+                    e.getWhoClicked().closeInventory();
+                    if (party.getOwner().equals(owner.getUniqueId())) {
+                        plugin.getManager()
+                                .deleteParty(party);
 
-            Messages.send(e.getWhoClicked(),true,"no-permission-delete");
-        }));
-        this.setItem(4,5, ItemBuilder
+                        BukkitAudienceManager.audience(e.getWhoClicked())
+                                .sendMessage(Messages.component(false, "parties.deleted")
+                                );
+                        return;
+                    }
+
+                    BukkitAudienceManager.audience(e.getWhoClicked())
+                            .sendMessage(Messages.component(false, "parties.no-permission-delete")
+                            );
+                }));
+        this.setItem(4, 5, ItemBuilder
                 .from(Objects.requireNonNull(XMaterial.OAK_SIGN.parseItem()))
-                .name(Messages.component(false, "guis", "members"))
-                .lore(Messages.component(false,"guis","members-lore"), Messages.component(false, "guis", "refresh"))
-                .asGuiItem(e -> new MembersMenu(plugin,party,owner).setup()));
+                .name(Messages.component(false, "guis.members"))
+                .lore(Messages.component(false, "guis.members-lore"),
+                        Messages.component(false, "guis.refresh"))
+                .asGuiItem(e -> new MembersMenu(plugin, party, owner).setup()));
 
         GuiItem item;
 
         if (owner.hasPermission("elections.party.icon")) {
             item = ItemBuilder.from(Material.EMERALD)
-                    .name(Messages.component(false, "guis", "icon"))
-                    .lore(Messages.component(false, "guis", "icon-lore"), Messages.component(false, "guis", "icon-lore2"))
+                    .name(Messages.component(false, "guis.icon"))
+                    .lore(Messages.component(false, "guis.icon-lore"),
+                            Messages.component(false, "guis.icon-lore2"))
                     .asGuiItem(e -> {
-                    e.getWhoClicked().closeInventory();
-                    ConversationUtil.createConversation(plugin,new IconConversation(this,party,owner,plugin));
-                });
+                        e.getWhoClicked().closeInventory();
+                        ConversationUtil.createConversation(plugin, new IconConversation(party, owner, plugin));
+                    });
         } else {
             item = ItemBuilder.from(Material.BARRIER)
-                    .name(Messages.component(false, "guis", "no-icon"))
-                    .lore(Messages.component(false, "guis", "no-icon-description"), Messages.component(false, "guis", "no-icon-description2"))
+                    .name(Messages.component(false, "guis.no-icon"))
+                    .lore(Messages.component(false, "guis.no-icon-description"),
+                            Messages.component(false, "guis.no-icon-description2"))
                     .asGuiItem();
         }
 

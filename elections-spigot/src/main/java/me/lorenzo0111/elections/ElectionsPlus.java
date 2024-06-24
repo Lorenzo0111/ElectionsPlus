@@ -28,10 +28,11 @@ import me.lorenzo0111.elections.api.IElectionsPlusAPI;
 import me.lorenzo0111.elections.api.implementations.ElectionsPlusAPI;
 import me.lorenzo0111.elections.cache.CacheManager;
 import me.lorenzo0111.elections.commands.ElectionsCommand;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.constants.Getters;
 import me.lorenzo0111.elections.database.DatabaseManager;
 import me.lorenzo0111.elections.database.IDatabaseManager;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.listeners.BlockListener;
 import me.lorenzo0111.elections.listeners.JoinListener;
 import me.lorenzo0111.elections.scheduler.BukkitScheduler;
 import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
@@ -54,6 +55,7 @@ import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public final class ElectionsPlus extends JavaPlugin {
     private final CacheManager cache = new CacheManager();
@@ -63,7 +65,6 @@ public final class ElectionsPlus extends JavaPlugin {
     private ElectionsPlusAPI api;
 
     private ConfigurationNode config;
-    private ConfigurationNode messages;
 
     private Permission permissions;
 
@@ -72,9 +73,14 @@ public final class ElectionsPlus extends JavaPlugin {
         instance = this;
         this.saveDefaultConfig();
         BukkitAudienceManager.init(this);
-        new Metrics(this,11735);
-        Getters.updater(new UpdateChecker(new BukkitScheduler(this), this.getDescription().getVersion(), this.getName(),93463, "https://www.spigotmc.org/resources/93463/", null, null));
+        new Metrics(this, 11735);
+
         this.load();
+
+        boolean checkForUpdates = config.node("update", "check").getBoolean(false);
+        if (checkForUpdates) {
+            Getters.updater(new UpdateChecker(new BukkitScheduler(this), this.getDescription().getVersion(), this.getName(), 93463, "https://www.spigotmc.org/resources/93463/", null, null));
+        }
     }
 
     @Override
@@ -86,15 +92,16 @@ public final class ElectionsPlus extends JavaPlugin {
             return;
         }
 
-         try {
-             this.getManager().closeConnection();
-         } catch (SQLException e) {
-             e.printStackTrace();
-         }
+        try {
+            this.getManager().closeConnection();
+        } catch (SQLException e) {
+            this.getLogger().log(Level.SEVERE, "An error occurred while closing the connection", e);
+        }
 
-         Bukkit.getScheduler().cancelTasks(this);
+        Bukkit.getScheduler().cancelTasks(this);
 
-         Messages.close();
+        if (BukkitAudienceManager.initialized())
+            BukkitAudienceManager.shutdown();
     }
 
     public void start() throws ConfigurateException {
@@ -102,34 +109,33 @@ public final class ElectionsPlus extends JavaPlugin {
 
         this.reload();
 
-        this.getLogger().info("Loading scheduler..");
+        this.getLogger().info("Loading scheduler...");
         GlobalMain.init(getDataFolder().toPath());
 
-        if (config.node("rank","enabled").getBoolean()) {
+        if (config.node("rank", "enabled").getBoolean()) {
             RegisteredServiceProvider<Permission> rsp = getServer().getServicesManager().getRegistration(Permission.class);
             if (rsp != null)
                 permissions = rsp.getProvider();
         }
 
         this.api = new ElectionsPlusAPI(this);
-        Bukkit.getServicesManager().register(IElectionsPlusAPI.class,api,this, ServicePriority.Normal);
-        Bukkit.getPluginManager().registerEvents(new JoinListener(),this);
+        Bukkit.getServicesManager().register(IElectionsPlusAPI.class, api, this, ServicePriority.Normal);
+        Bukkit.getPluginManager().registerEvents(new JoinListener(), this);
+        Bukkit.getPluginManager().registerEvents(new BlockListener(), this);
         switch (getConfig().getString("database.type", "NULL").toUpperCase()) {
-            case "REDIS":
-                this.getLogger().warning("The redis feature is not implemented yet. Using SQLITE..");
             case "SQLITE":
                 try {
-                    this.manager = new DatabaseManager(new BukkitScheduler(this),cache,config(),new SQLiteConnection(getDataFolder().toPath()));
+                    this.manager = new DatabaseManager(new BukkitScheduler(this), cache, config(), new SQLiteConnection(getDataFolder().toPath()));
                     Getters.database(manager);
                 } catch (SQLException | IOException e) {
-                    e.printStackTrace();
+                    this.getLogger().log(Level.SEVERE, "An error occurred while initializing the database", e);
                 }
                 break;
             case "MYSQL":
                 try {
-                    this.manager = new DatabaseManager(config,cache, getDataFolder().toPath(), new BukkitScheduler(this));
+                    this.manager = new DatabaseManager(config, cache, getDataFolder().toPath(), new BukkitScheduler(this));
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    this.getLogger().log(Level.SEVERE, "An error occurred while initializing the database", e);
                 }
                 break;
             default:
@@ -137,9 +143,13 @@ public final class ElectionsPlus extends JavaPlugin {
                 break;
         }
 
-        Customization customization = new Customization(null,config("prefix") + "&cCommand not found",config("prefix") + "&7Run /$cmd help for command help.");
+        Customization customization = new Customization(null,
+                Messages.string(true, "errors.command-not-found"),
+                Messages.string(true, "errors.help")
+        );
 
-        new ElectionsCommand(this,"elections",customization);
+
+        new ElectionsCommand(this, "elections", customization);
     }
 
     private void load() {
@@ -147,24 +157,28 @@ public final class ElectionsPlus extends JavaPlugin {
             this.getLogger().info("Loading libraries..");
             this.getLogger().info("Note: This might take a few minutes on first run.");
 
-            DependencyManager manager = new DependencyManager(getName(),getDataFolder().toPath());
+            DependencyManager manager = new DependencyManager(getName(), getDataFolder().toPath());
             long time = manager.build();
             this.getLogger().info("Loaded all libraries in " + time + "ms");
             this.start();
         } catch (ReflectiveOperationException | URISyntaxException | NoSuchAlgorithmException | IOException e) {
-            e.printStackTrace();
+            this.getLogger().log(Level.SEVERE, "An error occurred while loading the plugin", e);
         }
     }
 
     public void reload() throws ConfigurateException {
-        ConfigExtractor messagesExtractor = new ConfigExtractor(this.getClass(),this.getDataFolder(),"messages.yml");
+        ConfigExtractor messagesExtractor = new ConfigExtractor(this.getClass(), this.getDataFolder(), "messages.yml");
         messagesExtractor.extract();
-        this.messages = messagesExtractor.toConfigurate();
 
-        ConfigExtractor configExtractor = new ConfigExtractor(this.getClass(),this.getDataFolder(),"config.yml");
+        ConfigurationNode messages = messagesExtractor.toConfigurate();
+
+        ConfigExtractor configExtractor = new ConfigExtractor(this.getClass(), this.getDataFolder(), "config.yml");
         configExtractor.extract();
+
         this.config = configExtractor.toConfigurate();
-        Messages.init(messages,config("prefix"),this);
+
+        assert messages != null;
+        Messages.init(messages);
     }
 
     public void win(UUID uuid) {
@@ -177,7 +191,7 @@ public final class ElectionsPlus extends JavaPlugin {
         if (permissions == null)
             return;
 
-        permissions.playerAddGroup(Bukkit.getWorlds().get(0).getName(), Bukkit.getOfflinePlayer(uuid), config.node("rank","name").getString());
+        permissions.playerAddGroup(Bukkit.getWorlds().get(0).getName(), Bukkit.getOfflinePlayer(uuid), config.node("rank", "name").getString());
     }
 
     public ConfigurationNode config() {

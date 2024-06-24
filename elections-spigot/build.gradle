@@ -32,21 +32,19 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
-    maven { url 'https://repo.repsy.io/mvn/lorenzo0111/public/' }
-    maven { url "https://repo.mattstudios.me/artifactory/public/" }
     maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     implementation project(':elections-common')
     implementation project(':elections-api')
-    compileOnly('org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT')
-    implementation('space.rocketplugins.pluginslib:bukkit:2.0.3.2')
-    implementation("net.kyori:adventure-platform-bukkit:4.1.1-SNAPSHOT")
-    implementation('org.bstats:bstats-bukkit:3.0.0')
-    implementation("dev.triumphteam:triumph-gui:3.1.2")
-    slim('com.github.cryptomorin:XSeries:8.7.1')
+    compileOnly('org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT')
     compileOnly("com.github.MilkBowl:VaultAPI:1.7.1")
+    implementation('me.lorenzo0111.pluginslib:bukkit:2.0.4')
+    implementation("net.kyori:adventure-platform-bukkit:4.3.3")
+    implementation('org.bstats:bstats-bukkit:3.0.2')
+    implementation("dev.triumphteam:triumph-gui:3.2.2")
+    slim('com.github.cryptomorin:XSeries:11.1.0')
 }
 
 artifacts {

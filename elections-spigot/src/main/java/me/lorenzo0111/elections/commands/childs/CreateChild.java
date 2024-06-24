@@ -25,15 +25,18 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.elections.conversation.ConversationUtil;
 import me.lorenzo0111.elections.conversation.conversations.NameConversation;
-import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.elections.menus.CreateElectionMenu;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
 
 public class CreateChild extends SubCommand {
     private final ElectionsPlus plugin;
@@ -52,20 +55,33 @@ public class CreateChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(),true, "errors", "console");
+            sender.audience().sendMessage(Messages.component(true, "errors.console"));
             return;
         }
 
-        CreateElectionMenu menu = new CreateElectionMenu(plugin,"None",(Player) sender.player());
+        Player player = (Player) sender.player();
 
-        if (args.length != 2) {
-            ConversationUtil.createConversation(plugin,new NameConversation((Player) sender.player(),plugin,menu));
+        if (args.length == 1) {
+            CreateElectionMenu menu = new CreateElectionMenu(plugin, "None", player);
+            ConversationUtil.createConversation(plugin, new NameConversation(player, plugin, menu));
             return;
         }
 
-        String name = args[1];
+        plugin.getManager()
+                .createElection(args[1], new ArrayList<>())
+                .thenAccept(election -> {
+                    if (election == null) {
+                        sender.audience().sendMessage(Messages.component(true, "errors.election-exists"));
+                        return;
+                    }
 
-        menu.setName(name);
-        menu.setup();
+                    sender.audience().sendMessage(
+                            Messages.component(
+                                    true,
+                                    "election.created",
+                                    Placeholder.unparsed("name", args[1])
+                            )
+                    );
+                });
     }
 }

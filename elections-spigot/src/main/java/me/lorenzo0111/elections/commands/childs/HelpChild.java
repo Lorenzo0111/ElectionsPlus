@@ -24,12 +24,10 @@
 
 package me.lorenzo0111.elections.commands.childs;
 
-import me.lorenzo0111.elections.ElectionsPlus;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
-import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
 
 public class HelpChild extends SubCommand {
 
@@ -44,22 +42,23 @@ public class HelpChild extends SubCommand {
 
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
-        sender.audience().sendMessage(Component.text(ChatColor.translateAlternateColorCodes('&', ((ElectionsPlus) getCommand().getPlugin()).config("prefix") + "&7Available commands:")));
-        sender.audience().sendMessage(this.formatHelp("create <name>", "Create an election"));
-        if (sender.hasPermission("elections.disband"))
-            sender.audience().sendMessage(this.formatHelp("disband <name>", "Disband a party"));
-        if (sender.hasPermission("elections.info"))
-            sender.audience().sendMessage(this.formatHelp("info <name>", "Get votes of an election"));
-        if (sender.hasPermission("elections.close"))
-            sender.audience().sendMessage(this.formatHelp("close <name>", "Close an election"));
-        if (sender.hasPermission("elections.proceed"))
-            sender.audience().sendMessage(this.formatHelp("proceed <name>", "Give the winner rank to the owner of the winner party of an election."));
-        sender.audience().sendMessage(this.formatHelp("list", "View the list of elections"));
-        sender.audience().sendMessage(this.formatHelp("parties", "View the list of parties"));
-        sender.audience().sendMessage(this.formatHelp("vote [name]", "Vote to an election"));
+        this.formatHelp(sender, null, "help.header");
+        this.formatHelp(sender, "elections.create", "help.create");
+        this.formatHelp(sender, "elections.create", "help.add-party");
+        this.formatHelp(sender, "elections.parties", "help.parties");
+        this.formatHelp(sender, "elections.list", "help.list");
+        this.formatHelp(sender, "elections.disband", "help.disband");
+        this.formatHelp(sender, "elections.vote", "help.vote");
+        this.formatHelp(sender, "elections.reload", "help.reload");
+        this.formatHelp(sender, "elections.info", "help.info");
+        this.formatHelp(sender, "elections.close", "help.close");
+        this.formatHelp(sender, "elections.proceed", "help.proceed");
+        this.formatHelp(sender, "elections.create", "help.vote-block");
+
     }
 
-    public Component formatHelp(String command,String description) {
-        return Component.text(ChatColor.translateAlternateColorCodes('&', ((ElectionsPlus) getCommand().getPlugin()).config("prefix") + String.format("&9/elections %s &8» &7%s", command, description)));
+    private void formatHelp(User<?> sender, String permission, String path) {
+        if (permission != null && !sender.hasPermission(permission)) return;
+        sender.audience().sendMessage(Messages.component(true, path));
     }
 }

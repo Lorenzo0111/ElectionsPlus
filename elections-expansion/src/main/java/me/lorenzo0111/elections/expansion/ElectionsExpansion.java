@@ -37,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
+@SuppressWarnings("unused")
 public class ElectionsExpansion extends PlaceholderExpansion {
     private final IElectionsPlusAPI api;
 
@@ -66,13 +67,18 @@ public class ElectionsExpansion extends PlaceholderExpansion {
         return "ElectionsPlus";
     }
 
+    @Override
+    public boolean canRegister() {
+        return api != null;
+    }
+
     /*
-        Placeholders:
-        %elections_open%
-        %election_isopen%
-        %elections_isopen_<name>%
-        %elections_voted_<election>%
-         */
+            Placeholders:
+            %elections_open%
+            %election_isopen%
+            %elections_isopen_<name>%
+            %elections_voted_<election>%
+        */
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String params) {
         if (params.equalsIgnoreCase("open")) {
@@ -103,7 +109,7 @@ public class ElectionsExpansion extends PlaceholderExpansion {
 
         if (params.startsWith("voted_")) {
             String name = params.split("voted_")[1];
-            Vote vote = api.getCache().getVotes().get(name+"||"+player.getUniqueId());
+            Vote vote = api.getCache().getVotes().get(name + "||" + player.getUniqueId());
 
             return vote != null ? PlaceholderAPIPlugin.booleanTrue() : PlaceholderAPIPlugin.booleanFalse();
 
@@ -111,4 +117,6 @@ public class ElectionsExpansion extends PlaceholderExpansion {
 
         return null;
     }
+
+
 }

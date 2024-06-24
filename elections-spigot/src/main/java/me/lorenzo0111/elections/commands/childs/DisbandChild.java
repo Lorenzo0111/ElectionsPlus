@@ -25,14 +25,12 @@
 package me.lorenzo0111.elections.commands.childs;
 
 import me.lorenzo0111.elections.ElectionsPlus;
-import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.elections.config.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-
-import java.util.HashMap;
-import java.util.Map;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 public class DisbandChild extends SubCommand {
 
@@ -48,7 +46,10 @@ public class DisbandChild extends SubCommand {
     @Permission("elections.disband")
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
-        if(args.length != 2) {
+        if(args.length < 2) {
+            sender.audience().sendMessage(
+                    Messages.component(true, "errors.bad-args")
+            );
             return;
         }
 
@@ -57,9 +58,9 @@ public class DisbandChild extends SubCommand {
                 .getManager()
                 .deleteParty(args[1]);
 
-        Map<String,Object> map = new HashMap<>();
-        map.put("name",args[1]);
-        Messages
-                .send(sender.audience(),true, map, "disband");
+        sender.audience().sendMessage(
+                Messages.component(true, "disband.deleted",
+                        Placeholder.unparsed("name", args[1]))
+        );
     }
 }
