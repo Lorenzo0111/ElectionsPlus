@@ -143,9 +143,9 @@ public final class ElectionsPlus extends JavaPlugin {
         }
 
         Customization customization = new Customization(null,
-                                            Messages.componentString(true, "errors", "command-not-found"),
-                                            Messages.componentString(true, "errors", "help")
-                                        );
+                Messages.string(true, "errors.command-not-found"),
+                Messages.string(true, "errors.help")
+        );
 
 
         new ElectionsCommand(this, "elections", customization);

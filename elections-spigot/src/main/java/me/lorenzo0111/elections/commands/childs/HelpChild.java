@@ -42,25 +42,23 @@ public class HelpChild extends SubCommand {
 
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
-        this.formatHelp(sender, null, "help", "header");
-        this.formatHelp(sender, "elections.create", "help", "create");
-        this.formatHelp(sender, "elections.create", "help", "add-party");
-        this.formatHelp(sender, "elections.parties", "help", "parties");
-        this.formatHelp(sender, "elections.list", "help", "list");
-        this.formatHelp(sender, "elections.disband", "help", "disband");
-        this.formatHelp(sender, "elections.vote", "help", "vote");
-        this.formatHelp(sender, "elections.reload", "help", "reload");
-        this.formatHelp(sender, "elections.info", "help", "info");
-        this.formatHelp(sender, "elections.close", "help", "close");
-        this.formatHelp(sender, "elections.proceed", "help", "proceed");
-        this.formatHelp(sender, "elections.create", "help", "vote-block");
+        this.formatHelp(sender, null, "help.header");
+        this.formatHelp(sender, "elections.create", "help.create");
+        this.formatHelp(sender, "elections.create", "help.add-party");
+        this.formatHelp(sender, "elections.parties", "help.parties");
+        this.formatHelp(sender, "elections.list", "help.list");
+        this.formatHelp(sender, "elections.disband", "help.disband");
+        this.formatHelp(sender, "elections.vote", "help.vote");
+        this.formatHelp(sender, "elections.reload", "help.reload");
+        this.formatHelp(sender, "elections.info", "help.info");
+        this.formatHelp(sender, "elections.close", "help.close");
+        this.formatHelp(sender, "elections.proceed", "help.proceed");
+        this.formatHelp(sender, "elections.create", "help.vote-block");
 
     }
 
-    private void formatHelp(User<?> sender, String permission, Object... path) {
-        if (permission == null || !sender.hasPermission(permission)) {
-            return;
-        }
-        Messages.send(sender.audience(), true, path);
+    private void formatHelp(User<?> sender, String permission, String path) {
+        if (permission != null && !sender.hasPermission(permission)) return;
+        sender.audience().sendMessage(Messages.component(true, path));
     }
 }

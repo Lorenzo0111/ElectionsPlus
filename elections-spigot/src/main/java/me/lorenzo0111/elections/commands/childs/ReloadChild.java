@@ -30,9 +30,7 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-
-import java.util.Map;
-
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
 import org.spongepowered.configurate.ConfigurateException;
 
 public class ReloadChild extends SubCommand {
@@ -61,8 +59,10 @@ public class ReloadChild extends SubCommand {
         }
 
         long elapsedMs = System.currentTimeMillis() - start;
-        Map<String, String> placeholders = Messages.multiple("elapsed", String.valueOf(elapsedMs), "errors", String.valueOf(errors));
-        
-        Messages.send(sender.audience(), true, placeholders, "plugin", "reload");
+        sender.audience().sendMessage(
+                Messages.component(true, "plugin.reload",
+                        Formatter.number("elapsed", elapsedMs),
+                        Formatter.number("errors", errors))
+        );
     }
 }

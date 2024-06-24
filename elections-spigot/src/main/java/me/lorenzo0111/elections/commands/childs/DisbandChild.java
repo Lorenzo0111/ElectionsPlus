@@ -24,22 +24,18 @@
 
 package me.lorenzo0111.elections.commands.childs;
 
-import java.util.ArrayList;
-
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.handlers.Messages;
 import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 public class DisbandChild extends SubCommand {
-    private final ElectionsPlus plugin;
 
     public DisbandChild(Command command, ElectionsPlus plugin) {
         super(command);
-
-        this.plugin = plugin;
     }
 
     @Override
@@ -51,7 +47,9 @@ public class DisbandChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
         if(args.length < 2) {
-            Messages.send(sender.audience(), true, "errors", "bad-args");
+            sender.audience().sendMessage(
+                    Messages.component(true, "errors.bad-args")
+            );
             return;
         }
 
@@ -60,6 +58,9 @@ public class DisbandChild extends SubCommand {
                 .getManager()
                 .deleteParty(args[1]);
 
-        Messages.send(sender.audience(), true, Messages.single("name", args[1]), "disband", "deleted");
+        sender.audience().sendMessage(
+                Messages.component(true, "disband.deleted",
+                        Placeholder.unparsed("name", args[1]))
+        );
     }
 }

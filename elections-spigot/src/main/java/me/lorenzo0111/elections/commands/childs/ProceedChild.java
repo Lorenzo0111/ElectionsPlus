@@ -32,20 +32,14 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProceedChild extends SubCommand {
-    private final ElectionsPlus plugin;
-
     public ProceedChild(ICommand<?> command, ElectionsPlus plugin) {
         super(command);
-        this.plugin = plugin;
     }
 
     @Override
@@ -57,7 +51,7 @@ public class ProceedChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> user, String[] args) {
         if (args.length < 2) {
-            user.audience().sendMessage(Messages.component(true, "errors", "bad-args"));
+            user.audience().sendMessage(Messages.component(true, "errors.bad-args"));
             return;
         }
 
@@ -73,7 +67,7 @@ public class ProceedChild extends SubCommand {
                     List<String> winners = ElectionUtils.getWinners(votes);
 
                     if (winners.isEmpty()) {
-                        user.audience().sendMessage(Messages.component(true, "proceed", "no-winner"));
+                        user.audience().sendMessage(Messages.component(true, "proceed.no-winner"));
                         return;
                     }
 
@@ -82,7 +76,9 @@ public class ProceedChild extends SubCommand {
                                 .getParty(winners.get(0))
                                 .thenAccept((winner) -> plugin.win(winner.getOwner()));
 
-                        user.audience().sendMessage(Messages.component(true, Messages.multiple("party", winners.get(0), "election", args[1]), "proceed", "winner"));
+                        user.audience().sendMessage(Messages.component(true, "proceed.winner",
+                                Placeholder.unparsed("party", winners.get(0)),
+                                Placeholder.unparsed("election", args[1])));
                         return;
                     }
 
@@ -100,11 +96,18 @@ public class ProceedChild extends SubCommand {
                                     .thenAccept((winner) -> plugin.win(winner.getOwner()));
                         }
 
-                        user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties.toString(), "election", args[1]), "proceed", "multiple-winners"));
+                        user.audience().sendMessage(Messages.component(true,
+                                "proceed.multiple-winners",
+                                Placeholder.unparsed("parties", parties.toString()),
+                                Placeholder.unparsed("election", args[1])
+                                ));
                         return;
                     }
 
-                    user.audience().sendMessage(Messages.component(true, Messages.multiple("parties", parties.toString(), "election", args[1]), "proceed", "tie"));
+                    user.audience().sendMessage(Messages.component(true, "proceed.tie",
+                            Placeholder.unparsed("parties", parties.toString()),
+                            Placeholder.unparsed("election", args[1])
+                    ));
                 });
     }
 

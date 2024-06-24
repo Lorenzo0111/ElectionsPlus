@@ -34,6 +34,7 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ public class CreateChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(), true, "errors", "console");
+            sender.audience().sendMessage(Messages.component(true, "errors.console"));
             return;
         }
 
@@ -68,14 +69,20 @@ public class CreateChild extends SubCommand {
         }
 
         plugin.getManager()
-                .createElection(args[1], new ArrayList<Party>())
+                .createElection(args[1], new ArrayList<>())
                 .thenAccept(election -> {
                     if (election == null) {
-                        Messages.send(player, true, "errors", "election-exists");
+                        sender.audience().sendMessage(Messages.component(true, "errors.election-exists"));
                         return;
                     }
 
-                    Messages.send(player, true, Messages.single("name", args[1]), "election", "created");
+                    sender.audience().sendMessage(
+                            Messages.component(
+                                    true,
+                                    "election.created",
+                                    Placeholder.unparsed("name", args[1])
+                            )
+                    );
                 });
     }
 }

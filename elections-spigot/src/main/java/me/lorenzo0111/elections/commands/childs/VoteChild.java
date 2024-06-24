@@ -49,7 +49,7 @@ public class VoteChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {        
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(), true, "errors", "console");
+            sender.audience().sendMessage(Messages.component(true, "errors.console"));
             return;
         }
 

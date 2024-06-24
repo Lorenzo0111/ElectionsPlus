@@ -31,8 +31,9 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import net.kyori.adventure.text.minimessage.tag.resolver.Formatter;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,11 +56,11 @@ public class InfoChild extends SubCommand {
         ElectionsPlus plugin = (ElectionsPlus) getCommand().getPlugin();
 
         if (args.length < 2) {
-            user.audience().sendMessage(Messages.component(true, "errors", "election-name-missing"));
+            user.audience().sendMessage(Messages.component(true, "errors.election-name-missing"));
             return;
         }
 
-        user.audience().sendMessage(Messages.component(true, Messages.single("election", args[1]), "votes", "calculating"));
+        user.audience().sendMessage(Messages.component(true, "votes.calculating", Placeholder.unparsed("election", args[1])));
 
         plugin.getApi()
                 .getVotes()
@@ -69,31 +70,31 @@ public class InfoChild extends SubCommand {
                             .collect(Collectors.toList());
 
                     int total = 0;
-                    Map<String,Integer> voteMap = new HashMap<>();
+                    Map<String, Integer> voteMap = new HashMap<>();
 
                     for (Vote vote : collect) {
                         total++;
 
                         if (!voteMap.containsKey(vote.getParty())) {
-                            voteMap.put(vote.getParty(),1);
+                            voteMap.put(vote.getParty(), 1);
                             continue;
                         }
 
                         Integer voteCount = voteMap.get(vote.getParty());
-                        voteMap.replace(vote.getParty(),voteCount,voteCount+1);
+                        voteMap.replace(vote.getParty(), voteCount, voteCount + 1);
                     }
 
-                    user.audience().sendMessage(Messages.component(true, "votes", "title"));
+                    user.audience().sendMessage(Messages.component(true, "votes.title"));
                     for (String party : voteMap.keySet()) {
-                        int nvotes = voteMap.get(party);
-                        int percent = nvotes * 100 / total;
+                        int voteCount = voteMap.get(party);
+                        int percent = voteCount * 100 / total;
 
-                        HashMap<String, String> placeholders = new HashMap<>();
-                        placeholders.put("party", party);
-                        placeholders.put("nvotes", String.valueOf(nvotes));
-                        placeholders.put("percent", String.valueOf(percent));
-
-                        user.audience().sendMessage(Messages.component(true, placeholders, "votes", "status"));
+                        user.audience().sendMessage(Messages.component(true,
+                                "votes.status",
+                                Placeholder.unparsed("party", party),
+                                Formatter.number("votes", voteCount),
+                                Formatter.number("percent", percent)
+                        ));
                     }
                 });
     }

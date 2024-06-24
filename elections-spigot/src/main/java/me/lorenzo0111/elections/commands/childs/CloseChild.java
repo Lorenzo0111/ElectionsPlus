@@ -30,6 +30,7 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.ICommand;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 public class CloseChild extends SubCommand {
     private final ElectionsPlus plugin;
@@ -49,7 +50,7 @@ public class CloseChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> user, String[] args) {
         if (args.length < 2) {
-            Messages.send(user.audience(), true, "errors", "election-name-missing");
+            user.audience().sendMessage(Messages.component(true, "errors.election-name-missing"));
             return;
         }
 
@@ -59,12 +60,11 @@ public class CloseChild extends SubCommand {
                     if (election != null) {
                         election.close();
 
-                        Messages.send(user.audience(), true, Messages.single("name", election.getName()), "errors", "election-closed");
-
+                        user.audience().sendMessage(Messages.component(true, "errors.election-closed", Placeholder.unparsed("name", election.getName())));
                         return;
                     }
 
-                    Messages.send(user.audience(), true, Messages.single("name", args[1]), "errors", "election-not-found");
+                    user.audience().sendMessage(Messages.component(true, "election-not-found", Placeholder.unparsed("name", args[1])));
                 });
     }
 }

@@ -105,7 +105,7 @@ votes:
   calculating: "<gray>Calculating votes for <yellow><election><gray>..."
   title: "<dark_gray><st>=============</st><yellow> Votes <dark_gray><st>============="
   name: "votes"
-  status: "<gold><b>•</b> <yellow><party> <gray>» <yellow><nvotes><gray> votes (<yellow><i><percent>%<gray>)"
+  status: "<gold><b>•</b> <yellow><party> <gray>» <yellow><votes><gray> votes (<yellow><i><percent>%<gray>)"
 
 election:
   deleted: "<gray>Election <yellow><name><gray> deleted."

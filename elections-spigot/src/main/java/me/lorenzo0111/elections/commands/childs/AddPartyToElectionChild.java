@@ -32,6 +32,7 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -54,12 +55,12 @@ public class AddPartyToElectionChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(), true, "errors", "console");
+            sender.audience().sendMessage(Messages.component(true, "errors.console"));
             return;
         }
 
         if (args.length < 3) {
-            Messages.send(sender.audience(), true, "errors", "bad-args");
+            sender.audience().sendMessage(Messages.component(true, "errors.bad-args"));
             return;
         }
 
@@ -78,10 +79,12 @@ public class AddPartyToElectionChild extends SubCommand {
             return;
         }
 
-        Messages.send(sender.audience(),
-                true,
-                Messages.single("name", electionName),
-                "errors", "election-not-found");
+        sender.audience()
+                .sendMessage(Messages.component(
+                        true,
+                        "errors.election-not-found",
+                        Placeholder.unparsed("name", electionName))
+                );
     }
 
     private void addPartyToElection(Election election, User<?> sender, String partyName) {
@@ -96,17 +99,27 @@ public class AddPartyToElectionChild extends SubCommand {
                             .orElse(null);
 
                     if (party == null) {
-                        Messages.send(sender.audience(), true, Messages.single("party", partyName), "errors", "party-not-found");
+                        sender.audience().sendMessage(Messages.component(true,
+                                "errors.party-not-found",
+                                Placeholder.unparsed("party", partyName)));
                         return;
                     }
 
                     if (electionParties.contains(party)) {
-                        Messages.send(sender.audience(), true, Messages.multiple("party", partyName, "election", election.getName()), "election", "party-already-added");
+                        sender.audience().sendMessage(Messages.component(true,
+                                "errors.party-already-added",
+                                Placeholder.unparsed("party", partyName),
+                                Placeholder.unparsed("election", election.getName()))
+                        );
                         return;
                     }
 
                     electionParties.add(party);
-                    Messages.send(sender.audience(), true, Messages.multiple("party", partyName, "election", election.getName()), "election", "party-added");
+                    sender.audience().sendMessage(Messages.component(true,
+                            "election.party-added",
+                            Placeholder.unparsed("party", partyName),
+                            Placeholder.unparsed("election", election.getName()))
+                    );
 
                     Election newElection = new Election(election.getName(), electionParties, election.isOpen());
                     plugin.getManager().updateElection(newElection);

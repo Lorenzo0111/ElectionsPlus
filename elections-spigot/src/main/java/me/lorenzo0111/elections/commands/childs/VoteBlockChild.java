@@ -52,11 +52,15 @@ public class VoteBlockChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
         if (args.length != 2) {
-            Messages.send(sender.audience(), true, "errors", "bad-args");
+            sender.audience().sendMessage(
+                    Messages.component(true, "errors.bad-args")
+            );
             return;
         }
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(), true, "errors", "console");
+            sender.audience().sendMessage(
+                    Messages.component(true, "errors.console")
+            );
             return;
         }
 
@@ -64,7 +68,9 @@ public class VoteBlockChild extends SubCommand {
         Block block = player.getTargetBlock(null, 5);
 
         if (block == null || block.isEmpty()) {
-            Messages.send(sender.audience(), true, "errors", "no-block");
+            sender.audience().sendMessage(
+                    Messages.component(true, "errors.no-block")
+            );
             return;
         }
 
@@ -78,7 +84,7 @@ public class VoteBlockChild extends SubCommand {
             return;
         }
 
-        Messages.send(sender.audience(), true, "errors", "bad-args");
+        sender.audience().sendMessage(Messages.component(true, "errors.bad-args"));
     }
 
     private void create(User<?> sender, Block block) {
@@ -95,11 +101,11 @@ public class VoteBlockChild extends SubCommand {
                 )
                 .thenAccept(electionBlock -> {
                     if (electionBlock == null) {
-                        Messages.send(sender.audience(), true, "errors", "block-already-exists");
+                        sender.audience().sendMessage(Messages.component(true, "errors.block-already-exists"));
                         return;
                     }
 
-                    Messages.send(sender.audience(), true, "vote-block", "created");
+                    sender.audience().sendMessage(Messages.component(true, "vote-block.created"));
                 });
     }
 
@@ -112,7 +118,7 @@ public class VoteBlockChild extends SubCommand {
         );
         plugin.getManager().deleteElectionBlock(electionBlock);
 
-        Messages.send(sender.audience(), true, "vote-block", "deleted");
+        sender.audience().sendMessage(Messages.component(true, "vote-block.deleted"));
     }
 }
 

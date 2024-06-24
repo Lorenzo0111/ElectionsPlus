@@ -34,6 +34,8 @@ import me.lorenzo0111.pluginslib.audience.User;
 import me.lorenzo0111.pluginslib.command.Command;
 import me.lorenzo0111.pluginslib.command.SubCommand;
 import me.lorenzo0111.pluginslib.command.annotations.Permission;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -56,7 +58,7 @@ public class PartiesChild extends SubCommand {
     @Override
     public void handleSubcommand(User<?> sender, String[] args) {
         if (!(sender.player() instanceof Player)) {
-            Messages.send(sender.audience(), true, "errors", "console");
+            sender.audience().sendMessage(Messages.component(true, "errors.console"));
             return;
         }
 
@@ -81,7 +83,7 @@ public class PartiesChild extends SubCommand {
                         conversation.handle(args[2]);
                         break;
                     default:
-                        player.sendMessage(Messages.componentString(true, "errors", "bad-args"));
+                        sender.audience().sendMessage(Messages.component(true, "errors.bad-args"));
                         break;
                 }
                 return;
@@ -89,16 +91,16 @@ public class PartiesChild extends SubCommand {
                 if (args.length == 3) {
                     String partyName = args[2];
                     if (partyName.isEmpty()) {
-                        player.sendMessage(Messages.componentString(true, "errors", "party-name-required"));
+                        sender.audience().sendMessage(Messages.component(true, "errors.party-name-required"));
                         return;
                     }
 
                     this.plugin.getManager().deleteParty(partyName);
-                    player.sendMessage(Messages.componentString(true, "parties", "deleted"));
+                    sender.audience().sendMessage(Messages.component(true, "parties.deleted"));
                     return;
                 }
 
-                player.sendMessage(Messages.componentString(true, "errors", "bad-args"));
+                sender.audience().sendMessage(Messages.component(true, "errors.bad-args"));
                 return;
             case "add-member":
                 if (args.length == 4) {
@@ -107,33 +109,37 @@ public class PartiesChild extends SubCommand {
 
                     plugin.getManager()
                             .getParties()
-                            .thenAccept((parties) -> addMember(player, parties, partyName, memberName));
+                            .thenAccept((parties) -> addMember(sender.audience(), parties, partyName, memberName));
                     return;
                 }
 
-                player.sendMessage(Messages.componentString(true, "errors", "bad-args"));
+                sender.audience().sendMessage(Messages.component(true, "errors.bad-args"));
                 return;
             default:
-                player.sendMessage(Messages.componentString(true, "errors", "command-not-found"));
+                sender.audience().sendMessage(Messages.component(true, "errors.bad-args"));
                 break;
         }
     }
 
-    private void addMember(Player player, List<Party> parties, String partyName, String memberName) {
+    private void addMember(Audience audience, List<Party> parties, String partyName, String memberName) {
         Player member = Bukkit.getPlayer(memberName);
         if (member == null) {
-            player.sendMessage(Messages.componentString(true, Messages.single("name", memberName), "errors", "user-not-online"));
+            audience.sendMessage(Messages.component(true, "errors.user-not-online", Placeholder.unparsed("name", memberName)));
             return;
         }
 
         for (Party party : parties) {
             if (party.getName().equals(partyName)) {
                 party.addMember(member.getUniqueId());
-                player.sendMessage(Messages.componentString(true, Messages.multiple("name", member.getName(), "party", party.getName()), "parties", "user-added"));
+
+                audience.sendMessage(Messages.component(true, "parties.user-added",
+                        Placeholder.unparsed("name", member.getName()),
+                        Placeholder.unparsed("party", party.getName())));
                 return;
             }
         }
 
-        player.sendMessage(Messages.componentString(true, Messages.single("party", partyName), "errors", "party-not-found"));
+        audience.sendMessage(Messages.component(true, "errors.party-not-found",
+                Placeholder.unparsed("party", partyName)));
     }
 }

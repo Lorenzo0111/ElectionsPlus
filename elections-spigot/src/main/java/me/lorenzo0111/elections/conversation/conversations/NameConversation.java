@@ -35,7 +35,7 @@ public class NameConversation extends Conversation {
     private final CreateElectionMenu menu;
 
     public NameConversation(Player author, ElectionsPlus plugin, CreateElectionMenu menu) {
-        super(Messages.get("conversations", "name"), author, plugin);
+        super(Messages.string(true,"conversations.name"), author, plugin);
         this.menu = menu;
     }
 

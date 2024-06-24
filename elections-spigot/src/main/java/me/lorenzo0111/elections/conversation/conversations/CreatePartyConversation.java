@@ -27,13 +27,15 @@ package me.lorenzo0111.elections.conversation.conversations;
 import me.lorenzo0111.elections.ElectionsPlus;
 import me.lorenzo0111.elections.conversation.Conversation;
 import me.lorenzo0111.elections.handlers.Messages;
+import me.lorenzo0111.pluginslib.audience.BukkitAudienceManager;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class CreatePartyConversation extends Conversation {
 
     public CreatePartyConversation(Player author, ElectionsPlus plugin) {
-        super(Messages.componentString(false, "conversations", "create"), author, plugin);
+        super(Messages.string(false, "conversations.create"), author, plugin);
     }
 
     @Override
@@ -46,11 +48,20 @@ public class CreatePartyConversation extends Conversation {
                 .createParty(input, this.getAuthor().getUniqueId())
                 .thenAccept((party) -> {
                     if (party == null) {
-                        this.getAuthor().sendMessage(Messages.componentString(true, "parties", "duplicate"));
+                        BukkitAudienceManager.audience(this.getAuthor())
+                                .sendMessage(
+                                        Messages.component(true,
+                                                "parties.duplicate")
+                                );
                         return;
                     }
 
-                    this.getAuthor().sendMessage(Messages.componentString(true, Messages.single("party", party.getName()), "parties", "created"));
+                    BukkitAudienceManager.audience(this.getAuthor())
+                            .sendMessage(
+                                    Messages.component(true,
+                                            "parties.created",
+                                            Placeholder.unparsed("party", party.getName()))
+                            );
                 });
     }
 
