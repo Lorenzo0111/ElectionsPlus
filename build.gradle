@@ -65,7 +65,7 @@ subprojects {
         implementation("net.kyori:adventure-text-minimessage:4.17.0")
         implementation('net.kyori:adventure-api:4.17.0')
         implementation('net.kyori:adventure-text-serializer-legacy:4.17.0')
-        slim('org.slf4j:slf4j-simple:2.0.13')
+        slim('org.slf4j:slf4j-simple:2.0.15')
         slim("com.mysql:mysql-connector-j:8.4.0")
         slim('org.xerial:sqlite-jdbc:3.46.0.0')
         slim('com.zaxxer:HikariCP:4.0.3')
