@@ -62,7 +62,7 @@ subprojects {
     dependencies {
         implementation('org.quartz-scheduler:quartz:2.5.0')
         implementation('org.spongepowered:configurate-yaml:4.2.0')
-        implementation("net.kyori:adventure-text-minimessage:4.20.0")
+        implementation("net.kyori:adventure-text-minimessage:4.21.0")
         implementation('net.kyori:adventure-api:4.20.0')
         implementation('net.kyori:adventure-text-serializer-legacy:4.20.0')
         slim('org.slf4j:slf4j-simple:2.0.17')
